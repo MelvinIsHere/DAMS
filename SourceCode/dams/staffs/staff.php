@@ -12,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Admin - Dashboard</title>
+    <title>Staff - Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -38,7 +38,7 @@
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3">Staff <sup>2</sup></div>
             </a>
 
             <!-- Divider -->
@@ -88,7 +88,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Monitoring :</h6>
                         <a class="collapse-item tablinks" onclick="openCity(event, 'documentTracking')"  href="#">Documents Tracking</a>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'userLoginMonitoring')" href="#">User Login History</a>
                         <a class="collapse-item tablinks"  onclick="openCity(event, 'submissionMonitoring')" href="#">Submission Monitoring</a>
                         
                     </div>
@@ -624,7 +623,7 @@
             if ($conn->connect_error) {
                     die("Connection failed : " . $conn->connect_error);
             }
-                $sql = "SELECT * FROM pendingtask WHERE task_owner = 'Office of Vice Chancellor of Academic Affairs'";
+                $sql = "SELECT * FROM pendingtask WHERE task_owner = 'Office of Vice Chancellor of Academic Affairs' OR task_owner = 'CICS DEAN'";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
                     $taskName = $row['task_name'];
