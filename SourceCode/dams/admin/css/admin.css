@@ -11279,26 +11279,14 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+.task_title {
+    font-size: 16px; /* Adjust the font size as needed */
+}
 
-#pendingDocu .row .card_task{
-      width: 400px;
-      border: solid thin #d9d9d9;
-      margin-top: 100px;
-      background-color: whitesmoke;
+.task_owner {
+    font-size: 12px; /* Adjust the font size as needed */
+}
 
-      
-      
-      
-      
-    }
-#pendingDocu  .task_title p{
-      font-size: 1.5rem;
-      margin-left: 2rem;
-      
-    }
-#pendingDocu  .task_title p{
-      
-      margin-top: -0.9rem;
-      font-size: 1rem;
-      
-    }
+.task_info_text {
+    font-size: 10px; /* Adjust the font size as needed */
+}
