@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Admin - Dashboard</title>
+    <title>Staff - Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -35,7 +38,7 @@
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3">Staff <sup>2</sup></div>
             </a>
 
             <!-- Divider -->
@@ -85,7 +88,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Monitoring :</h6>
                         <a class="collapse-item tablinks" onclick="openCity(event, 'documentTracking')"  href="#">Documents Tracking</a>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'userLoginMonitoring')" href="#">User Login History</a>
                         <a class="collapse-item tablinks"  onclick="openCity(event, 'submissionMonitoring')" href="#">Submission Monitoring</a>
                         
                     </div>
@@ -616,92 +618,41 @@
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+        <?php 
+             $conn = new mysqli("localhost","root","","dams");
+            if ($conn->connect_error) {
+                    die("Connection failed : " . $conn->connect_error);
+            }
+                $sql = "SELECT * FROM pendingtask WHERE task_owner = 'Office of Vice Chancellor of Academic Affairs' OR task_owner = 'CICS DEAN'";
+                $result = $conn->query($sql);
+                while($row = mysqli_fetch_array($result)){
+                    $taskName = $row['task_name'];
+                    $taskOwner = $row['task_owner'];
+                    $posted = $row['task_posted'];
+                    $deadline = $row['task_duedate'];
+                    $descriptions  =$row['description'];
+                
+            ?>
         <div class="col">
             <div class="card" style="margin-top:20px">
                 <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
                     <div class="task_info" style="white-space: nowrap;">
-                        <p class="task_title"><b>OPCR</b></p>
-                        <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
+                        <p class="task_title"><b><?php echo $taskName; ?></b></p>
+                        <p class="task_owner"><?php echo $taskOwner; ?></p>
                         <p class="task_info_text">
-                            <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
+                            <span><?php echo $posted; ?></span>&nbsp;&nbsp;&nbsp;<span><?php echo $deadline; ?></span></p>
                         
                     </div>
                     <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 30px;">View</a>
                     </div>
                 </div>
 
             </div>
-        </div>
-          <div class="col">
-            <div class="card" style="margin-top:20px">
-                <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                    <div class="task_info" style="white-space: nowrap;">
-                        <p class="task_title"><b>OPCR</b></p>
-                        <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                        <p class="task_info_text">
-                            <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                        
-                    </div>
-                    <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-          <div class="col">
-            <div class="card" style="margin-top:20px">
-                <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                    <div class="task_info" style="white-space: nowrap;">
-                        <p class="task_title"><b>OPCR</b></p>
-                        <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                        <p class="task_info_text">
-                            <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                        
-                    </div>
-                    <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-            <div class="col">
-            <div class="card" style="margin-top:20px">
-                <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                    <div class="task_info" style="white-space: nowrap;">
-                        <p class="task_title"><b>OPCR</b></p>
-                        <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                        <p class="task_info_text">
-                            <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                        
-                    </div>
-                    <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
         
-            <div class="col">
-            <div class="card" style="margin-top:20px">
-                <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                    <div class="task_info" style="white-space: nowrap;">
-                        <p class="task_title"><b>OPCR</b></p>
-                        <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                        <p class="task_info_text">
-                            <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                        
-                    </div>
-                    <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                    </div>
-                </div>
-                
-            </div>
         </div>
+       <?php }?>
+    
         <script>
     const taskTitle = document.querySelectorAll('.task_title');
     taskTitle.forEach((taskTitle) => {
@@ -874,263 +825,32 @@
                                     </thead>
                                     
                                     <tbody>
+                                         <?php 
+                                         $conn = new mysqli("localhost","root","","dams");
+                                        if ($conn->connect_error) {
+                                                die("Connection failed : " . $conn->connect_error);
+                                        }
+                                            $sql = "SELECT * FROM usermonitoring";
+                                            $result = $conn->query($sql);
+                                            while($row = mysqli_fetch_array($result)){
+                                                $id = $row['id'];
+                                                $fname = $row['firstName'];
+                                                $lname = $row['lastName'];
+                                                $position = $row['position'];
+                                                $department = $row['department'];
+                                                $login = $row['login'];
+                                                $logout = $row['logout'];
+                                            
+                                        ?>
                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
+                                            <td><?php echo $id ?></td>
+                                            <td><?php echo $fname . " " . $lname ?></td>
+                                            <td><?php echo $position ?></td>
+                                            <td><?php echo $department ?></td>
+                                            <td><?php echo $login ?></td>
+                                            <td><?php echo $logout ?></td>
                                         </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
+                                        <?php }?>
                                         
                                     </tbody>
                                 </table>
