@@ -446,7 +446,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
+                                                Pending (all)</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
                                         </div>
                                         <div class="col-auto">
@@ -624,14 +624,14 @@
             if ($conn->connect_error) {
                     die("Connection failed : " . $conn->connect_error);
             }
-                $sql = "SELECT * FROM pendingtask WHERE task_owner = 'Office of Vice Chancellor of Academic Affairs'";
+                $sql = "SELECT * FROM createTask WHERE deans = 'Tasked'";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
-                    $taskName = $row['task_name'];
+                    $taskName = $row['taskName'];
                     $taskOwner = $row['task_owner'];
-                    $posted = $row['task_posted'];
-                    $deadline = $row['task_duedate'];
-                    $descriptions  =$row['description'];
+                    $posted = $row['dateStart'];
+                    $deadline = $row['dateEnd'];
+                    
                 
             ?>
         <div class="col">
@@ -681,18 +681,21 @@
                         
 
                         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
-                            <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
+                            <a href="#" onclick="openCity(event, 'opcrTask')" class="tablinks">
+                                <div class="col">                                    
+                                    <div class="card row" style="width: 200px; height: 300px">
+                                        <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
+                                           
+                                        </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="text-center" style="width: 200px;margin-top: 10px;">
+                                            <p >OPCR</p>
+                                        </div>
+                                    </div> 
                                 </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >OPCR</p>
-                                    </div>
-                                </div> 
-                            </div>
+                                </a>
+                            
                                 <div class="col">
                                 <div class="card row" style="width: 200px; height: 300px">
                                     <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
@@ -881,6 +884,51 @@
                     <!-- Content Row -->
                     <div class="row">
 
+                        
+
+                     
+
+                    </div>
+
+                </div>
+
+
+
+                    <!-- CREATE TASK INPUT -->
+                 <div class="container-fluid tabcontent" id="opcrTask" style="display:none;">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-1 text-gray-800">Task OPCR</h1>
+                    <p class="mb-4">Bootstrap's default utility classes can be found on the official <a
+                            href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities
+                        below were created to extend this theme past the default utility classes built into Bootstrap's
+                        framework.</p>
+
+                    <!-- Content Row -->
+                    <div class="container-fluid">
+                        
+                            <form action="task.php" method="POST">
+                            
+
+                              <div class="form-group">
+                                <label for="description" class="text-left">Description</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="description">
+                              </div>
+                              <div class="form-group">
+                                <label for="dateStart">Date Start:</label>
+                                <input type="date" class="form-control" id="dateStart" name="dateStart">
+                              </div>
+                             <div class="form-group">
+                                <label for="dateEnd">Date End:</label>
+                                <input type="date" class="form-control" id="dateEnd" name="dateEnd">
+                              </div>
+                              <div class="checkbox">
+                                    <label><input type="checkbox" name="dean" value="Tasked"> Deans</label>
+                                    <label><input type="checkbox" name="department" value="Tasked"> Department</label>
+                                    
+                                </div>
+                              <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                            </form>
                         
 
                      
