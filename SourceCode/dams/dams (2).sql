@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 20, 2023 at 06:27 PM
+-- Generation Time: Jun 21, 2023 at 09:59 AM
 -- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.28
+-- PHP Version: 7.4.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,36 @@ SET time_zone = "+00:00";
 --
 -- Database: `dams`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `createtask`
+--
+
+CREATE TABLE `createtask` (
+  `id` bigint(255) NOT NULL,
+  `taskName` varchar(255) NOT NULL,
+  `task_owner` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `dateStart` date NOT NULL,
+  `dateEnd` date NOT NULL,
+  `deans` varchar(255) NOT NULL,
+  `department` varchar(255) NOT NULL,
+  `staff` varchar(255) NOT NULL,
+  `custom` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `createtask`
+--
+
+INSERT INTO `createtask` (`id`, `taskName`, `task_owner`, `description`, `dateStart`, `dateEnd`, `deans`, `department`, `staff`, `custom`) VALUES
+(1, 'OPCR', 'Office of Vice Chancellor of Academic Affairs', 'sample', '2023-06-21', '2023-06-24', '', 'Tasked', '', ''),
+(2, 'OPCR', 'Office of Vice Chancellor of Academic Affairs', 'sample', '2023-06-21', '2023-06-24', '', 'Tasked', '', ''),
+(3, 'OPCR', 'Office of Vice Chancellor of Academic Affairs', 'sample', '2023-06-21', '2023-06-23', 'Tasked', 'Tasked', '', ''),
+(4, 'OPCR', 'Office of Vice Chancellor of Academic Affairs', 'something', '2023-07-08', '2023-06-21', 'Tasked', '', '', ''),
+(5, 'OPCR', 'Office of Vice Chancellor of Academic Affairs', 'sampless', '2023-06-26', '2023-07-01', 'Tasked', 'Tasked', '', '');
 
 -- --------------------------------------------------------
 
@@ -73,6 +103,12 @@ INSERT INTO `usermonitoring` (`id`, `firstName`, `lastName`, `position`, `depart
 --
 
 --
+-- Indexes for table `createtask`
+--
+ALTER TABLE `createtask`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `pendingtask`
 --
 ALTER TABLE `pendingtask`
@@ -87,6 +123,12 @@ ALTER TABLE `usermonitoring`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `createtask`
+--
+ALTER TABLE `createtask`
+  MODIFY `id` bigint(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `pendingtask`
