@@ -86,7 +86,7 @@
                         <h6 class="collapse-header">Monitoring :</h6>
                         <a class="collapse-item tablinks" onclick="openCity(event, 'documentTracking')"  href="#">Documents Tracking</a>
                         <a class="collapse-item tablinks" onclick="openCity(event, 'userLoginMonitoring')" href="#">User Login History</a>
-                        <a class="collapse-item tablinks"  onclick="openCity(event, 'submissionMonitoring')" href="#">Submission Monitoring</a>
+                        <a class="collapse-item tablinks"  onclick="openCity(event, 'viewMonitoring')" href="#">Submission Monitoring</a>
                         
                     </div>
                 </div>
@@ -1287,21 +1287,360 @@
                 <div>
                                         <!-- Page Heading -->
                     <h1 class="h3 mb-1 text-gray-800">Submission Monitoring</h1>
-                    <div class="box1">
-                        <h4>Accomplishment Report</h4>
-                        <p>Due Date: December-21-2024, Saturday at 5:00PM</p>
+
+                    <div class="col">
+                        <div class="card" id="cardbtn" style="margin-top:20px">
+                            <div class="card-body" style="height: 140px;  width: auto;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <h3 class="h3 mb-1 text-gray-800">Accomplishment Report</h3>
+                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" onclick="openCity(event, 'viewTask-details')" style="margin-top: 40px; margin-right: 50px;">View Assigned Task</a>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
-                    <div class="box1">
-                        <h4>Faculty Loading</h4>
-                        <p>Due Date: December-21-2024, Saturday at 5:00PM</p>
+                    
+                    <div class="col">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body" style="height: 140px;  width:auto;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <h3 class="h3 mb-1 text-gray-800">Faculty Loading</h3>
+                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" onclick="openCity(event, 'viewFacultyLoading')" style="margin-top: 40px; margin-right: 50px;">View Assigned Task</a>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
-                    <div class="box1">
-                        <h4>Faculty Schedule</h4>
-                        <p>Due Date: December-21-2024, Saturday at 5:00PM</p>
+
+                    <div class="col">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body" style="height: 140px;  width: auto;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <h3 class="h3 mb-1 text-gray-800">Faculty Schedule</h3>
+                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" onclick="openCity(event, 'viewFacultySched')" style="margin-top: 40px; margin-right: 50px;">View Assigned Task</a>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
+                <!-- Accomplishment Report -->
+                 <div class="container-fluid tabcontent" id="viewTask-details" style="display:none;">
+
+                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking | Accomplishment Report</h1>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>Full Name</th>
+                                            <th>Position</th>
+                                            <th>Department</th>
+                                            <th>Due Date</th>
+                                            <th>Document Status</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</t>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>OPCR</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                   
+                    <div class="d-flex flex-column">
+                        <a href="#" class="btn btn-warning btn-sm" id="viewTask-back" onclick="openCity(event, 'viewMonitoring')" style="margin-top: 20px;margin-bottom: 20px; margin-right: 50px;">Back</a>
+                    </div>
+                </div>
+
+                <!-- Faculty Loading -->
+                <div class="container-fluid tabcontent" id="viewFacultyLoading" style="display:none;">
+                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking</h1>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>Full Name</th>
+                                            <th>Position</th>
+                                            <th>Department</th>
+                                            <th>Due Date</th>
+                                            <th>Document Status</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</t>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                   
+                    <div class="d-flex flex-column">
+                        <a href="#" class="btn btn-warning btn-sm" id="viewTask-back" onclick="openCity(event, 'viewMonitoring')" style="margin-top: 20px;margin-bottom: 20px; margin-right: 50px;">Back</a>
+                    </div>
+                </div>
+
+                <!-- Faculty Sched -->
+                <div class="container-fluid tabcontent" id="viewFacultySched" style="display:none;">
+                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking|Schedule</h1>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>Full Name</th>
+                                            <th>Position</th>
+                                            <th>Department</th>
+                                            <th>Due Date</th>
+                                            <th>Document Status</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</t>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>06-21-2023</td>
+                                            <td class="ns" >Not Submitted</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                   
+                    <div class="d-flex flex-column">
+                        <a href="#" class="btn btn-warning btn-sm" id="viewTask-back" onclick="openCity(event, 'viewMonitoring')" style="margin-top: 20px;margin-bottom: 20px; margin-right: 50px;">Back</a>
+                    </div>
+                </div>             
 
             <script>
 function openCity(evt, cityName) {

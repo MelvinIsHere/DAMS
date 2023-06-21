@@ -2379,6 +2379,23 @@ fieldset:disabled a.btn {
   left: 60px;
 }
 
+#viewTaskbtn{
+  position: relative;
+
+  width: 100%;
+  max-width: 250px;
+  min-width: 100px;
+}
+
+#viewTask-back{
+  position: relative;
+/*  left: 750px;*/
+  width: 100%;
+  max-width: 250px;
+  min-width: 100px;
+  font-size: 16px;
+}
+
 .btn-primary:hover {
   color: #fff;
   background-color: #2e59d9;
@@ -4551,6 +4568,7 @@ input[type="button"].btn-block {
   margin-top: 5px;
 }
 
+
 .box1, p{
   position: relative;
   left: 30px;
@@ -4559,7 +4577,21 @@ input[type="button"].btn-block {
 .card-body {
   flex: 1 1 auto;
   min-height: 1px;
+  min-width: 20px;
+  max-width:1200px;
   padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#cardbtn{
+/*  display: flex;
+  justify-content: space-between;
+  min-width: 20px;
+  max-width:1200px;
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;*/
 }
 
 .card-title {
