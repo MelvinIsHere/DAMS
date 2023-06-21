@@ -1493,11 +1493,13 @@ pre code {
   padding: 0.75rem;
   vertical-align: top;
   border-top: 1px solid #e3e6f0;
+  text-align: center;
 }
 
 .table thead th {
   vertical-align: bottom;
   border-bottom: 2px solid #e3e6f0;
+  text-align: center;
 }
 
 .table tbody + tbody {
@@ -1511,6 +1513,14 @@ pre code {
 
 .table-bordered {
   border: 1px solid #e3e6f0;
+}
+
+.ns{
+  color: #C21807 !important;
+}
+
+.submitted{
+  color:#1cc88a !important;
 }
 
 .table-bordered th,
@@ -2359,6 +2369,8 @@ fieldset:disabled a.btn {
   color: #fff;
   background-color: #4e73df;
   border-color: #4e73df;
+  position: relative;
+  left: 20px;
 }
 
 #btn-view{
@@ -4526,6 +4538,22 @@ input[type="button"].btn-block {
 .card > .card-header + .list-group,
 .card > .list-group + .card-footer {
   border-top: 0;
+}
+
+.box1{
+  border-bottom: solid 1px;
+  border-color: #ced4da;
+}
+
+.box1, h4{
+  position: relative;
+  left: 10px;
+  margin-top: 5px;
+}
+
+.box1, p{
+  position: relative;
+  left: 30px;
 }
 
 .card-body {
@@ -9599,6 +9627,10 @@ button.bg-dark:focus {
 
 .text-primary {
   color: #4e73df !important;
+}
+
+.text-hello{
+  color: #010101;
 }
 
 a.text-primary:hover, a.text-primary:focus {
