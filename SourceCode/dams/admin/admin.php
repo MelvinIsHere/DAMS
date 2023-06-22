@@ -897,12 +897,21 @@
                     <!-- CREATE TASK INPUT -->
                  <div class="container-fluid tabcontent" id="opcrTask" style="display:none;">
 
+
+
+                   
+
                     <!-- Page Heading -->
                     <h1 class="h3 mb-1 text-gray-800">Task OPCR</h1>
                     <p class="mb-4">Bootstrap's default utility classes can be found on the official <a
                             href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities
                         below were created to extend this theme past the default utility classes built into Bootstrap's
                         framework.</p>
+                    
+
+                     <!-- GENERATE OPCR REPORT -->
+                    <a href="generateReport.php" class="btn">GENERATE OPCR REPORT</a>
+
 
                     <!-- Content Row -->
                     <div class="container-fluid">
