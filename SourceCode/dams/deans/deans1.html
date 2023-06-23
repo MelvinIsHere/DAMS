@@ -109,7 +109,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Automation :</h6>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'documentTracking')"  href="#">Documents</a>
+                        <a class="collapse-item tablinks" onclick="openCity(event, 'automated-documents')"  href="#">Documents</a>
             
                     </div>
                 </div>
@@ -1290,7 +1290,7 @@
 
                     <div class="col">
                         <div class="card" id="cardbtn" style="margin-top:20px">
-                            <div class="card-body" style="height: 140px;  width: auto;">
+                            <div class="card-body" id="card-body" style="height: 140px;  width: auto;">
                                 <div class="task_info" style="white-space: nowrap;">
                                     <h3 class="h3 mb-1 text-gray-800">Accomplishment Report</h3>
                                     <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
@@ -1306,7 +1306,7 @@
                     
                     <div class="col">
                         <div class="card" style="margin-top:20px">
-                            <div class="card-body" style="height: 140px;  width:auto;">
+                            <div class="card-body" id="card-body" style="height: 140px;  width:auto;">
                                 <div class="task_info" style="white-space: nowrap;">
                                     <h3 class="h3 mb-1 text-gray-800">Faculty Loading</h3>
                                     <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
@@ -1322,7 +1322,8 @@
 
                     <div class="col">
                         <div class="card" style="margin-top:20px">
-                            <div class="card-body" style="height: 140px;  width: auto;">
+                            <div class="card-body" id="card-body"
+                             style="height: 140px;  width: auto;">
                                 <div class="task_info" style="white-space: nowrap;">
                                     <h3 class="h3 mb-1 text-gray-800">Faculty Schedule</h3>
                                     <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
@@ -1543,7 +1544,7 @@
 
                 <!-- Faculty Sched -->
                 <div class="container-fluid tabcontent" id="viewFacultySched" style="display:none;">
-                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking|Schedule</h1>
+                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking| Faculty Schedule</h1>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
