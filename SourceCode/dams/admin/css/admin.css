@@ -9988,7 +9988,11 @@ a:focus {
 }
 
 .text-xs {
-  font-size: .7rem;
+  margin-top: 10px;
+  font-size: 18px;
+  position: relative;
+  text-align: center;
+  color: black;
 }
 
 .text-lg {
