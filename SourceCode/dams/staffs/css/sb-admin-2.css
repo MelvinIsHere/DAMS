@@ -11279,3 +11279,22 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+#pendingDocu .row .card_task{
+      width: 400px;
+      border: solid thin #d9d9d9;
+      margin-top: 100px;
+      background-color: red;
+      
+
+      
+      
+      
+      
+    }
+    .task_title p{
+      font-size: 1.5rem;
+      margin-left: 2rem;
+      
+    }
+    
