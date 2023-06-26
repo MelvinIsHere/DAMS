@@ -22,6 +22,7 @@
 
     <!-- Custom styles for this template-->
     <link href="css/admin.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
    
 </head>
 
@@ -112,7 +113,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Automation :</h6>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'documentTracking')"  href="#">Documents</a>
+                        <a class="collapse-item tablinks" onclick="openCity(event, 'docuAutomation')"  href="#">Documents</a>
             
                     </div>
                 </div>
@@ -212,15 +213,21 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
+                                <span class="badge badge-danger badge-counter" id="count_notif"></span>
                             </a>
+
+
+                            
                             <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in "
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
-                                    Alerts Center
+                                    Notifications
                                 </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                <div class="notif">
+                                    
+                                </div>
+                                <!-- <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="mr-3">
                                         <div class="icon-circle bg-primary">
                                             <i class="fas fa-file-alt text-white"></i>
@@ -230,8 +237,8 @@
                                         <div class="small text-gray-500">December 12, 2019</div>
                                         <span class="font-weight-bold">A new monthly report is ready to download!</span>
                                     </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                </a> -->
+                                <!-- <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="mr-3">
                                         <div class="icon-circle bg-success">
                                             <i class="fas fa-donate text-white"></i>
@@ -252,11 +259,66 @@
                                         <div class="small text-gray-500">December 2, 2019</div>
                                         Spending Alert: We've noticed unusually high spending for your account.
                                     </div>
-                                </a>
+                                </a> -->
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                             </div>
                         </li>
+                        <script type="text/javascript">
+                                $(document).ready(function(){
+                                        notif();
+                                    });
 
+                                function notif(){
+                                        $.ajax({
+                                        type: "GET",
+                                        url: "reload.php",
+                                        success: function(response){
+                                            console.log(response);
+                                        $.each(response,function (key,value){
+                                            // console.log(value['first_name']);
+                                            $('.notif').append(
+                                                    // '<p>'+value['title']+ '</p><br>\
+                                                    // <p>'+value['content']+'</p><br>\
+                                                    // <p>' + value['content'] + '</p><br>'
+                                                  '  <a class="dropdown-item d-flex align-items-center" href="#">\
+                                                        <div class="mr-3">\
+                                                            <div class="icon-circle bg-success">\
+                                                                <i class="fas fa-donate text-white"></i>\
+                                                            </div>\
+                                                        </div>\
+                                                        <div>\
+                                                            <div class="small text-gray-500">'+value['date']+'</div>\
+                                                            '+value['content']+'\
+                                                        </div>\
+                                                    </a>'
+                                            );
+                                        });
+                                        }
+
+
+                                    });
+                                }
+                        </script>
+                                <script type="text/javascript">
+
+
+                                        function loadDoc() {
+                                        setInterval(function() {
+                                            var xhttp = new XMLHttpRequest();
+                                            xhttp.onreadystatechange = function() {
+                                                if (this.readyState == 4 && this.status == 200) {
+                                                    document.getElementById('count_notif').innerHTML = this.responseText;
+                                                }
+                                            };
+                                            xhttp.open("GET", "get_notif.php", true);
+                                            xhttp.send();
+                                        }, 1000);
+                                    }
+
+                                    loadDoc();
+
+                                    </script>
+                        
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
@@ -594,19 +656,45 @@
                     </div>
 
                 </div>
-                <div class="container-fluid tabcontent" id="createDocu" style="display: none;">
+              <div class="container-fluid tabcontent" id="createDocu" style="display: none;">
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-4 text-gray-800">Documents</h1>
 
                     <div class="row">
 
-                        <div class="col-lg-6">
-
-
-
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
+                                    </div>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">OPCR</div>
+                            </div>                                    
                         </div>
 
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
+                                    </div>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Loading</div>
+                            </div>                                    
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
+                                    </div>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Schedule</div>
+                            </div>                                    
+                        </div>
                     
 
                     </div>
@@ -680,107 +768,44 @@
                             <h1 class="h3 mb-1 text-gray-800">Create Tasks</h1>
                         
 
-                        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
-                            <a href="#" onclick="openCity(event, 'opcrTask')" class="tablinks">
-                                <div class="col">                                    
-                                    <div class="card row" style="width: 200px; height: 300px">
-                                        <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                           
-                                        </div>
+                       <div class="row">
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <a href="#" onclick="openCity(event,'opcrTask')">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
                                     </div>
-                                    <div class="row">
-                                        <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                            <p >OPCR</p>
-                                        </div>
-                                    </div> 
-                                </div>
-                                </a>
-                            
-                                <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >IPCR</p>
-                                    </div>
-                                </div> 
-                            </div>
-                                <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >Room utilization report</p>
-                                    </div>
-                                </div> 
-                            </div>
-                               <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >Report</p>
-                                    </div>
-                                </div> 
-                            </div>
-                               <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >Report</p>
-                                    </div>
-                                </div> 
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">OPCR</div>
                             </div> 
-                             <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
+                            </a>                                   
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >Report</p>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Loading</div>
+                            </div>                                    
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
                                     </div>
-                                </div> 
-                            </div>
-                          <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >Report</p>
-                                    </div>
-                                </div> 
-                            </div>  
-                    <div class="col">
-                                <div class="card row" style="width: 200px; height: 300px">
-                                    <div class="card-body d-flex justify-content-between" style="background-image: url('img/docbg.jpg');">
-                                       
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="text-center" style="width: 200px;margin-top: 10px;">
-                                        <p >Report</p>
-                                    </div>
-                                </div> 
-                            </div>
-                            <!-- Add more card columns if needed -->
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Schedule</div>
+                            </div>                                    
+                        </div>
+                    
+
                         </div>
 
 
@@ -797,6 +822,67 @@
                             href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities
                         below were created to extend this theme past the default utility classes built into Bootstrap's
                         framework.</p>
+
+                   
+
+                </div>
+                 <div class="container-fluid tabcontent" id="docuAutomation" style="display:none;">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-1 text-gray-800">Document Automation</h1>
+                    <p class="mb-4">Bootstrap's default utility classes can be found on the official <a
+                            href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities
+                        below were created to extend this theme past the default utility classes built into Bootstrap's
+                        framework.</p>
+
+                      <div class="row">
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            
+                            <a href="generateReport.php" class="btn">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
+                                    </div>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">OPCR</div>
+                            </div> 
+                            </a>                                   
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <a href="#" class="btn">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
+                                    </div>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Loading</div>
+                            </div>   
+                            </a>                                 
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <a href="#" class="btn">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="container">
+                                         <img src="sample.jpg" width="100%" height="auto">
+                                    </div>
+                                </div>                            
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Schedule</div>
+                            </div>         
+                            <a href="#" class="btn">                           
+                        </div>
+                    
+
+                        </div>
+
+
+      
+
 
                    
 
