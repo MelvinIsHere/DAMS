@@ -614,7 +614,7 @@
                                          <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
                                     </div>
                                 </div>                            
-                                <div class="text-xs font-weight-bold text-hello mb-1" onclick="openCity(event,'viewDocument')">OPCR</div>
+                                <div class="text-xs font-weight-bold text-hello mb-1" onclick="openCity(event,'createfill-Up')">OPCR</div>
                             </div>                                    
                         </div>
 
@@ -780,261 +780,152 @@
 </script>
     </div>
 </div>
-            <div class="container-fluid tabcontent" id="viewDocument">
-                <h1 class="h3 mb-1 text-gray-800">Document Name</h1>
-                        <div class="card-body">
+        <div class="container-fluid tabcontent" id="createfill-Up" style="display:none;">
+                    <h1 class="h3 mb-1 text-gray-800">Create Documents | Faculty Loading</h1>
+
+                    <form>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-7">
+                                <label>Full Name</label>
+                                <input type="text" class="form-control input-lg" data-provide="typeahead" placeholder="(Surname. Firstname, Middel Initial)" id="input-name" />
+                            </div>
+                            <div class="col-xs-12 col-sm-5">
+                                <label>Section</label>
+                               <select class="form-control input-lg"id="input-section">
+                                   <option value="IT 311">IT 311</option>
+                                   <option value="IT 312">IT 312</option>
+                               </select>
+                            </div>
+                        </div>
+                    </form>
+                    <div>
+                        <label>Course</label>
+                        <input type="text" id="input-description" class="input-description">
+                    </div>
+                    <center>
+                    <div class="createTask-submit">
+                        <div class="d-flex flex-column">
+                            <a href="#" class="btn btn-primary btn-sm" id="TaskSubmit" style="margin-top: 40px; margin-right: 50px;">Add</a>
+                        </div>
+                    </div>
+                </center>   
+                    <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th>id</th>
                                             <th>Full Name</th>
-                                            <th>Full Name</th>
-                                            <th>Course</th>
-                                            <th>Section</th>
-                                            <th>No of. Students</th>
-                                            <th>Total Units</th>
-                                            <th>Lec hrs/per Week</th>
-                                            <th>Rle hrs/per Week</th>
-                                            <th>Lab hrs/per Week</th>
-                                            <th>Total hrs/per Week</th>
-                                            <th>Course Title</th>
-                                            <th>Regular hrs</th>
-                                            <th>Overload</th>
-                                            <th>No. of Prep</th>
-                                            <th>Type</th>
-                                            <th>College</th>
-                                            <th>Semester</th>
-                                            <th>Academic Year</th>
+                                            <th>Position</th>
+                                            <th>Department</th>
+                                            <th>Documents</th>
+                                            <th>Document Status</th>
                                         </tr>
                                     </thead>
                                     
                                     <tbody>
                                         <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Woods</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
+                                            <td>Accomplishment Report </td>
+                                            <td class="ns">Not Submitted</td>
+                                        </tr>
+                                         <tr>
                                             <td>1</td>
-                                            <td>2023-2024   </td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>Faculty Loading</td>
+                                            <td class="submitted">Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>Accomplishment Report</td>
+                                            <td class="submitted" >Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>Faculty Schedule</t>
+                                            <td class="submitted" >Submitted</td>
+                                        </tr>
+                                         <tr>
+                                            <td>1</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
+                                            <td>CICS</td>
+                                            <td>Room Schedule</td>
+                                            <td class="submitted" >Submitted</td>
                                         </tr>
                                         <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
-                                        </tr>                                         
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>1</td>
-                                            <td>Permanent</td>
-                                            <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
-                                        </tr> 
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>1</td>
-                                            <td>Permanent</td>
-                                            <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>Room Schedule</td>
+                                            <td class="submitted" >Submitted</td>
                                         </tr>
                                         <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>Room Schedule</td>
+                                            <td class="submitted" >Submitted</td>
                                         </tr>
                                         <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>Room Schedule</td>
+                                            <td class="submitted" >Submitted</td>
                                         </tr>
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
+                                         <tr>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>OPCR</td>
+                                            <td class="submitted" >Submitted</td>
                                         </tr>
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
+                                         <tr>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>OPCR</td>
+                                            <td class="ns" >Not Submitted</td>
                                         </tr>
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
+                                         <tr>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>OPCR</td>
+                                            <td class="ns" >Not Submitted</td>
                                         </tr>
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
+                                         <tr>
                                             <td>1</td>
-                                            <td>Permanent</td>
+                                            <td>Tiger Nixon</td>
+                                            <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bryan Russel Rosel</td>
-                                            <td>IT 311</td>
-                                            <td>BSIT 3301 BA</td>
-                                            <td>38</td>
-                                            <td>15</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>15</td>
-                                            <td>Fundamentals of Business Analytics</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>1</td>
-                                            <td>Permanent</td>
-                                            <td>CICS</td>
-                                            <td>ARASOF</td>
-                                            <td>1</td>
-                                            <td>2023-2024</td>
+                                            <td>OPCR</td>
+                                            <td class="ns" >Not Submitted</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                </div>
 
-            </div>
             
 
 
@@ -1205,7 +1096,6 @@
                     <h1 class="h3 mb-1 text-gray-800">Documents Tracking</h1>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name"> -->
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
