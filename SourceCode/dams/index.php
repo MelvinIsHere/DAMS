@@ -15,7 +15,7 @@
 <body>
   <div class="wrapper">
     <section class="form login">
-      <header>Techno-Art</header>
+      <header>AutoDoc</header>
       <form action="php/login.php" method="POST" enctype="multipart/form-data" autocomplete="off">
         <div class="error-text"></div>
         <div class="field input">
