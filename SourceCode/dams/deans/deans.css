@@ -10099,7 +10099,23 @@ a:focus {
   height: 40px;
   border: solid 1px ;
   border-color: #5a5c69;
+  border-radius: 5px;
 }
+
+#num-stu{
+  border-color: #5a5c69;
+}
+.form-control.input-lg{
+  border-color: #5a5c69;
+}
+
+#input-name{
+}
+
+#input-section{
+  right: 0;
+}
+
 
 .checkbox-text {
   position: relative;
