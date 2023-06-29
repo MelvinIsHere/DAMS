@@ -135,6 +135,8 @@ while ($item = mysqli_fetch_array($data)) {
         //increment value
         $currentContentRow++;
     }
+    // Get the value from cell A4
+    $cellValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, 7)->getCalculatedValue();
 }
 //remove row for the permanent faculty
 $spreadsheet->getActiveSheet()->removeRow($currentContentRow,3);
