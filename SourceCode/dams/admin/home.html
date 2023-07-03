@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--divinectorweb.com-->
+<head>
+	<meta charset="UTF-8">
+	<title>Simple Sidebar Menu Using HTML & CSS</title>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+	<link href="style.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="predict-design.css">
+</head>
+<body>
+	<nav>	
+		<ul>
+			<li class="logo"><img alt="" src="346027122_246942921344916_4317446332697508456_n.png"></li>
+			<li class="tablinks" onclick="openCity(event, 'predict')" id="defaultOpen">
+					<a href="#"><i class="fa fa-eye"></i>   Predict</a>
+			</li>
+			<li class="tablinks" onclick="openCity(event, 'table')" id="defaultOpen">
+					<a href="#"><i class="fa fa-table"></i>  Table</a>
+			</li>
+			<li class="tablinks" onclick="openCity(event, 'artists')" id="defaultOpen">
+					<a href="#"><i class="fa fa-users"></i>   Insert</a>
+			</li>
+		</ul>
+	</nav>
+	 
+	<div id="predict" class="tabcontent">
+		<div class="wrapper">
+			<div class="section">
+				<div class="box-area">
+				 <div class="container">
+				    <div class="title">Clothing Line Price Prediction</div>
+				    <div class="content">
+				      <form action="#">
+				        <div class="user-details">
+				          <div class="input-box">
+				            <span class="details">Fabric : </span>
+				             <select id= "fabric">
+									<option value="Cotton">Cotton</option>
+									<option value="Poly-cotton">Poly-cotton</option>
+									<option value="Cotton Spandex">Cotton Spandex</option>
+									<option value="Silk Satin">Silk Satin</option>
+									<option value="Chiffon">Chiffon</option>
+									<option value="KNITS">KNITS</option>
+									<option value="Cotton Polyester">Cotton Polyester</option>
+									<option value="CVC">CVC</option>
+									<option value="Polyester">Polyester</option>
+									<option value="Net">Net</option>
+									
+									<option value="Spandex">Spandex</option>
+									<option value="JERSEY COTTON">JERSEY COTTON</option>
+									<option value="Lace">Lace</option>
+									<option value="Velvet">Velvet</option>
+									<option value="Other Material">Other Material</option>						
+							</select>		
+				          </div>
+				          
+				          
+				          <div class="input-box">
+				            <span class="details">Brand</span>
+				            <select id="brand">
+							    <option value="No Brand">No Brand</option>
+							    <option value="BENOH">BENOH</option>
+							    <option value="Huilishi">Huilishi</option>
+							    <option value="Organic">Organic</option>
+							    <option value="INSPI">INSPI</option>
+							    <option value="Infinitee">Infinitee</option>
+							    <option value="Kinwoo.PH ONLINE SHOP">Kinwoo.PH ONLINE SHOP</option>
+							    <option value="Crown Tshirt">Crown Tshirt</option>
+							    <option value="1">1</option>
+							    <option value="coolair">coolair</option>
+							    
+							    <option value="Monkey King">Monkey King</option>
+							    <option value="Champion">Champion</option>
+							    <option value="INSPI Basics">INSPI Basics</option>
+							    <option value="NY">NY</option>
+							    <option value="Zeneya">Zeneya</option>
+							    <option value="Fruit of the Loom">Fruit of the Loom</option>
+							    <option value="OEM">OEM</option>
+							    <option value="Bath and Body Works">Bath and Body Works</option>
+							    <option value="MONARCHY katropa">MONARCHY katropa</option>
+							    <option value="Hanes">Hanes</option>
+							    <option value="Petrol">Petrol</option>
+							    <option value="TEETALK">TEETALK</option>
+							    <option value="Softex">Softex</option>
+							    <option value="PENSHOPPE">PENSHOPPE</option>
+							    <option value="DAILY GRIND CLOTHING">DAILY GRIND CLOTHING</option>
+							    <option value="Active Life">Active Life</option>
+							    <option value="Lux Apparel PH (Lux Finds PH (Official))">Lux Apparel PH (Lux Finds PH (Official))</option>
+							    <option value="Bueno">Bueno</option>
+							</select>
+
+				          </div>
+				          <div class="input-box">
+				            <span class="details">Sleeves</span>
+				            <select id="sleeves">
+								  <option value="Short Sleeve">Short Sleeve</option>
+								  
+								  <option value="Long Sleeve">Long Sleeve</option>
+								  <option value="3/4 Sleeve">3/4 Sleeve</option>
+								  <option value="Elbow length">Elbow length</option>
+								  <option value="Sleeveless">Sleeveless</option>
+							</select>
+				          </div>
+				          <div class="input-box">
+				            <span class="details">Neckline</span>
+				            <select id="neck_type">
+								  <option value="Crew Neck">Crew Neck</option>
+								  
+								  <option value="Scoop neck">Scoop neck</option>
+								  <option value="Shirt Collar">Shirt Collar</option>
+								  <option value="O-Neck">O-Neck</option>
+								  <option value="Round-Neck">Round Neck</option>
+								  <option value="V-Neck">V-Neck</option>
+								  <option value="Hooded">Hooded</option>
+								  <option value="Round">Round</option>
+								  <option value="Polo Collar">Polo Collar</option>
+							</select>
+				          </div>
+				          
+				          <div class="button">
+				            <input type="submit" value="Predict" id="btn">
+				          </div>
+				        </div>
+				        <center>
+				         <span class="gender-title"> The prediction Price based on Model is:</span>
+				         <br>
+				         <div class="apicontent" id="apicontent"></div>
+				          <br>
+				        </center>
+				        </div>
+				      </form>
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="table" class="tabcontent">
+		<div class="wrapper">
+			<div class="section">
+				<div class="box-area">
+					<h2 class="title-table">Uploaded Products</h2>
+					<div class="table">
+						<table>
+							<tr>
+								<th>ID</th>
+								<th>Product Name</th>
+								
+								<th>Fabric</th>
+								<th>Brand</th>
+								<th>Sleeves</th>
+								<th>Neckline</th>
+								<th>Price</th>
+								<th colspan="2">Action</th>
+								<th></th>
+
+							</tr>
+							   <?php 
+         						 $conn = new mysqli("localhost","root","","clothing");
+          							if ($conn->connect_error) {
+          									die("Connection failed : " . $conn->connect_error);
+        								}
+      							  else{ 
+          
+          					$products = "SELECT * FROM uploaded_products";
+          					$productsSQL = $conn->query($products);
+          					while($row = $productsSQL->fetch_assoc()){
+        					?>
+      
+							<tr>
+								<td><?php echo $row['product_D'];?></td>
+								<td><?php echo $row['product_name'];?></td>
+								<td><?php echo $row['product_fabric'];?></td>
+								<td><?php echo $row['product_brand'];?></td>
+								<td><?php echo $row['product_sleeves'];?></td>
+								<td><?php echo $row['product_neckline'];?></td>
+								<td><?php echo $row['product_price'];?></td>
+								
+								<td>
+									<a class="edit" href="update.php?id=<?php echo $row['product_D']?>">Edit</button>
+								</td>
+								<td>
+									<a class="delete" href="delete.php?id=<?php echo $row['product_D']?>">Delete</button>
+								</td>
+							</tr>
+							   <?php }
+										}
+							?>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="artists" class="tabcontent">
+		<div class="wrapper">
+			<div class="section">
+				<div class="box-area">
+					  <div class="upload">
+					      <div class="title">
+					        Insert New Product     
+					      </div>
+					      <div class="form">
+					      	<form method="post" action="insert.php">
+					         <div class="inputfield">
+					            <label>Product Name:</label>
+					            <input type="text" class="input" name="product_name">
+					         </div>  
+					        
+					         <div class="inputfield">
+					            <label>Brand:</label>
+					            <input type="text" class="input" name="brand">
+					         </div>   
+					          <div class="inputfield">
+					            <label>Fabric:</label>
+					            <input type="text" class="input" name="fabric">
+					         </div> 
+					          <div class="inputfield">
+					            <label>Neckline:</label>
+					            <input type="text" class="input" name="neckline">
+					         </div> 
+					        <div class="inputfield">
+					            <label>Sleeve:</label>
+					            <input type="text" class="input" name="sleeves">
+					        </div>
+
+					          <div class="inputfield">
+					            <label>Product Price:</label>
+					            <input type="text" class="input" name="product_price">
+					        </div>
+					        <div class="inputfield">
+					          <input type="submit" value="Done" class="btn" name="submit">
+					        </div>
+					      
+					        </form>
+					      </div>
+					  </div> 
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<script type="text/javascript">
+	function openCity(evt, cityName) {
+	  var i, tabcontent, tablinks;
+	  tabcontent = document.getElementsByClassName("tabcontent");
+	  for (i = 0; i < tabcontent.length; i++) {
+	    tabcontent[i].style.display = "none";
+	  }
+	  tablinks = document.getElementsByClassName("tablinks");
+	  for (i = 0; i < tablinks.length; i++) {
+	    tablinks[i].className = tablinks[i].className.replace(" active", "");
+	  }
+	  document.getElementById(cityName).style.display = "block";
+	  evt.currentTarget.className += " active";
+	}
+
+	// Get the element with id="defaultOpen" and click on it
+	document.getElementById("defaultOpen").click();	
+</script>
+<script src ="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(() => {
+		$("#btn").click(() => {
+			
+			// let color_family = $("#color_family")[0].value;
+			let fabric = $("#fabric")[0].value;
+			let brand = $("#brand")[0].value;
+			let sleeves = $("#sleeves")[0].value;
+			let neck_type = $("#neck_type")[0].value;
+			// let date = $("#date")[0].value;
+			// console.log(color_family);
+			console.log(fabric);
+			console.log(brand);
+			console.log(sleeves);
+			console.log(neck_type);
+			if(fabric == " " || brand == " " || sleeves == "" || neck_type == "" ){
+				alert('Input Incomplete');
+			}
+			else{
+				$("#apicontent")[0].innerHTML = "Loading Please Wait";
+				$.ajax({
+  					url: "http://127.0.0.1:105/api/predict",
+  					method: 'POST',
+  					data : {
+  						// color_family: color_family,
+  						fabric: fabric,
+  						brand: brand,
+  						sleeves: sleeves,
+  						neck_type: neck_type},
+  					crossDomain:true,
+  					headers: {
+    					"Access-Control-Allow-Origin" : '*'
+  								},
+  					 success: function(res) {
+        				var prediction = Number(res.prediction);
+				        var formattedPrediction = prediction.toFixed(2);
+        				$('#apicontent').text(formattedPrediction);
+    					},
+    					error: function(err) {
+        				console.log(err);
+    					}
+
+				})//.done(res => {
+  		// 				let response = res.prediction.toFixed(2);
+				//   		$("#apicontent")[0].innerHTML = response + '&nbsp;pesos';
+				// 		});
+
+			}
+		});
+		
+	});
+</script>
+</body>
+</html>

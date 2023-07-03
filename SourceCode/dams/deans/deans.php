@@ -1,3 +1,35 @@
+<?php 
+include "../config.php";
+session_start();
+
+ if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
+    $users_id = $_SESSION['unique_id'];
+    $id = $_SESSION['user_id'];
+
+
+
+    $data = mysqli_query($conn,"SELECT 
+            u.user_id,
+            u.unique_id,
+            u.email,
+            u.password,
+            u.img,
+            u.status,
+            u.type,
+            d.department_name,
+            d.department_abbrv
+            FROM users u
+            LEFT JOIN departments d ON u.user_id = d.user_id
+            WHERE unique_id = '$users_id' 
+    
+            ");
+    $data_result = mysqli_fetch_assoc($data);
+    $department_name = $data_result['department_name'];
+
+    if($data_result){
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,6 +51,7 @@
 
     <!-- Custom styles for this template-->
     <link href="deans.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
    
 </head>
 
@@ -68,28 +101,18 @@
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item tablinks" href="#" onclick="openCity(event, 'createDocu')">Create Documents</a>
                         <a class="collapse-item tablinks" onclick="openCity(event, 'pendingDocu')" href="#">Pending Task</a>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'createTask')" href="#">Create Task</a>
+                      
                     </div>
                 </div>
             </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
+                <a class="nav-link collapsed tablinks" href="#"  onclick="openCity(event, 'viewMonitoring')">
                     <i class="fas fa-fw fa-wrench"></i>
-                    <span>Monitoring</span>
+                    <span>Submission Monitoring</span>
                 </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Monitoring :</h6>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'documentTracking')"  href="#">Documents Tracking</a>
-                        <a class="collapse-item tablinks" onclick="openCity(event, 'userLoginMonitoring')" href="#">User Login History</a>
-                        <a class="collapse-item tablinks"  onclick="openCity(event, 'viewMonitoring')" href="#">Submission Monitoring</a>
-                        
-                    </div>
-                </div>
+              
             </li>
 
             <!-- Divider -->
@@ -162,19 +185,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                 
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -204,121 +215,112 @@
                         </li>
 
                         <!-- Nav Item - Alerts -->
+                        <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="upNotif()">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
+                                <span class="badge badge-danger badge-counter" id="count_notif"></span>
                             </a>
+
+
+                            
                             <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in "
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
-                                    Alerts Center
+                                    Notifications
                                 </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
+                                <div class="notif">
+                                    
+                                </div>
+                               
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                             </div>
                         </li>
+                        <script type="text/javascript">
+                         $(document).ready(function () {
+                              $("#alertsDropdown").click(function (event) {
+                                event.preventDefault(); // Prevent the default link behavior
+                                
+                                $.ajax({
+                                  type: 'POST',
+                                  url: 'upNotif.php',
+                                  success: function(response) {
+                                    // Handle the success response from the server
+                                    console.log(response);
+                                    // Optionally, you can perform additional actions or update the UI
+                                  },
+                                  error: function(xhr, status, error) {
+                                    // Handle any errors that occur during the request
+                                    console.error(error);
+                                  }
+                                });
+                              });
+                            });
 
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
+
+                        </script>
+                        <script type="text/javascript">
+                                $(document).ready(function(){
+                                        notif();
+                                    });
+
+                          
+
+
+                                function notif(){
+                                        $.ajax({
+                                        type: "GET",
+                                        url: "show_notif.php",
+                                        success: function(response){
+                                            console.log(response);
+                                        $.each(response,function (key,value){
+                                            // console.log(value['first_name']);
+                                            $('.notif').append(
+                                                    ' <a class="dropdown-item d-flex align-items-center" href="#">\
+                                                        <div class="mr-3">\
+                                                            <div class="icon-circle bg-success">\
+                                                                <i class="fas fa-donate text-white"></i>\
+                                                            </div>\
+                                                        </div>\
+                                                        <div>\
+                                                            <div class="small text-gray-500">'+value['date']+'</div>\
+                                                            '+value['content']+'\
+                                                        </div>\
+                                                    </a>'
+                                            );
+                                        });
+                                        }
+
+
+                                    });
+                                }
+                        </script>
+                                <script type="text/javascript">
+
+
+                                        function loadDoc() {
+                                        setInterval(function() {
+                                            var xhttp = new XMLHttpRequest();
+                                            xhttp.onreadystatechange = function() {
+                                                if (this.readyState == 4 && this.status == 200) {
+                                                    document.getElementById('count_notif').innerHTML = this.responseText;
+                                                }
+                                            };
+                                            xhttp.open("GET", "get_notif.php", true);
+                                            xhttp.send();
+                                        }, 1000);
+                                    }
+
+                                    loadDoc();
+
+
+
+                                    </script>
+                        
+                       
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -326,7 +328,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Deans of Colleges1</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $department_name;?></span>
                                 <img class="img-profile rounded-circle"
                                     src="img/undraw_profile.svg">
                             </a>
@@ -379,7 +381,30 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Pending Task</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                
+                                                    <?php
+                                                        $pending_count = mysqli_query($conn," SELECT
+                                                        COUNT(*)
+
+
+                                                        FROM departments dp
+                                                        LEFT JOIN users u ON u.user_id = dp.user_id
+                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                        WHERE dp.user_id = '$id' AND is_completed = 1 AND for_deans = 1");
+                                                        $result = mysqli_fetch_assoc($pending_count);
+                                                        if($result){
+                                                            echo $result['COUNT(*)'];
+                                                        }
+                                                        else{
+                                                            echo "0";
+                                                        }
+
+                                                     ?>
+
+
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -397,7 +422,28 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Completed Task</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">10</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <?php
+                                                        $pending_count = mysqli_query($conn,"SELECT
+                                                        COUNT(*)
+
+
+                                                        FROM departments dp
+                                                        LEFT JOIN users u ON u.user_id = dp.user_id
+                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                        WHERE dp.user_id = '$id' AND is_completed = 0
+                                                        AND t.for_deans = 1
+                                                        ");
+                                                        $result = mysqli_fetch_assoc($pending_count);
+                                                        if($result){
+                                                            echo $result['COUNT(*)'];
+                                                        }
+                                                        else{
+                                                            echo "0";
+                                                        }
+
+                                                     ?></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -469,9 +515,9 @@
                                 </div>
                                 <div class="card-body">
                                     <h4 class="small font-weight-bold">OPCR <span
-                                            class="float-right">20%</span></h4>
+                                            class="float-right">90%</span></h4>
                                     <div class="progress mb-4">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: <?php echo 90 . "%";?>"
                                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                     <h4 class="small font-weight-bold">Room Utilization Matrix <span
@@ -530,40 +576,151 @@
                     <!-- End of Footer -->
 
                 </div>
+
+
+
+
+
+
+
+                  <div class="container-fluid tabcontent" id="insertData" style="display:none;">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-1 text-gray-800">Insert Data for Faculty Loading</h1>
+                        <div class="card-body container">
+                            <div class="row">
+                                <div class="col">
+                                    <a class=" btn btn-primary" style="top:100%;float: right;" href="generateReport.php">Generate Document</a>
+                   
+                                </div>
+                             
+                        
+                                       
+                                
+                            </div>
+                            <br><br><br>
+                            <form method="POST" action="../php/insert_faculty_loading.php">
+                              <div class="row">
+                                   <div class="col">
+                                   <label for="lname" class="form-label">Faculty</label>
+                                    <input class="form-control" list="lnames" name="faculty" id="lname" placeholder="Enter faculty name">
+                                    <datalist id="lnames">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT firstname,lastname,middlename FROM faculties";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $name = $row['firstname'] .' ' . $row['middlename'] .' '. $row['lastname'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $name ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="row">
+                                 <div class="col">
+                                   <label for="browser" class="form-label">Course Code</label>
+                                    <input class="form-control" list="browsers" name="course_code" id="browser" placeholder="Choose a Course Code">
+                                    <datalist id="browsers">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT course_code FROM courses";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $code = $row['course_code'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $code ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="row">
+                                     <div class="col">
+                                   <label for="ini" class="form-label">Section</label>
+                                    <input class="form-control" list="inis" name="section" id="ini" placeholder="Ente Section ">
+                                    <datalist id="inis">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT section_name FROM sections";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $md = $row['section_name'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $md ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                                <div class="col">
+                                   <label for="sem" class="form-label">Semester</label>
+                                    <input class="form-control" list="sems" name="semester" id="sem" placeholder="Semester">
+                                    <datalist id="sems">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT sem_description FROM semesters";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $md = $row['sem_description'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $md ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                            </div>
+                                      
+                                
+                              
+
+                              
+
+                               
+                                 
+                                 <div style="display: block; position:absolute;top:70%;right:8%;">
+                            <button class="btn btn-success" type="submit" name="submit"style="width: 200px;">Insert data</button>
+                        </div>
+                        
+                              </form>
+
+                            
+                        </div>
+                        <br><br><br>
+                        
+
+                            
+                          
+                    
+                </div>
+
+
+
+
+
                <div class="container-fluid tabcontent" id="createDocu" style="display: none;">
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-4 text-gray-800">Document Templates</h1>
 
                     <div class="row">
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="container">
-                                         <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                    </div>
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello mb-1" onclick="openCity(event,'viewDocument')">OPCR</div>
-                            </div>                                    
-                        </div>
 
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">IPCR</div>
-                            </div>                                    
-                        </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                               <a href="#" onclick="openCity(event,'insertData')">
+                                    <div class="card border-left-primary shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="container">
+                                                <img src="sample.jpg" width="100%" height="auto">
+                                            </div>
+                                        </div>                            
+                                        <div class="text-xs font-weight-bold text-hello mb-1" onclick="openCity(event,'viewDocument')">Faculty Loading</div>
+                                    </div>   
+                                    </a>                                 
+                                </div>
+                            
 
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">IPCR</div>
-                            </div>                                    
-                        </div>
+
+                       
 
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
@@ -578,7 +735,7 @@
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
-                                    <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
+                                    <img src="sample.jpg" width="100%" height="auto">
                                 </div>                            
                                 <div class="text-xs font-weight-bold text-hello mb-1">Faculty Loading</div>
                             </div>                                    
@@ -598,98 +755,86 @@
 
 
              <div class="container-fluid tabcontent" id="pendingDocu" style="display: none;">
-                <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h1">Pending Task</h1>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h1">Pending Task</h1>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+        <?php 
+             $conn = new mysqli("localhost","root","","dams2");
+            if ($conn->connect_error) {
+                    die("Connection failed : " . $conn->connect_error);
+            }
+
+            // $dept_name_sql = mysqli_query($conn,"SELECT department_abbrv FROM departments WHERE department_name = '$department_name'");
+            // $dept_res = mysqli_fetch_assoc($dept_name_sql);
+
+            // $dept_name = $dept_res['department_abbrv'];
+
+            // echo $dept_name;
+
+
+
+
+                $sql = "SELECT
+                    tt.`task_id`,
+                    tt.task_name,
+                    tt.`task_desc`,
+                    tt.date_posted,
+                    tt.due_date,
+                    tt.for_ovcaa,
+                    tt.for_deans,
+                    ts.`is_completed`,
+                    ts.`office_id`,
+                    dp.`department_name`
+                    FROM tasks tt
+                    LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                    LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                    WHERE dp.`department_name` = 'Computer of Informatics and Computing Science' AND is_completed = 1
+                    AND tt.for_deans = 1";
+                $result = $conn->query($sql);
+                while($row = mysqli_fetch_array($result)){
+                    $taskid = $row['task_id'];
+                    $taskName = $row['task_name'];
+                    $posted = $row['date_posted'];
+                    $deadline = $row['due_date'];
+                    
+                    
+                
+            ?>
+        <div class="col">
+            <div class="card" style="margin-top:20px">
+                <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
+                    <div class="task_info" style="white-space: nowrap;">
+                        <p class="task_title"><b><?php echo $taskName; ?></b></p>
+                        
+                        <p class="task_info_text">
+                            <span><?php echo $posted; ?></span>&nbsp;&nbsp;&nbsp;<span><?php echo $deadline; ?></span></p>
+                        
+                    </div>
+                     <div class="d-flex flex-column">
+                                    <a href="pending.php?id=<?php echo $taskid; ?>"  class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;" name="task">View</a>
+
+                                </div>
+                                <script type="text/javascript">
+
+
+                                </script>
                 </div>
 
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
-                    <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
+            </div>
+               <script type="text/javascript">
 
-                        </div>
-                    </div>
-                      <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                      <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                        <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                    
-                        <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
+                function console_log(link){
+                     console.log('Clicked Link:', link);
+    }
+    
+    </script>
+        
+        </div>
+       <?php }?>
+    
         <script>
     const taskTitle = document.querySelectorAll('.task_title');
     taskTitle.forEach((taskTitle) => {
@@ -707,8 +852,41 @@
     });
 
 </script>
+
     </div>
 </div>
+<div class="container-fluid tabcontent" id="pending-Details" style="display:none;">
+            <h1 class="h3 mb-1 text-gray-800">Pending Documents | Faculty Loading</h1><br>
+
+            <form>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-7">
+                        
+                        <h3>TASK</h3>
+                        <h6>June 27, 2023</h6>
+                        <hr class="hr">
+                        <p class="due-date">Due Date: June 30, 2023</p>
+                        <p>From your Google Developer Profile, kindly attach a screenshot of your<br>
+                            1. account (showing the account name and # of badge/s)<br>
+                            2. actual badge/s<br>
+                            <br>
+                            See google doc for reference.
+                        </p>
+                    
+                    </div>
+                    <div class="col-xs-12 col-sm-4" id="upload">
+                        <h5>Your Document</h5>
+                        <div>
+                            <h2 id="docuStatus"><span><i class="fa fa-file-text-o" aria-hidden="true"></i></span></h2>
+                        </div>
+                        <a type="btn" id="submit-btn-upload" class="btn btn-primary btn-sm">Submit</a>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+
             <div class="container-fluid tabcontent" id="viewDocument" style="display: none;">
                 <h1 class="h3 mb-1 text-gray-800">Document Name</h1>
                         <div class="card-body">
@@ -1023,70 +1201,6 @@
                 </div>
             </div>
 
-                 <div class="container-fluid tabcontent" id="createTask" style="display:none;">
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-1 text-gray-800">Create Tasks</h1>
-                
-
-                    <div class="row">
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="container">
-                                         <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                    </div>
-                                </div>                            
-                                <a class="text-xs font-weight-bold text-hello mb-1" href="#fill-Up"  onclick="openCity(event, 'fill-Up')">OPCR</a>
-                            </div>                                    
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello mb-1">Faculty Schedule</div>
-                            </div>                                    
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">IPCR</div>
-                            </div>                                    
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="sample.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">IPCR</div>
-                            </div>                                    
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="business-requirements-document-template-09.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello mb-1">Faculty Loading</div>
-                            </div>                                    
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <img src="sample.jpg" width="100%" height="auto">
-                                </div>                            
-                                <div class="text-xs font-weight-bold text-hello mb-1">Accomplishment Report</div>
-                            </div>                                    
-                        </div>
-                    </div>
-                </div>
 
                 <div class="container-fluid tabcontent" id="fill-Up" style="display:none;">
                     <h1 class="h3 mb-1 text-gray-800">Create Task | OPCR</h1>
@@ -1127,424 +1241,6 @@
                     </div>
 
                 </div>
-
-                 <div class="container-fluid tabcontent" id="documentTracking" style="display:none;">
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking</h1>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name"> -->
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>id</th>
-                                            <th>Full Name</th>
-                                            <th>Position</th>
-                                            <th>Department</th>
-                                            <th>Documents</th>
-                                            <th>Document Status</th>
-                                        </tr>
-                                    </thead>
-                                    
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Tiger Woods</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Accomplishment Report </td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Faculty Loading</td>
-                                            <td class="submitted">Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Accomplishment Report</td>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Faculty Schedule</t>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Room Schedule</td>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Room Schedule</td>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Room Schedule</td>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>Room Schedule</td>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>OPCR</td>
-                                            <td class="submitted" >Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>OPCR</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>OPCR</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>OPCR</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                   
-
-                </div>
-               <div class="container-fluid tabcontent" id="userLoginMonitoring" style="display:none;">
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">User Login Monitoring</h1>
-
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>id</th>
-                                            <th>Full Name</th>
-                                            <th>Position</th>
-                                            <th>Department</th>
-                                            <th>Login</th>
-                                            <th>Logout</th>
-                                        </tr>
-                                    </thead>
-                                    
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                            <td>2023/04/25 00 00 00 </td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
-
-            <!-- </div> -->
 
 
 
@@ -1890,6 +1586,8 @@ function openCity(evt, cityName) {
   }
   document.getElementById(cityName).style.display = "block";
   evt.currentTarget.className += " active";
+
+
 }
 
 // function myFunction() {
@@ -1955,7 +1653,7 @@ function openCity(evt, cityName) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-danger" href="../php/logout.php?logout_id=<?php echo $users_id; ?>" target="_blank" style="margin-right: 10px;">Logout</a>
                 </div>
             </div>
         </div>
@@ -1994,3 +1692,8 @@ function openCity(evt, cityName) {
 </body>
 
 </html>
+<?php 
+
+}}else{
+    header("Location: ../index.php");
+}?>

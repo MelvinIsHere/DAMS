@@ -31,12 +31,12 @@
           <input type="submit" name="submit" value="Login">
         </div>
       </form>
-      <div class="link">Not yet signed up? <a href="signup-rev.php">Signup now</a></div>
+      
     </section>
   </div>
-  
-  <!-- <script src="javascript/pass-show-hide.js"></script> -->
-  <!-- <script src="javascript/login-2.js"></script> -->
+<!--   
+  <script src="javascript/pass-show-hide.js"></script>
+  <script src="javascript/login-2.js"></script>  -->
 
 </body>
 </html>

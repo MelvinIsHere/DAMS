@@ -5,16 +5,7 @@
       <header>Techno-Art</header>
       <form action="#" method="POST" enctype="multipart/form-data" autocomplete="off">
         <div class="error-text"></div>
-        <div class="name-details">
-          <div class="field input">
-            <label>First Name</label>
-            <input type="text" name="fname" placeholder="First name" required>
-          </div>
-          <div class="field input">
-            <label>Last Name</label>
-            <input type="text" name="lname" placeholder="Last name" required>
-          </div>
-        </div>
+       
         <div class="field input">
           <label>Email Address</label>
           <input type="text" name="email" placeholder="Enter your email" required>
@@ -24,6 +15,24 @@
           <input type="password" name="password" placeholder="Enter new password" required>
           <i class="fas fa-eye"></i>
         </div>
+        <div class="input">
+          <label for="type">Type of account:</label>
+
+              <select name="type" id="type" class="field input">
+                <option value="Dean">Dean</option>
+                <option value="Heads">Head</option>
+                
+                
+              </select>
+        </div>
+         <div class="field input">
+          <label>Department Name</label>
+          <input type="text" name="department" placeholder="Enter Department" required>
+        </div>
+         <div class="field input">
+          <label>Department abbrevation</label>
+          <input type="text" name="abbv" placeholder="Enter abbrevation" required>
+        </div>
         <div class="field image">
           <label>Select Image</label>
           <input type="file" name="image" accept="image/x-png,image/gif,image/jpeg,image/jpg" required>
@@ -32,7 +41,7 @@
           <input type="submit" name="submit" value="Signup">
         </div>
       </form>
-      <div class="link">Already signed up? <a href="index.php">Login now</a></div>
+      
     </section>
   </div>
 
