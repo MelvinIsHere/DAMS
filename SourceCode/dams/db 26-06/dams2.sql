@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.1.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 29, 2023 at 12:26 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.1.17
+-- Generation Time: Jul 03, 2023 at 08:03 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 7.4.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -21,57 +21,6 @@ SET time_zone = "+00:00";
 -- Database: `dams2`
 --
 
-DELIMITER $$
---
--- Procedures
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `new_course` (IN `in_code` VARCHAR(12), IN `in_desc` VARCHAR(50), IN `in_dept` VARCHAR(12), IN `in_units` INT(4), IN `in_lec` DOUBLE(4,2), IN `in_rle` DOUBLE(4,2), IN `in_lab` DOUBLE(4,2))   BEGIN
-		INSERT INTO `courses` (
-			`course_code`,
-			`course_description`, 
-			`department_id`,
-			`units`,
-			`lec_hrs_wk`,
-			`rle_hrs_wk`,
-			`lab_hrs_wk`
-			)
-		values (in_code,
-			in_desc,
-			(select department_id
-			from departments
-			where department_abbrv = in_dept),
-			in_units,
-			in_lec,
-			in_rle,
-			in_lab);
-	END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `new_fac_titles` (IN `in_fac` INT(8), IN `in_title` INT(8))   BEGIN
-		INSERT INTO faculty_titles(
-			faculty_id,
-			title_id
-		)
-		VALUES(
-			in_fac,
-			in_title
-		);
-	END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `show_fac_titles` (IN `in_fac_id` INT(8))   BEGIN
-		SELECT
-		CASE tt.`title_description`
-			WHEN 'Dean' THEN CONCAT(tt.`title_description`,' ',dp.department_abbrv)
-			ELSE tt.`title_description`
-		END "Titles"
-		FROM faculty_titles ft
-		LEFT JOIN titles tt ON ft.`title_id`=tt.`title_id`
-		LEFT JOIN faculties fc ON ft.`faculty_id`=fc.`faculty_id`
-		LEFT JOIN departments dp ON fc.`department_id`=dp.department_id
-		WHERE fc.`faculty_id` = in_fac_id; # 1 is ID of faculty
-	END$$
-
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -82,7 +31,7 @@ CREATE TABLE `academic_year` (
   `acad_year_id` int(8) NOT NULL,
   `start_year` int(4) DEFAULT NULL,
   `end_year` int(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `academic_year`
@@ -106,7 +55,7 @@ CREATE TABLE `courses` (
   `lec_hrs_wk` double(4,2) NOT NULL,
   `rle_hrs_wk` double(4,2) NOT NULL,
   `lab_hrs_wk` double(4,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `courses`
@@ -128,17 +77,17 @@ INSERT INTO `courses` (`course_id`, `course_code`, `course_description`, `depart
 CREATE TABLE `departments` (
   `department_id` int(8) NOT NULL,
   `department_name` varchar(50) NOT NULL,
-  `department_abbrv` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `department_abbrv` varchar(12) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `departments`
 --
 
-INSERT INTO `departments` (`department_id`, `department_name`, `department_abbrv`) VALUES
-(1, 'College of Informatics and Computing Sciences', 'CICS'),
-(2, 'College of Arts and Sciences', 'CAS'),
-(3, 'College of Teacher Education', 'CTE');
+INSERT INTO `departments` (`department_id`, `department_name`, `department_abbrv`, `user_id`) VALUES
+(8, 'Computer of Informatics and Computing Science', 'CICS', 1),
+(9, 'Office of Vice Chancellor of Academic Affairs', 'OVCAA', 2);
 
 -- --------------------------------------------------------
 
@@ -155,7 +104,7 @@ CREATE TABLE `faculties` (
   `is_permanent` int(4) NOT NULL,
   `is_guest` int(4) NOT NULL,
   `is_partTime` int(4) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `faculties`
@@ -180,7 +129,7 @@ CREATE TABLE `faculty_loadings` (
   `section_id` int(8) NOT NULL,
   `acad_year_id` int(8) NOT NULL,
   `sem_id` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `faculty_loadings`
@@ -189,7 +138,22 @@ CREATE TABLE `faculty_loadings` (
 INSERT INTO `faculty_loadings` (`fac_load_id`, `faculty_id`, `course_id`, `section_id`, `acad_year_id`, `sem_id`) VALUES
 (1, 1, 1, 1, 1, 2),
 (2, 1, 2, 2, 1, 2),
-(3, 1, 3, 2, 1, 2);
+(3, 1, 3, 2, 1, 2),
+(4, 1, 1, 1, 1, 1),
+(5, 2, 1, 1, 1, 1),
+(6, 2, 1, 1, 1, 1),
+(7, 1, 1, 1, 1, 1),
+(8, 2, 2, 1, 1, 1),
+(9, 4, 3, 1, 1, 1),
+(10, 4, 3, 1, 1, 1),
+(11, 4, 2, 1, 1, 2),
+(12, 4, 2, 1, 1, 1),
+(13, 4, 2, 1, 1, 1),
+(14, 4, 2, 1, 1, 1),
+(15, 4, 1, 1, 1, 1),
+(16, 2, 1, 1, 1, 1),
+(17, 2, 4, 1, 1, 1),
+(18, 1, 2, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -201,7 +165,7 @@ CREATE TABLE `faculty_titles` (
   `fac_title_id` int(8) NOT NULL,
   `faculty_id` int(8) NOT NULL,
   `title_id` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `faculty_titles`
@@ -217,6 +181,46 @@ INSERT INTO `faculty_titles` (`fac_title_id`, `faculty_id`, `title_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `file_table`
+--
+
+CREATE TABLE `file_table` (
+  `file_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `directory` varchar(255) NOT NULL,
+  `date` date NOT NULL DEFAULT current_timestamp(),
+  `file_owner_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `file_table`
+--
+
+INSERT INTO `file_table` (`file_id`, `file_name`, `directory`, `date`, `file_owner_id`) VALUES
+(1, '', 'task_files/', '2023-07-03', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `notif_id` int(11) NOT NULL,
+  `content` varchar(255) NOT NULL,
+  `date` date NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`notif_id`, `content`, `date`) VALUES
+(1, 'something', '2023-07-02');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `programs`
 --
 
@@ -225,7 +229,7 @@ CREATE TABLE `programs` (
   `program_title` varchar(50) NOT NULL,
   `department_id` int(8) NOT NULL,
   `program_abbrv` varchar(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `programs`
@@ -247,7 +251,7 @@ CREATE TABLE `sections` (
   `section_name` varchar(8) NOT NULL,
   `semester_id` int(8) NOT NULL,
   `no_of_students` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sections`
@@ -266,7 +270,7 @@ INSERT INTO `sections` (`section_id`, `course_id`, `program_id`, `section_name`,
 CREATE TABLE `semesters` (
   `semester_id` int(8) NOT NULL,
   `sem_description` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `semesters`
@@ -294,15 +298,22 @@ CREATE TABLE `tasks` (
   `for_heads` tinyint(1) NOT NULL,
   `acad_year_id` int(8) NOT NULL,
   `sem_id` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tasks`
 --
 
 INSERT INTO `tasks` (`task_id`, `task_name`, `task_desc`, `document_id`, `date_posted`, `due_date`, `for_ovcaa`, `for_deans`, `for_heads`, `acad_year_id`, `sem_id`) VALUES
-(1, 'Faculty Loading', 'Faculty Loading AY 22-23, Second Sem)', 1, '2023-06-01', '2023-06-30', 0, 1, 0, 1, 2),
-(2, 'OPCR', 'aergfsads', 1, '2023-06-01', '2023-06-30', 1, 1, 1, 1, 2);
+(1, 'OVCAA TASKS', 'TASK', 0, '2023-07-03', '2023-07-04', 1, 0, 0, 0, 0),
+(2, 'DEANS ', 'DEANS', 0, '2023-07-03', '2023-07-03', 0, 1, 0, 0, 0),
+(3, 'DEANS 2 TASKS', 'amskm', 0, '2023-07-03', '2023-07-18', 0, 1, 0, 0, 0),
+(4, 'aaa', 'aa', 0, '2023-07-05', '2023-07-21', 0, 1, 0, 0, 0),
+(5, 'Ticket for Parking Lot inside the Campus', 'The project would help the students to have a safe', 0, '2023-07-03', '2023-07-31', 1, 1, 0, 0, 0),
+(6, 'aa', 'aa', 0, '2023-07-03', '2023-07-18', 1, 0, 0, 0, 0),
+(7, 'TASK ', 'TASK', 0, '2023-07-03', '2023-07-03', 1, 0, 0, 0, 0),
+(8, 'TASK ', 'TASK', 0, '2023-07-03', '2023-07-03', 1, 0, 0, 0, 0),
+(9, 'TASK ', 'TASK', 0, '2023-07-03', '2023-07-03', 1, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -315,15 +326,22 @@ CREATE TABLE `task_status` (
   `task_id` int(8) NOT NULL,
   `office_id` int(8) NOT NULL,
   `is_completed` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `task_status`
 --
 
 INSERT INTO `task_status` (`status_id`, `task_id`, `office_id`, `is_completed`) VALUES
-(1, 1, 1, 0),
-(2, 1, 2, 0);
+(1, 1, 9, 1),
+(2, 2, 8, 0),
+(3, 3, 8, 1),
+(4, 4, 8, 1),
+(5, 5, 8, 1),
+(6, 6, 9, 1),
+(7, 7, 9, 1),
+(8, 8, 9, 1),
+(9, 9, 9, 1);
 
 -- --------------------------------------------------------
 
@@ -334,7 +352,7 @@ INSERT INTO `task_status` (`status_id`, `task_id`, `office_id`, `is_completed`) 
 CREATE TABLE `titles` (
   `title_id` int(8) NOT NULL,
   `title_description` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `titles`
@@ -345,6 +363,53 @@ INSERT INTO `titles` (`title_id`, `title_description`) VALUES
 (2, 'Vice Chancellor for Academic Affairs'),
 (3, 'Dean'),
 (4, 'Faculty Researcher');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL,
+  `unique_id` int(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `img` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`user_id`, `unique_id`, `email`, `password`, `img`, `status`, `type`) VALUES
+(1, 1188612194, 'cics.arasof@gmail.com', '44fb9f21c19e7bc98470f77407027fe8', '16881944698cd0a7dd98109ad4554e9ab62171435b.jpg', 'Active now', 'Dean'),
+(2, 993187776, 'ovcaa.arasof@gmail.com', '44fb9f21c19e7bc98470f77407027fe8', '16882117848cd0a7dd98109ad4554e9ab62171435b.jpg', 'Active now', 'Admin');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_notifications`
+--
+
+CREATE TABLE `user_notifications` (
+  `user_notif_id` int(11) NOT NULL,
+  `status` varchar(5) NOT NULL DEFAULT '0',
+  `notif_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user_notifications`
+--
+
+INSERT INTO `user_notifications` (`user_notif_id`, `status`, `notif_id`, `user_id`) VALUES
+(2, '1', 1, 1),
+(3, '1', 1, 1),
+(4, '1', 1, 2),
+(5, '1', 1, 1);
 
 --
 -- Indexes for dumped tables
@@ -366,7 +431,8 @@ ALTER TABLE `courses`
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
-  ADD PRIMARY KEY (`department_id`);
+  ADD PRIMARY KEY (`department_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `faculties`
@@ -378,13 +444,30 @@ ALTER TABLE `faculties`
 -- Indexes for table `faculty_loadings`
 --
 ALTER TABLE `faculty_loadings`
-  ADD PRIMARY KEY (`fac_load_id`);
+  ADD PRIMARY KEY (`fac_load_id`),
+  ADD KEY `faculty_loadings_ibfk_1` (`section_id`),
+  ADD KEY `faculty_loadings_ibfk_2` (`course_id`),
+  ADD KEY `faculty_loadings_ibfk_3` (`faculty_id`),
+  ADD KEY `faculty_loadings_ibfk_4` (`sem_id`);
 
 --
 -- Indexes for table `faculty_titles`
 --
 ALTER TABLE `faculty_titles`
   ADD PRIMARY KEY (`fac_title_id`);
+
+--
+-- Indexes for table `file_table`
+--
+ALTER TABLE `file_table`
+  ADD PRIMARY KEY (`file_id`),
+  ADD KEY `file_owner_id` (`file_owner_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notif_id`);
 
 --
 -- Indexes for table `programs`
@@ -423,6 +506,20 @@ ALTER TABLE `titles`
   ADD PRIMARY KEY (`title_id`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`user_id`);
+
+--
+-- Indexes for table `user_notifications`
+--
+ALTER TABLE `user_notifications`
+  ADD PRIMARY KEY (`user_notif_id`),
+  ADD KEY `notif_id` (`notif_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -442,7 +539,7 @@ ALTER TABLE `courses`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `department_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `department_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `faculties`
@@ -454,13 +551,25 @@ ALTER TABLE `faculties`
 -- AUTO_INCREMENT for table `faculty_loadings`
 --
 ALTER TABLE `faculty_loadings`
-  MODIFY `fac_load_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `fac_load_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `faculty_titles`
 --
 ALTER TABLE `faculty_titles`
   MODIFY `fac_title_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `file_table`
+--
+ALTER TABLE `file_table`
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notif_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `programs`
@@ -484,19 +593,54 @@ ALTER TABLE `semesters`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `task_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `task_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `task_status`
 --
 ALTER TABLE `task_status`
-  MODIFY `status_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `status_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `titles`
 --
 ALTER TABLE `titles`
   MODIFY `title_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `user_notifications`
+--
+ALTER TABLE `user_notifications`
+  MODIFY `user_notif_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `departments`
+--
+ALTER TABLE `departments`
+  ADD CONSTRAINT `departments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `file_table`
+--
+ALTER TABLE `file_table`
+  ADD CONSTRAINT `file_table_ibfk_1` FOREIGN KEY (`file_owner_id`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `user_notifications`
+--
+ALTER TABLE `user_notifications`
+  ADD CONSTRAINT `user_notifications_ibfk_1` FOREIGN KEY (`notif_id`) REFERENCES `notifications` (`notif_id`),
+  ADD CONSTRAINT `user_notifications_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
