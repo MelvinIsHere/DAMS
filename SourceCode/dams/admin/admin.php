@@ -1,4 +1,35 @@
+<?php 
+include "../config.php";
+session_start();
 
+ if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
+    $users_id = $_SESSION['unique_id'];
+    $id = $_SESSION['user_id'];
+
+
+
+    $data = mysqli_query($conn,"SELECT 
+            u.user_id,
+            u.unique_id,
+            u.email,
+            u.password,
+            u.img,
+            u.status,
+            u.type,
+            d.department_name,
+            d.department_abbrv
+            FROM users u
+            LEFT JOIN departments d ON u.user_id = d.user_id
+            WHERE unique_id = '$users_id' 
+    
+            ");
+    $data_result = mysqli_fetch_assoc($data);
+    $department_name = $data_result['department_name'];
+
+    if($data_result){
+
+
+?>
 
 
 <!DOCTYPE html>
@@ -168,19 +199,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
+                  
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -228,39 +247,7 @@
                                 <div class="notif">
                                     
                                 </div>
-                                <!-- <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a> -->
-                                <!-- <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a> -->
+                               
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                             </div>
                         </li>
@@ -320,71 +307,7 @@
 
                                     </script>
                         
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
+                        
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -392,7 +315,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $department_name;?></span>
                                 <img class="img-profile rounded-circle"
                                     src="img/undraw_profile.svg">
                             </a>
@@ -445,7 +368,25 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Pending Task</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"> <?php
+                                                        $pending_count = mysqli_query($conn," SELECT
+                                                        COUNT(*)
+
+
+                                                        FROM departments dp
+                                                        LEFT JOIN users u ON u.user_id = dp.user_id
+                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                        WHERE dp.user_id = 1 AND is_completed = 1 AND for_ovcaa = 1");
+                                                        $result = mysqli_fetch_assoc($pending_count);
+                                                        if($result){
+                                                            echo $result['COUNT(*)'];
+                                                        }
+                                                        else{
+                                                            echo "0";
+                                                        }
+
+                                                     ?></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -463,7 +404,32 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Completed Task</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">10</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php 
+
+                                                $completed_count = mysqli_query($conn,"
+SELECT
+                                                        COUNT(*)
+
+
+                                                        FROM departments dp
+                                                        LEFT JOIN users u ON u.user_id = dp.user_id
+                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                        WHERE dp.user_id = 2 AND is_completed = 0
+                                                        AND t.for_ovcaa = 1");
+                                                        $result = mysqli_fetch_assoc($pending_count);
+                                                        if($result){
+                                                            echo $result['COUNT(*)'];
+                                                        }
+                                                        else{
+                                                            echo "0";
+                                                        }
+
+                                                    
+
+                                                ?>
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -638,17 +604,33 @@
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
         <?php 
-             $conn = new mysqli("localhost","root","","dams");
+             $conn = new mysqli("localhost","root","","dams2");
             if ($conn->connect_error) {
                     die("Connection failed : " . $conn->connect_error);
             }
-                $sql = "SELECT * FROM createTask WHERE deans = 'Tasked'";
+                $sql = " SELECT
+                    tt.`task_id`,
+                    tt.task_name,
+                    tt.`task_desc`,
+                    tt.date_posted,
+                    tt.due_date,
+                    tt.for_ovcaa,
+                    tt.for_deans,
+                    ts.`is_completed`,
+                    ts.`office_id`,
+                    dp.`department_name`
+                    FROM tasks tt
+                    LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                    LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                    WHERE dp.`department_name` = '$department_name' AND is_completed = 1
+                    AND tt.for_ovcaa = 1";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
-                    $taskName = $row['taskName'];
-                    $taskOwner = $row['task_owner'];
-                    $posted = $row['dateStart'];
-                    $deadline = $row['dateEnd'];
+                    $taskid = $row['task_id'];
+                    $taskName = $row['task_name'];
+                    $posted = $row['date_posted'];
+                    $deadline = $row['due_date'];
+                    
                     
                 
             ?>
@@ -657,13 +639,13 @@
                 <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
                     <div class="task_info" style="white-space: nowrap;">
                         <p class="task_title"><b><?php echo $taskName; ?></b></p>
-                        <p class="task_owner"><?php echo $taskOwner; ?></p>
+                        
                         <p class="task_info_text">
                             <span><?php echo $posted; ?></span>&nbsp;&nbsp;&nbsp;<span><?php echo $deadline; ?></span></p>
                         
                     </div>
                     <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 30px;">View</a>
+                        <a href="pending.php?id=<?php echo $taskid; ?>" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 30px;">View</a>
                     </div>
                 </div>
 
@@ -708,7 +690,7 @@
                                          <img src="sample.jpg" width="100%" height="auto">
                                     </div>
                                 </div>                            
-                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">OPCR</div>
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Loading</div>
                             </div> 
                             </a>                                   
                         </div>
@@ -720,7 +702,7 @@
                                          <img src="sample.jpg" width="100%" height="auto">
                                     </div>
                                 </div>                            
-                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">Faculty Loading</div>
+                                <div class="text-xs font-weight-bold text-hello text-uppercase mb-1">OPCR</div>
                             </div>                                    
                         </div>
 
@@ -810,14 +792,13 @@
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">User Login Monitoring</h1>
-                    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                        For more information about DataTables, please visit the <a target="_blank"
-                            href="https://datatables.net">official DataTables documentation</a>.</p>
+                    <p class="mb-4"> <a target="_blank"
+                            href="https://datatables.net"></a>.</p>
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">User Login Information</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -888,15 +869,12 @@
                    
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-1 text-gray-800">Task OPCR</h1>
-                    <p class="mb-4">Bootstrap's default utility classes can be found on the official <a
-                            href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities
-                        below were created to extend this theme past the default utility classes built into Bootstrap's
-                        framework.</p>
+                    <h1 class="h3 mb-1 text-gray-800">Task Faculty Loading</h1>
+                  
                     
 
                      <!-- GENERATE OPCR REPORT -->
-                    <a href="generateReport.php" class="btn">GENERATE OPCR REPORT</a>
+                    
 
 
                     <!-- Content Row -->
@@ -904,24 +882,29 @@
                         
                             <form action="task.php" method="POST">
                             
-
+                                <div class="form-group">
+                                <label for="name" class="text-left">Task Name</label>
+                                <input type="text" class="form-control" id="name" name="task_name" placeholder="Task Name" required>
+                              </div>
                               <div class="form-group">
                                 <label for="description" class="text-left">Description</label>
-                                <input type="text" class="form-control" id="description" name="description" placeholder="description">
+                                <input type="text" class="form-control" id="description" name="description" placeholder="description" required>
                               </div>
                               <div class="form-group">
                                 <label for="dateStart">Date Start:</label>
-                                <input type="date" class="form-control" id="dateStart" name="dateStart">
+                                <input type="date" class="form-control" id="dateStart" name="dateStart" required>
                               </div>
                              <div class="form-group">
                                 <label for="dateEnd">Date End:</label>
-                                <input type="date" class="form-control" id="dateEnd" name="dateEnd">
+                                <input type="date" class="form-control" id="dateEnd" name="dateEnd" required>
                               </div>
                               <div class="checkbox">
-                                    <label><input type="checkbox" name="dean" value="Tasked"> Deans</label>
-                                    <label><input type="checkbox" name="department" value="Tasked"> Department</label>
+                                    <label><input type="checkbox" name="dean" value="1" > Deans</label>
+                                    
+                                    <label><input type="checkbox" name="ovcaa" value="1"> OVCAA</label>
                                     
                                 </div>
+
                               <button type="submit" class="btn btn-primary pull-right">Submit</button>
                             </form>
                         
@@ -997,87 +980,80 @@
                                     <thead>
                                         <tr>
                                             <th>id</th>
-                                            <th>Full Name</th>
+                                            <th>Email</th>
                                             <th>Position</th>
                                             <th>Department</th>
                                             <th>Due Date</th>
                                             <th>Document Status</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     
                                     <tbody>
+                                         <?php 
+                                             $conn = new mysqli("localhost","root","","dams2");
+                                            if ($conn->connect_error) {
+                                                    die("Connection failed : " . $conn->connect_error);
+                                            }
+
+                                                $sql = "
+
+                                                SELECT DISTINCT
+                                                    dp.`department_name`,
+                                                    dp.`department_abbrv`,
+                                                    u.user_id,
+                                                    u.type,
+                                                    u.email,
+                                                    ts.is_completed,
+                                                    t.due_date,
+                                                    t.task_name,
+                                                    f.file_id
+
+                                                    FROM departments dp
+                                                    LEFT JOIN users u ON u.user_id = dp.user_id
+                                                    LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                    LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                    LEFT JOIN file_table f ON f.file_owner_id = u.user_id
+                                                    WHERE t.task_id IS NOT NULL";
+                                                $result = $conn->query($sql);
+                                                while($row = mysqli_fetch_array($result)){
+                                                   $user_id = $row['user_id'];
+                                                   $email = $row['email'];
+                                                   $position = $row['type'];
+                                                   $abbrv = $row['department_abbrv'];
+                                                   $due_date = $row['due_date'];
+                                                   $status = $row['is_completed'];
+                                                   $file_id = $row['file_id'];
+
+
+                                                    
+                                                    
+                                                
+                                            ?>
                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
+                                            <td><?php echo $user_id;?></td>
+                                            <td><?php echo $email;?></td>
+                                            <td><?php echo $position;?></td>
+                                            <td><?php echo $abbrv;?></td>
+                                            <td><?php echo $due_date;?></td>
+                                            <td class="<?php if ($status == 1) {
+                                                echo 'ns';
+                                            }
+                                            else{
+                                                echo "submitted";
+                                            }?>">
+                                                <?php
+                                                if ($status == 1 || $status == null) {
+                                                    echo "Not Submitted";
+                                                }
+                                                else{
+                                                    echo "Submitted";
+                                                }
+
+                                             ?></td>
+                                             <td><a class="btn btn-primary" href="../view_files.php?id=<?php echo $file_id?>">View<a></td>
                                         </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
+                                        <?php }?>
                                     </tbody>
                                 </table>
                             </div>
@@ -1315,14 +1291,7 @@ function openCity(evt, cityName) {
 
             <!-- End of Main Content -->
             
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
-                    </div>
-                </div>
-            </footer>
+            
             <!-- End of Footer -->
 
         </div>
@@ -1388,3 +1357,8 @@ function openCity(evt, cityName) {
 </body>
 
 </html>
+<?php 
+
+}}else{
+    header("Location: ../index.php");
+}?>

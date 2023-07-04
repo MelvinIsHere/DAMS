@@ -4,29 +4,50 @@
     $email =  $_POST['email'];
     $password = $_POST['password'];
     if(!empty($email) && !empty($password)){
-        $sql = mysqli_query($conn, "SELECT * FROM users WHERE email = '{$email}'");
+          $sql = mysqli_query($conn,"SELECT
+            u.user_id, 
+            u.unique_id,
+            u.email,
+            u.password,
+            u.img,
+            u.status,
+            u.type,
+            d.department_name,
+            d.department_abbrv
+            FROM users u
+            LEFT JOIN departments d ON u.user_id = d.user_id WHERE email = '{$email}' ");
+
+        
         if(mysqli_num_rows($sql) > 0){
             $row = mysqli_fetch_assoc($sql);
             $user_pass = md5($password);
             $enc_pass = $row['password'];
+            $dept_name = $row['department_name'];
             $type = $row['type'];
             if($user_pass === $enc_pass){
                 $status = "Active now";
                 $sql2 = mysqli_query($conn, "UPDATE users SET status = '{$status}' WHERE unique_id = {$row['unique_id']}");
                 if($sql2){
-                    $_SESSION['unique_id'] = $row['unique_id'];
+
+                    if($type === "Admin"){
+                        header("Location: ../admin/admin.php");
+                          $_SESSION['unique_id'] = $row['unique_id'];
                     $_SESSION['user_id'] = $row['user_id'];
-                    $_SESSION['fname'] = $row['fname'];
-                    $_SESSION['lname'] = $row['lname'];
+                   
                     $_SESSION['email'] = $row['email'];
                     $_SESSION['type'] = $row['type'];
-                    if($_SESSION['type'] === "admin"){
-                        header("Location: ../admin/admin.php");
+                    $_SESSION['dept_name'] = $row['department_name'];
                     }
-                    else if($_SESSION['type'] === "staffs"){
+                    else if($type === "staffs"){
                         header("Location: ../staffs/staff.php");
                     }
-                     else if($_SESSION['type'] === "deans"){
+                     else if($type === "Dean" || $type === "Heads"){
+                    $_SESSION['unique_id'] = $row['unique_id'];
+                    $_SESSION['user_id'] = $row['user_id'];
+                   
+                    $_SESSION['email'] = $row['email'];
+                    $_SESSION['type'] = $row['type'];
+                    $_SESSION['dept_name'] = $row['department_name'];
                         header("Location: ../deans/deans.php");
                     }
                     

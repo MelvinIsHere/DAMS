@@ -687,7 +687,7 @@
                                     
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="submission-pending-ui.html" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                                    <a href="#" onclick="openCity(event,'pending-Details')" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
                                 </div>
                             </div>
                         </div>
@@ -780,6 +780,34 @@
 </script>
     </div>
 </div>
+
+        <div class="container-fluid tabcontent" id="pending-Details" style="display:none;">
+            <h1 class="h3 mb-1 text-gray-800">Pending Documents | Faculty Loading</h1><br>
+
+            <form>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-7">
+                        <h3>Melvin Felicisimo</h3>
+                        <h6>June 27, 2023</h6>
+                        <hr class="hr">
+                        <p class="due-date">Due Date: June 30, 2023</p>
+                        <p>From your Google Developer Profile, kindly attach a screenshot of your<br>
+                            1. account (showing the account name and # of badge/s)<br>
+                            2. actual badge/s<br>
+                            <br>
+                            See google doc for reference.
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-4" id="upload">
+                        <h5>Your Document</h5>
+                        <div>
+                            <h2 id="docuStatus"><span><i class="fa fa-file-text-o" aria-hidden="true"></i></span></h2>
+                        </div>
+                        <a type="btn" id="submit-btn-upload" class="btn btn-primary btn-sm">Submit</a>
+                    </div>
+                </div>
+            </form>
+        </div>
 
 
         <div class="container-fluid tabcontent" id="createfill-Up" style="display:none;">

@@ -1,5 +1,5 @@
-	<?php 
-	  // $conn = new mysqli("localhost","root","","dams");
+        <?php 
+          // $conn = new mysqli("localhost","root","","dams");
           //                               if ($conn->connect_error) {
           //                                       die("Connection failed : " . $conn->connect_error);
           //                               }
@@ -19,7 +19,7 @@
 
                 // END NG CONNECTION
                                                 //<- START NG QUERY NG SELECT ALL DATA SA DATABASE TABLE
-                                            $sql = "SELECT * FROM announcement ORDER BY `date` ASC LIMIT 8";     //QUERY
+                                            $sql = "SELECT * FROM notifications ORDER BY `date` ASC";     //QUERY
                                             $result = $conn->query($sql);      //EXCUTION
                                             $result_array = [];
                                             if(mysqli_num_rows($result) > 0){

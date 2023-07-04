@@ -16,8 +16,7 @@
                 if($sql2){
                     $_SESSION['unique_id'] = $row['unique_id'];
                     $_SESSION['user_id'] = $row['user_id'];
-                    $_SESSION['fname'] = $row['fname'];
-                    $_SESSION['lname'] = $row['lname'];
+
                     $_SESSION['email'] = $row['email'];
                     $_SESSION['type'] = $row['type'];
                     if($_SESSION['type'] === "admin"){
