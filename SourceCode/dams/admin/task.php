@@ -49,14 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   
 
-        header("Location: admin.php?success=TaskUploaded");
+        header("Location: generate_task.php?success=TaskUploaded");
 
         }
 
    
     }
     else{
-        header("Location: admin.php?error=department required");
+        header("Location: generate_task.php?error=department required");
     }
 }
      else {

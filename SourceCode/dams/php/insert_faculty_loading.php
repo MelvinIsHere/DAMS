@@ -18,6 +18,7 @@
                                 $section = $_POST['section'];
                                 $faculty = $_POST['faculty'];
                                 $semester = $_POST['semester'];
+                                echo $faculty;
                                 
                                 
 
@@ -48,7 +49,7 @@
 						    				if($sems){
 						    					$insert = mysqli_query($conn,"INSERT INTO faculty_loadings(faculty_id,course_id,section_id,acad_year_id,sem_id) VALUES('$dept_id','$course_id','$section_id','$current_acad','$sem_id')");
 						    					if($insert){
-						    						header('Location: ../deans/deans.php?Success : Insert Success');
+						    						header('Location: ../deans/dataFillUp.php?Success : Insert Success');
 						    					}
 						    					else{
 						    						echo mysqli_error($conn);
