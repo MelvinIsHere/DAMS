@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-size: 14px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: "Arial",sans-serif;
+}
+.body{
+  width: 1199px;
+  height: 725px;
+  box-shadow: 0px 0px 10px 0px ;
+  border-radius: 10px;
+}
+.title{
+  background-color: #ced4da;
+  color: black;
+  height: 40px;
+}
+.title-{
+  margin-top: none;
+  font-size: 20px;
+  text-align: center;
+  padding:7px;
+}
+.container{
+  margin-top: 20px;
+  border: solid;
+  width: 40%;
+  font-size: 20px;
+  border-color: #ced4da;
+  height: 300px;
+  border-radius: 10px;
+}
+.form{
+  margin-top: 10px;
+  border-bottom: solid 2px;
+  border-color: #ced4da;
+  text-align: left;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+.login-input{
+  border-top: solid;
+  width: 450px;
+  height: 30px;
+  border: solid 2px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  border-color: #ced4da;
+  margin-bottom: 10px;
+}
+/*.login-input:hover{
+  border-color: #8080FF;
+  transition: 0.5s;
+}*/
+
+.check{
+  position:relative;
+  right: 160px;
+}
+.bi.bi-eye-slash{
+  position: relative;
+  left: 120px;
+}
+
+.password-input{
+  border-top: solid;
+  width: 450px;
+  height: 30px;
+  border: solid 2px;
+  border-radius: 5px;
+/*  margin-bottom: 15px;*/
+  border-color: #ced4da;
+}
+.label{
+  font-size: 14px;
+  position: relative;
+  right: 165px;
+}
+.sign-in-button{
+  width: 130px;
+  height: 40px;
+  background-color: #63C5DA;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-size: 20px;
+  position: relative;
+  left: 120px;
+}
+.sign-in-button:hover{
+  transition: 0.9s;
+  background-color: #3cb043;
+}
+
+.border{
+  margin-top: 10px;
+  border: solid 1px;
+  border-color: #ced4da;
+}
+
+.forgotpass{
+  position: relative;
+  right: 120px;
+  color:black;
+  font-size: 14px;
+}
+.forgotpass:hover{
+  transition: 0.9s;
+  color:#3cb043 ;
+}
