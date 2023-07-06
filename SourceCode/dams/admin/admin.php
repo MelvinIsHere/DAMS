@@ -77,15 +77,12 @@ session_start();
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Pending Task</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"> <?php
-                                                        $pending_count = mysqli_query($conn," SELECT
+                                                        $pending_count = mysqli_query($conn,"SELECT
                                                         COUNT(*)
-
-
-                                                        FROM departments dp
-                                                        LEFT JOIN users u ON u.user_id = dp.user_id
-                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
-                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
-                                                        WHERE dp.user_id = 1 AND is_completed = 1 AND for_ovcaa = 1");
+                                                        FROM tasks tt
+                                                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                                                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                                                        WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND ts.`is_completed` = 1;");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -116,17 +113,13 @@ session_start();
                                                 <?php 
 
                                                 $completed_count = mysqli_query($conn,"
-SELECT
+                                                        SELECT
                                                         COUNT(*)
-
-
-                                                        FROM departments dp
-                                                        LEFT JOIN users u ON u.user_id = dp.user_id
-                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
-                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
-                                                        WHERE dp.user_id = 2 AND is_completed = 0
-                                                        AND t.for_ovcaa = 1");
-                                                        $result = mysqli_fetch_assoc($pending_count);
+                                                        FROM tasks tt
+                                                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                                                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                                                        WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND ts.`is_completed` = 0;");
+                                                        $result = mysqli_fetch_assoc($completed_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
                                                         }
@@ -380,25 +373,6 @@ function openCity(evt, cityName) {
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
   
 
     <!-- Bootstrap core JavaScript-->

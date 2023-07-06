@@ -56,22 +56,17 @@ session_start();
             if ($conn->connect_error) {
                     die("Connection failed : " . $conn->connect_error);
             }
-                $sql = " SELECT
-                    tt.`task_id`,
-                    tt.task_name,
-                    tt.`task_desc`,
-                    tt.date_posted,
-                    tt.due_date,
-                    tt.for_ovcaa,
-                    tt.for_deans,
-                    ts.`is_completed`,
-                    ts.`office_id`,
-                    dp.`department_name`
-                    FROM tasks tt
-                    LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
-                    LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                    WHERE dp.`department_name` = '$department_name' AND is_completed = 0
-                    AND tt.for_ovcaa = 1";
+                $sql = "SELECT
+                        tt.task_id AS task_id,
+                        tt.task_name AS task_name,
+                        tt.date_posted AS date_posted,
+                        tt.due_date AS due_date,
+                        ts.`is_completed`
+                        FROM tasks tt
+                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                        WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND is_completed = 1 
+    ";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
                     $taskid = $row['task_id'];
@@ -119,6 +114,9 @@ session_start();
     });
 
 </script>
+
+
+
     </div>
 </div>
 

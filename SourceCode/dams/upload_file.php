@@ -1,13 +1,14 @@
 <?php
 session_start();
 $users_id = $_SESSION['user_id'];
-echo $users_id;
+
+include "php/functions.php";
 
  $conn = new mysqli("localhost","root","","dams2");
      if($conn->connect_error){
         die('Connection Failed : ' .$conn->connect_error);
      }
-  if(isset($_POST['submit'])){
+  // if(isset($_POST['submit'])){
       $task_id = $_POST['task_id'];
 
 
@@ -29,38 +30,45 @@ echo $users_id;
             $path = "task_files/".$fileName;
             
             if(empty($fileName)){
-               header("Location: deans/deans.php?Error : Submission Fail No File  Attached");
+               echo "Submission Fail No File Attached";
+               
             }
             else{
-                  $query = "INSERT INTO file_table(file_name,directory,file_owner_id) VALUES ('$fileName','$path','$users_id')";
-             $run = mysqli_query($conn,$query);
-             if($run){
-                move_uploaded_file($fileTmpName,$path);
-                $update = mysqli_query($conn,"UPDATE task_status SET is_completed = '0' WHERE task_id = '$task_id'");
-                if($update){
+                  $run =  insertQuery($fileName,$path,$users_id);
                   
-                header("Location: deans/deans.php?Success : File Submitted");
-               }
-               else{
-                  echo "Error: " . mysqli_error($conn);
-               }
-             }
-             else{
-                 echo "Error: " . mysqli_error($conn);
-             }
-            }
+             
+               move_uploaded_file($fileTmpName,$path);
+                $update = updateTaskStats($task_id);
+                
+                 $name = getName($users_id);
+                $task_name = getTaskName($task_id);
+
+                $notif = notifications($name,$task_name);
+                
+                $user_notif = user_notif_dean($users_id,$notif);
+                
+
+              
+
+
+                if(!empty($user_notif)){
+                     echo "Work Submitted";
+                }
+                else{
+                  echo "error";
+                }
+
+               
+               
+                // header("Location: deans/deans.php?Success : File Submitted");
+               
          
             
              
                 
 
-}
-
-else{
-   echo "Error: " . mysqli_error($conn);
-   echo "sad";
-}
-
+                  }
+//}
    // code...
 
 ?>

@@ -68,21 +68,15 @@ session_start();
 
 
                 $sql = "SELECT
-                    tt.`task_id`,
-                    tt.task_name,
-                    tt.`task_desc`,
-                    tt.date_posted,
-                    tt.due_date,
-                    tt.for_ovcaa,
-                    tt.for_deans,
-                    ts.`is_completed`,
-                    ts.`office_id`,
-                    dp.`department_name`
-                    FROM tasks tt
-                    LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
-                    LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                    WHERE dp.`department_name` = 'Computer of Informatics and Computing Science' AND is_completed = 1
-                    AND tt.for_deans = 1";
+                         tt.task_name AS task_name,
+                        tt.date_posted AS date_posted,
+                        tt.due_date AS due_date,
+                        ts.`is_completed`,
+                        ts.task_id AS task_id
+                        FROM tasks tt
+                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1;";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
                     $taskid = $row['task_id'];

@@ -1,5 +1,5 @@
-	<?php 
-	  // $conn = new mysqli("localhost","root","","dams");
+        <?php 
+          // $conn = new mysqli("localhost","root","","dams");
           //                               if ($conn->connect_error) {
           //                                       die("Connection failed : " . $conn->connect_error);
           //                               }
@@ -12,14 +12,14 @@
 
 
         
-        $conn = new mysqli("localhost", "root", "", "dams");
+        $conn = new mysqli("localhost", "root", "", "dams2");
                                         if ($conn->connect_error) {
                                                 die("Connection failed : " . $conn->connect_error);
                                         }
 
                 // END NG CONNECTION
                                                 //<- START NG QUERY NG SELECT ALL DATA SA DATABASE TABLE
-                                            $sql = "SELECT * FROM announcement ORDER BY `date` ASC";     //QUERY
+                                            $sql = "SELECT * FROM notifications ORDER BY `date` ASC";     //QUERY
                                             $result = $conn->query($sql);      //EXCUTION
                                             $result_array = [];
                                             if(mysqli_num_rows($result) > 0){
@@ -30,7 +30,7 @@
                                                         echo json_encode($result_array);
                                             }
                                             else{
-                                                echo "<h4>Nothing Found</h4>";
+                                                echo "";
                                             }
 
 
