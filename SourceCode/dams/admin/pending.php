@@ -42,6 +42,9 @@ $task_id = $_GET['id'];
     <link rel="stylesheet" type="text/css" href="deans.css">
     <link rel="stylesheet" type="text/css" href="pending.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+    <script src="https://malsup.github.io/jquery.form.js"></script> 
+   
 </head>
 <body>
      <nav class="navigation">
@@ -66,7 +69,7 @@ $task_id = $_GET['id'];
                 <div class="col-xs-12 col-sm-4" id="upload">
                   <center>
                     <div class="body">
-                      <form action="../upload_file_admin.php" method="POST" enctype="multipart/form-data">
+                      <form action="" method="POST" id="form" enctype="multipart/form-data">
                               <div class="wrapper">
                                 <header>File Uploader JavaScript</header>
                                 
@@ -85,13 +88,46 @@ $task_id = $_GET['id'];
                 <input type="text" name="task_id" value="<?php echo $task_id; ?>" style="width: 0px; height: 0px; display: none;">
             </div>
             <br><br><br><br>
-            <button type="submit" name="submit" class="btn btn-success pull-right ">Submit</button>
+            <button type="submit" name="submit" id="submit" class="btn btn-success pull-right ">Submit</button>
        </form>
    </center>
 <!-- <a class="btn btn-warning btn-sm" href="deans.php">Back</a> -->
  
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+   $("#form").submit(function(e) {
+      e.preventDefault(); // Prevent the form from submitting normally
 
+      // Get the form data
+      var formData = new FormData(this);
+
+      // Send the AJAX request
+      $.ajax({
+         url: "../upload_file.php", // PHP file to handle the insertion
+         type: "POST",
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function(response) {
+            // Handle the response from the PHP file
+          
+              alert(response);
+
+              window.location.href = "pendingDocuments.php";
+
+         // Show a success message or do something with the response
+            
+         },
+         error: function(xhr, status, error) {
+            // Handle errors
+            console.error(error); // Log the error message
+         }
+      });
+   });
+});
+</script>
 
 
 
@@ -160,6 +196,8 @@ function uploadFile(name){
   xhr.send(data);
 }
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+    <script src="https://malsup.github.io/jquery.form.js"></script> 
 
 </body>
 </html>

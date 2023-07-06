@@ -72,14 +72,11 @@ session_start();
                                                 
                                                     <?php
                                                         $pending_count = mysqli_query($conn," SELECT
-                                                        COUNT(*)
-
-
-                                                        FROM departments dp
-                                                        LEFT JOIN users u ON u.user_id = dp.user_id
-                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
-                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
-                                                        WHERE dp.user_id = '$id' AND is_completed = 1 AND for_deans = 1");
+                        COUNT(*)
+                        FROM tasks tt
+                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1;");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -1024,25 +1021,7 @@ function openCity(evt, cityName) {
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-danger" href="../php/logout.php?logout_id=<?php echo $users_id; ?>" target="_blank" style="margin-right: 10px;">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+   
   
 
     <!-- Bootstrap core JavaScript-->

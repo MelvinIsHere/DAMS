@@ -61,6 +61,29 @@
                             </div>
                         </li>
                         <script type="text/javascript">
+                         $(document).ready(function () {
+                              $("#alertsDropdown").click(function (event) {
+                                event.preventDefault(); // Prevent the default link behavior
+                                
+                                $.ajax({
+                                  type: 'POST',
+                                  url: 'upNotif.php',
+                                  success: function(response) {
+                                    // Handle the success response from the server
+                                    console.log(response);
+                                    // Optionally, you can perform additional actions or update the UI
+                                  },
+                                  error: function(xhr, status, error) {
+                                    // Handle any errors that occur during the request
+                                    console.error(error);
+                                  }
+                                });
+                              });
+                            });
+
+
+                        </script>
+                        <script type="text/javascript">
                                 $(document).ready(function(){
                                         notif();
                                     });
@@ -155,3 +178,22 @@
 
                 </nav>
                 <!-- End of Topbar -->
+                   <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger" href="../php/logout.php?logout_id=<?php echo $users_id; ?>" target="_blank" style="margin-right: 10px;">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,8 +1,8 @@
 <?php
 session_start();
 $users_id = $_SESSION['user_id'];
-echo $users_id;
 
+include "php/functions.php";
  $conn = new mysqli("localhost","root","","dams2");
      if($conn->connect_error){
         die('Connection Failed : ' .$conn->connect_error);
@@ -31,22 +31,29 @@ echo $users_id;
                header("Location: admin/admin.php?Error : Submittion Fail No File attached");
             }
             else{
-               $query = "INSERT INTO file_table(file_name,directory,file_owner_id) VALUES ('$fileName','$path','$users_id')";
-             $run = mysqli_query($conn,$query);
-             if($run){
+             
+              $run =  insertQuery($fileName,$path,$users_id);
+              echo $run;
+
+
                 move_uploaded_file($fileTmpName,$path);
-                $update = mysqli_query($conn,"UPDATE task_status SET is_completed = '0' WHERE task_id = '$task_id'");
-                if($update){
+                $update = updateTaskStats($task_id);
+                echo $update;
+
+                $name = getName($users_id);
+                $task_name = getTaskName($task_id);
+
+                $notif = notifications($name,$task_name);
+                echo $notif;
+
+
+
+
+                
                   
                 header("Location: admin/admin.php?Success: file Successully Submitted");
-               }
-               else{
-                  echo "Error: " . mysqli_error($conn);
-               }
-             }
-             else{
-                 echo "Error: " . mysqli_error($conn);
-             }
+               
+             
             }
             
         

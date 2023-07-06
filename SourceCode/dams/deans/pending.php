@@ -66,7 +66,7 @@ $task_id = $_GET['id'];
                 <div class="col-xs-12 col-sm-4" id="upload">
                   <center>
                     <div class="body">
-                      <form action="../upload_file.php" method="POST" enctype="multipart/form-data">
+                      <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST" enctype="multipart/form-data" id="form">
                               <div class="wrapper">
                                 <header>File Uploader JavaScript</header>
                                 
@@ -85,12 +85,25 @@ $task_id = $_GET['id'];
                 <input type="text" name="task_id" value="<?php echo $task_id; ?>" style="width: 0px; height: 0px; display: none;">
             </div>
             <br><br><br><br>
-            <button type="submit" name="submit" class="btn btn-success pull-right ">Submit</button>
+            <button type="submit" name="submit" id="submit"class="btn btn-success pull-right ">Submit</button>
        </form>
    </center>
 <!-- <a class="btn btn-warning btn-sm" href="deans.php">Back</a> -->
  
 
+<script type="text/javascript">
+      $(document).on('click','#submit',function(e) {
+  var data = $("#form").serialize();
+  $.ajax({
+         data: data,
+         type: "post",
+         url: "../upload_file.php",
+         success: function(data){
+              alert("Work Submitted: " + data);
+         }
+});
+ });
+</script>
 
 
 
