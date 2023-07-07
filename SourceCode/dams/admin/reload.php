@@ -19,7 +19,7 @@
 
                 // END NG CONNECTION
                                                 //<- START NG QUERY NG SELECT ALL DATA SA DATABASE TABLE
-                                            $sql = "SELECT * FROM notifications ORDER BY `date` ASC";     //QUERY
+                                            $sql = "SELECT * FROM notifications ORDER BY `date` DESC";     //QUERY
                                             $result = $conn->query($sql);      //EXCUTION
                                             $result_array = [];
                                             if(mysqli_num_rows($result) > 0){

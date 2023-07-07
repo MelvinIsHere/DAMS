@@ -49,7 +49,7 @@ function  getTaskName($task_id){
 function notifications($name,$task_name){
 	include "config.php";
 	$content = $name . "Submitted a file in " . $task_name . "!";
-	$sql = mysqli_query($conn,"INSERT INTO notifications(content) VALUES('$content')");
+	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','no')");
 	if(!$sql){
 		return mysqli_error($conn);
 		
@@ -69,6 +69,97 @@ function user_notif_dean($users_id,$notif_id){
 		return "success";
 	}
 }
+
+
+
+//tasks
+function insertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans,$department){
+	include "config.php";
+	  $conn -> query("INSERT INTO tasks (task_name, task_desc, date_posted, due_date, for_ovcaa,for_deans, for_heads) VALUES ('$task_name','$description', '$dateStart', '$dateEnd','$ovcaa', '$deans', '$department')");
+                // $result = $conn->query($sql);
+                // Print auto-generated id
+                $id = $conn -> insert_id;
+
+           if(!empty($id)){
+           	return $id;
+           }
+           else{
+           		return "Not inserted";
+           }
+}
+function  getDept_id($task_id){
+				include "config.php";
+                $sql = "SELECT department_id FROM departments WHERE department_abbrv != 'OVCAA'";
+                $result = mysqli_query($conn,$sql);
+                if ($result) {
+                    while($row = mysqli_fetch_array($result)){
+                        $dept_id = $row['department_id'];
+                        $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
+                    }
+                }
+            }
+function adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans){
+	include "config.php";
+	   $conn -> query("INSERT INTO tasks (task_name, task_desc, date_posted, due_date, for_ovcaa,for_deans) VALUES ('$task_name','$description', '$dateStart', '$dateEnd','$ovcaa', '$deans')");
+                // $result = $conn->query($sql);
+                // Print auto-generated id
+                $id = $conn -> insert_id;
+
+            return $id;
+                
+}
+function insertTaskNotification($task_name){
+	include "config.php";
+	$content = "Office of Vice Chancellor of Academic Affairs Uploaded a task ".$task_name;
+	
+	
+	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','yes')");
+	if(!$sql){
+		return mysqli_error($conn);
+		
+	}
+	else{
+		return $conn->insert_id;
+	}
+
+
+
+}
+function getEmail($users_id){
+	include "config.php";
+	$getName = mysqli_query($conn,"SELECT email FROM users WHERE user_id = '$users_id'");
+	$emailArray = mysqli_fetch_assoc($getName);
+	$email = $emailArray['email'];
+
+	return $email;
+}
+
+
+function activity_log($users_id){
+	include "config.php";
+	$email = getEmail($users_id);
+	$activity = $email . "  Uploaded a task";   
+	$act_log = mysqli_query($conn,"INSERT INTO activity_log(activity,user_id) VALUES('$activity','$users_id')")	;
+
+
+
+}
+
+function activity_log_submitted_documents($users_id,$task_name){
+	include "config.php";
+	$email = getEmail($users_id);
+	$activity = $email . "  Submitted a document in " . $task_name;   
+	$act_log = mysqli_query($conn,"INSERT INTO activity_log(activity,user_id) VALUES('$activity','$users_id')")	;
+
+
+
+}
+function notifFilter($users_id){
+
+
+}
+
+
 
  ?>
 
