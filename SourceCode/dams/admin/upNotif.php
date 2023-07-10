@@ -7,7 +7,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "UPDATE user_notifications SET status = 1 WHERE user_id = '$user_id'";
+$sql = "UPDATE user_notifications SET status = 1 WHERE user_id != '$user_id'";
 if ($conn->query($sql) === TRUE) {
     echo "Notification status updated successfully";
 } else {

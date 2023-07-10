@@ -198,36 +198,59 @@ session_start();
                                     <h6 class="m-0 font-weight-bold text-primary">All Tasks Completion</h6>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="small font-weight-bold">OPCR <span
-                                            class="float-right">90%</span></h4>
+                                    <h4 class="small font-weight-bold">Faculty Loading <span
+                                            class="float-right"><?php
+                                            // Create a MySQLi connection
+                                            $conn = new mysqli("localhost", "root", "", "dams2");
+
+                                            // Check connection
+                                            if ($conn->connect_error) {
+                                                die("Connection failed: " . $conn->connect_error);
+                                            }
+
+                                            $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
+                                                      FROM task_status
+                                                      WHERE office_id = 8";
+
+                                            $result = $conn->query($query);
+                                            if ($result->num_rows > 0) {
+                                                $row = $result->fetch_assoc();
+                                                echo $row['percentage_completed'] . "%";
+                                            } else {
+                                                echo "0%";
+                                            }
+
+                                            $conn->close();
+                                            ?></span></h4>
                                     <div class="progress mb-4">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: <?php echo 90 . "%";?>"
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width:<?php
+                                                // Create a MySQLi connection
+                                                $conn = new mysqli("localhost", "root", "", "dams2");
+
+                                                // Check connection
+                                                if ($conn->connect_error) {
+                                                    die("Connection failed: " . $conn->connect_error);
+                                                }
+
+                                                $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
+                                                          FROM task_status
+                                                          WHERE office_id = 8";
+
+                                                $result = $conn->query($query);
+                                                if ($result->num_rows > 0) {
+                                                    $row = $result->fetch_assoc();
+                                                    echo $row['percentage_completed'] . "%";
+                                                } else {
+                                                    echo "0%";
+                                                }
+
+                                                $conn->close();
+                                                ?>
+                                                "
+
                                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
-                                    <h4 class="small font-weight-bold">Room Utilization Matrix <span
-                                            class="float-right">40%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
-                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Schedule <span
-                                            class="float-right">60%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar" role="progressbar" style="width: 60%"
-                                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">IPCR <span
-                                            class="float-right">80%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Account Setup <span
-                                            class="float-right">Complete!</span></h4>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                   
                                 </div>
                             </div>
 

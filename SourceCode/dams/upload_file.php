@@ -46,6 +46,8 @@ include "php/functions.php";
                 $notif = notifications($name,$task_name);
                 
                 $user_notif = user_notif_dean($users_id,$notif);
+
+                $act_log = activity_log_submitted_documents($users_id,$task_name);
                 
 
               

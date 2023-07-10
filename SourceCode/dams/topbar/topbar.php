@@ -91,7 +91,7 @@
                                 function notif(){
                                         $.ajax({
                                         type: "GET",
-                                        url: "reload.php",
+                                        url: "../admin/reload.php",
                                         success: function(response){
                                             console.log(response);
                                         $.each(response,function (key,value){

@@ -1,14 +1,7 @@
         <?php 
-          // $conn = new mysqli("localhost","root","","dams");
-          //                               if ($conn->connect_error) {
-          //                                       die("Connection failed : " . $conn->connect_error);
-          //                               }
-          //                               $sql = "SELECT * FROM data_start";
-          //                               $result = $conn->query($sql);
-
-          //                               echo $result;
-
-          //                               $conn->close();
+        session_start();
+        $id = $_SESSION['user_id'];
+        
 
 
         
@@ -16,10 +9,23 @@
                                         if ($conn->connect_error) {
                                                 die("Connection failed : " . $conn->connect_error);
                                         }
+                                       
 
                 // END NG CONNECTION
                                                 //<- START NG QUERY NG SELECT ALL DATA SA DATABASE TABLE
-                                            $sql = "SELECT * FROM notifications ORDER BY `date` ASC";     //QUERY
+                                             $sql = "SELECT 
+                                                            n.content AS 'content',
+                                                            n.date AS 'date',
+                                                            n.is_task,
+                                                            un.user_id,
+                                                                un.notif_id
+                                                        FROM 
+                                                            notifications n
+                                                        LEFT JOIN 
+                                                            user_notifications un ON un.notif_id = n.notif_id
+                                                        WHERE 
+                                                        is_task = 'yes'";  
+
                                             $result = $conn->query($sql);      //EXCUTION
                                             $result_array = [];
                                             if(mysqli_num_rows($result) > 0){
@@ -30,7 +36,9 @@
                                                         echo json_encode($result_array);
                                             }
                                             else{
-                                                echo "";
+                                                echo "a";
+
+;
                                             }
 
 

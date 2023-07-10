@@ -91,19 +91,42 @@ $task_id = $_GET['id'];
 <!-- <a class="btn btn-warning btn-sm" href="deans.php">Back</a> -->
  
 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script type="text/javascript">
-      $(document).on('click','#submit',function(e) {
-  var data = $("#form").serialize();
-  $.ajax({
-         data: data,
-         type: "post",
-         url: "../upload_file.php",
-         success: function(data){
-              alert("Work Submitted: " + data);
+$(document).ready(function() {
+   $("#form").submit(function(e) {
+      e.preventDefault(); // Prevent the form from submitting normally
+
+      // Get the form data
+      var formData = new FormData(this);
+
+      // Send the AJAX request
+      $.ajax({
+         url: "../upload_file.php", // PHP file to handle the insertion
+         type: "POST",
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function(response) {
+            // Handle the response from the PHP file
+          
+              alert(response);
+
+              window.location.href = "pendingDocuments.php";
+
+         // Show a success message or do something with the response
+            
+         },
+         error: function(xhr, status, error) {
+            // Handle errors
+            console.error(error); // Log the error message
          }
+      });
+   });
 });
- });
 </script>
+
 
 
 

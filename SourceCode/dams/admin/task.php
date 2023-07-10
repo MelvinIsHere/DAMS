@@ -1,9 +1,12 @@
  <?php 
+ session_start();
+ $users_id = $_SESSION['user_id'];
 $conn = new mysqli("localhost", "root", "", "dams2");
+include "../php/functions.php";
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $task_name = $_POST['task_name'];
     $description = $_POST['description'];
     $dateStart = $_POST['dateStart'];
@@ -12,13 +15,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $ovcaa = isset($_POST['ovcaa']) ? $_POST['ovcaa'] : null;
     if($deans == 1 ||  $ovcaa == 1 ){
-        if($deans == 1 && $ovcca != 1){
 
-             $conn -> query("INSERT INTO tasks (task_name, task_desc, date_posted, due_date, for_ovcaa,for_deans, for_heads) VALUES ('$task_name','$description', '$dateStart', '$dateEnd','$ovcaa', '$deans', '$department')");
-                // $result = $conn->query($sql);
-                // Print auto-generated id
-                $id = $conn -> insert_id;
-                
+        if ($deans == 1 && $ovcaa == 1) {
+              $id = adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans); //insert task into the deans
+
+
+                $sql = "SELECT department_id FROM departments";
+                $result = mysqli_query($conn,$sql);
+                if ($result) {
+                    while($row = mysqli_fetch_array($result)){
+                        $dept_id = $row['department_id'];
+                        $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
+        }
+        $notif_id = insertTaskNotification($task_name); //insert task notifications to others
+        $user_notif = user_notif_dean($users_id,$notif_id); // insert thee status
+        $act_log = activity_log($users_id);
+    }
+
+  
+
+        // header("Location: admin.php?success=TaskUploaded");
+    echo "success";
+        }
+
+
+
+
+        else if($deans == 1 && $ovcaa != 1){
+
+           $id = adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans); //insert task into the deans
+
+
                 $sql = "SELECT department_id FROM departments WHERE department_abbrv != 'OVCAA'";
                 $result = mysqli_query($conn,$sql);
                 if ($result) {
@@ -26,17 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $dept_id = $row['department_id'];
                         $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
         }
+        $notif_id = insertTaskNotification($task_name); //insert task notifications to others
+        $user_notif = user_notif_dean($users_id,$notif_id); // insert thee status
+        $act_log = activity_log($users_id);
     }
 
   
 
-        header("Location: admin.php?success=TaskUploaded");
+        // header("Location: admin.php?success=TaskUploaded");
+    echo "success";
         }
         else{
 
-            $conn -> query("INSERT INTO tasks (task_name, task_desc, date_posted, due_date, for_ovcaa,for_deans) VALUES ('$task_name','$description', '$dateStart', '$dateEnd','$ovcaa', '$deans')");
-                
-                $id = $conn -> insert_id;
+           $id = adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans); //insert task to ovcaa
                 echo $id;
                 $sql = "SELECT department_id FROM departments WHERE department_abbrv = 'OVCAA'";
                 $result = mysqli_query($conn,$sql);
@@ -45,22 +74,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $dept_id = $row['department_id'];
                         $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
         }
+         $notif_id = insertTaskNotification($task_name); //insert task notifications to others
+        $user_notif = user_notif_dean($users_id,$notif_id); // insert thee status
+        $act_log = activity_log($users_id);
     }
 
   
 
-        header("Location: generate_task.php?success=TaskUploaded");
+        // header("Location: generate_task.php?success=TaskUploaded");
+        echo "success";
 
         }
 
    
     }
     else{
-        header("Location: generate_task.php?error=department required");
-    }
-}
-     else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        // header("Location: generate_task.php?error=department required");
+        echo "no";
     }
 
 

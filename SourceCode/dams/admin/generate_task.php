@@ -34,103 +34,82 @@ session_start();
 <html>
 <?php  include "../header/header.php"?>
 <body>
-    <div id="wrapper">
-    <?php
-     include "../sidebar/sidebar.php";
-     ?>
-  <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+    <nav class="navigation">
+        <h3 class="title-nav">Create Task</h3><br>
+    </nav>
+    <center>
+        <div>
+            <form method="POST" action="" id="form">
+                <div class="row" id="row">
+                    <div class="col-xs-12 col-sm-7">
+                        <label>Task Name</label>
+                        <br>
+                        <input type="text" class="input-date" placeholder="Type task name..." name="task_name">
+                        <br>
+                        <br>
+                        <label>Task Description</label>
+                        <br>
+                        <input type="text" class="input-description" placeholder="Type something..." name="description">
 
-            <!-- Main Content -->
-            <div id="content">
-    <?php include "../topbar/topbar.php"; ?>
-     
-         <!-- CREATE TASK INPUT -->
-                 <div class="container-fluid tabcontent" id="opcrTask">
-
-
-
-                   
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-1 text-gray-800">Task Faculty Loading</h1>
-                  
-                    
-
-                     <!-- GENERATE OPCR REPORT -->
-                    
-
-
-                    <!-- Content Row -->
-                    <div class="container-fluid">
-                        
-                            <form action="task.php" method="POST">
-                            
-                                <div class="form-group">
-                                <label for="name" class="text-left">Task Name</label>
-                                <input type="text" class="form-control" id="name" name="task_name" placeholder="Task Name" required>
-                              </div>
-                              <div class="form-group">
-                                <label for="description" class="text-left">Description</label>
-                                <input type="text" class="form-control" id="description" name="description" placeholder="description" required>
-                              </div>
-                              <div class="form-group">
-                                <label for="dateStart">Date Start:</label>
-                                <input type="date" class="form-control" id="dateStart" name="dateStart" required>
-                              </div>
-                             <div class="form-group">
-                                <label for="dateEnd">Date End:</label>
-                                <input type="date" class="form-control" id="dateEnd" name="dateEnd" required>
-                              </div>
-                              <div class="checkbox">
-                                    <label><input type="checkbox" name="dean" value="1" > Deans</label>
-                                    
-                                    <label><input type="checkbox" name="ovcaa" value="1"> OVCAA</label>
-                                    
-                                </div>
-
-                              <button type="submit" class="btn btn-primary pull-right">Submit</button>
-                            </form>
-                        
-
-                     
-
+                    </div>              
+                    <div class="col-xs-12 col-sm-4">
+                        <div>
+                            <label class="label">Date Start</label>
+                            <br>
+                            <input type="date" name="dateStart" class="input-date" />
+                            <br>
+                            <br>
+                            <label class="label">Due Date</label>
+                            <br>
+                            <input type="date" name="dateEnd" class="input-date" />
+                            <br><br>
+                        <div>
+                            <h5>Assigned to:</h5>
+                            <input type="checkbox" name="dean" value="1"> Deans of Colleges   
+                            <input type="checkbox" name="ovcaa" value="1">  Office of Vice Chancellor of Academic Affairs
+                        </div>
+                        </div>
+                        <br>
+                        <button id="submit"type="submit"  name="submit"class="btn btn-primary btn-upload">Upload</button>
                     </div>
-
                 </div>
-                
-               
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
- 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
-    <script src="js/demo/datatables-demo.js"></script>
-    <script src="js/demo/viewTask_details.js"></script>
-    <script src="js/demo/faculty_loading.js"></script>
-    <script src="js/demo/faculty_sched_table.js"></script>
-     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+            </form>
+        </div>
+    </center>
 
 
-<?php }
-}?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+   $("#form").submit(function(e) {
+      e.preventDefault(); // Prevent the form from submitting normally
+
+      // Get the form data
+      var formData = new FormData(this);
+
+      // Send the AJAX request
+      $.ajax({
+         url: "task.php", // PHP file to handle the insertion
+         type: "POST",
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function(response) {
+            // Handle the response from the PHP file
+            $("#form").trigger('reset');
+            alert(response);
+         },
+         error: function(xhr, status, error) {
+            // Handle errors
+            console.error(error); // Log the error message
+         }
+      });
+   });
+});
+</script>
+
 </body>
 </html>
+
+<?php }}?>

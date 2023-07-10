@@ -10,8 +10,8 @@ if ($conn->connect_error) {
 $sql = "SELECT COUNT(*) AS notification_count
 FROM user_notifications un
 LEFT JOIN notifications n ON n.notif_id = un.notif_id
-WHERE un.user_id = '$user_id'
-AND status = 0
+WHERE un.user_id != '$user_id'
+AND status = 0 
 ;";
 $result = $conn->query($sql);
 
