@@ -117,7 +117,7 @@ session_start();
                                         </tr>
                                     </thead>
                                     
-                                    <tbody>
+                                       <tbody>
                                          <?php 
                                              $conn = new mysqli("localhost","root","","dams2");
                                             if ($conn->connect_error) {
@@ -133,6 +133,7 @@ session_start();
                                                     u.type,
                                                     u.email,
                                                     ts.is_completed,
+                                                    ts.status_id AS 'status_id',
                                                     t.due_date,
                                                     t.task_name,
                                                     f.file_id
@@ -142,7 +143,8 @@ session_start();
                                                     LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
                                                     LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
                                                     LEFT JOIN file_table f ON f.file_owner_id = u.user_id
-                                                    WHERE t.task_id IS NOT NULL";
+                                                    WHERE task_name = 'Accomplishment Report'
+                                                    GROUP BY dp.user_id";
                                                 $result = $conn->query($sql);
                                                 while($row = mysqli_fetch_array($result)){
                                                    $user_id = $row['user_id'];
@@ -152,6 +154,7 @@ session_start();
                                                    $due_date = $row['due_date'];
                                                    $status = $row['is_completed'];
                                                    $file_id = $row['file_id'];
+                                                   $status_id = $row['status_id'];
 
 
                                                     
@@ -179,7 +182,9 @@ session_start();
                                                 }
 
                                              ?></td>
-                                             <td><a class="btn btn-primary" href="../view_files.php?id=<?php echo $file_id?>">View<a></td>
+                                             <td><a class="btn btn-primary" href="../view_files.php?id=<?php echo $file_id?>">View<a><a class="btn btn-primary" href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report"><i class="fa-thin fa-eye"></i></a>
+</td>
+
                                         </tr>
                                         <?php }?>
                                     </tbody>
@@ -206,82 +211,80 @@ session_start();
                                             <th>Department</th>
                                             <th>Due Date</th>
                                             <th>Document Status</th>
+                                            <th>File</th>
                                         </tr>
                                     </thead>
                                     
-                                    <tbody>
+                                 <tbody>
+                                         <?php 
+                                             $conn = new mysqli("localhost","root","","dams2");
+                                            if ($conn->connect_error) {
+                                                    die("Connection failed : " . $conn->connect_error);
+                                            }
+
+                                                $sql = "
+
+                                                SELECT DISTINCT
+                                                    dp.`department_name`,
+                                                    dp.`department_abbrv`,
+                                                    u.user_id,
+                                                    u.type,
+                                                    u.email,
+                                                    ts.is_completed,
+                                                    ts.status_id AS 'status_id',
+                                                    t.due_date,
+                                                    t.task_name,
+                                                    f.file_id
+
+                                                    FROM departments dp
+                                                    LEFT JOIN users u ON u.user_id = dp.user_id
+                                                    LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                    LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                    LEFT JOIN file_table f ON f.file_owner_id = u.user_id
+                                                    WHERE task_name = 'Faculty Schedule'
+                                                    GROUP BY dp.user_id";
+                                                $result = $conn->query($sql);
+                                                while($row = mysqli_fetch_array($result)){
+                                                   $user_id = $row['user_id'];
+                                                   $email = $row['email'];
+                                                   $position = $row['type'];
+                                                   $abbrv = $row['department_abbrv'];
+                                                   $due_date = $row['due_date'];
+                                                   $status = $row['is_completed'];
+                                                   $file_id = $row['file_id'];
+                                                   $status_id = $row['status_id'];
+
+
+                                                    
+                                                    
+                                                
+                                            ?>
                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
+                                            <td><?php echo $user_id;?></td>
+                                            <td><?php echo $email;?></td>
+                                            <td><?php echo $position;?></td>
+                                            <td><?php echo $abbrv;?></td>
+                                            <td><?php echo $due_date;?></td>
+                                            <td class="<?php if ($status == 1) {
+                                                echo 'ns';
+                                            }
+                                            else{
+                                                echo "submitted";
+                                            }?>">
+                                                <?php
+                                                if ($status == 1 || $status == null) {
+                                                    echo "Not Submitted";
+                                                }
+                                                else{
+                                                    echo "Submitted";
+                                                }
+
+                                             ?></td>
+                                             <td><a class="btn btn-primary" href="../view_files.php?id=<?php echo $file_id?>">View<a><a class="btn btn-primary" href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report">Return</a>
+</td>
+
                                         </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
+                                        <?php }?>
                                     </tbody>
                                 </table>
                             </div>
@@ -300,7 +303,7 @@ session_start();
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
-                                    <thead>
+                                     <thead>
                                         <tr>
                                             <th>id</th>
                                             <th>Full Name</th>
@@ -308,82 +311,80 @@ session_start();
                                             <th>Department</th>
                                             <th>Due Date</th>
                                             <th>Document Status</th>
+                                            <th>File</th>
                                         </tr>
                                     </thead>
                                     
-                                    <tbody>
+                                  <tbody>
+                                         <?php 
+                                             $conn = new mysqli("localhost","root","","dams2");
+                                            if ($conn->connect_error) {
+                                                    die("Connection failed : " . $conn->connect_error);
+                                            }
+
+                                                $sql = "
+
+                                                SELECT DISTINCT
+                                                    dp.`department_name`,
+                                                    dp.`department_abbrv`,
+                                                    u.user_id,
+                                                    u.type,
+                                                    u.email,
+                                                    ts.is_completed,
+                                                    ts.status_id AS 'status_id',
+                                                    t.due_date,
+                                                    t.task_name,
+                                                    f.file_id
+
+                                                    FROM departments dp
+                                                    LEFT JOIN users u ON u.user_id = dp.user_id
+                                                    LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                    LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
+                                                    LEFT JOIN file_table f ON f.file_owner_id = u.user_id
+                                                    WHERE task_name = 'Accomplishment Report'
+                                                    GROUP BY dp.user_id";
+                                                $result = $conn->query($sql);
+                                                while($row = mysqli_fetch_array($result)){
+                                                   $user_id = $row['user_id'];
+                                                   $email = $row['email'];
+                                                   $position = $row['type'];
+                                                   $abbrv = $row['department_abbrv'];
+                                                   $due_date = $row['due_date'];
+                                                   $status = $row['is_completed'];
+                                                   $file_id = $row['file_id'];
+                                                   $status_id = $row['status_id'];
+
+
+                                                    
+                                                    
+                                                
+                                            ?>
                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
+                                            <td><?php echo $user_id;?></td>
+                                            <td><?php echo $email;?></td>
+                                            <td><?php echo $position;?></td>
+                                            <td><?php echo $abbrv;?></td>
+                                            <td><?php echo $due_date;?></td>
+                                            <td class="<?php if ($status == 1) {
+                                                echo 'ns';
+                                            }
+                                            else{
+                                                echo "submitted";
+                                            }?>">
+                                                <?php
+                                                if ($status == 1 || $status == null) {
+                                                    echo "Not Submitted";
+                                                }
+                                                else{
+                                                    echo "Submitted";
+                                                }
+
+                                             ?></td>
+                                             <td><a class="btn btn-primary" href="../view_files.php?id=<?php echo $file_id?>">View<a><a class="btn btn-primary" href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report">Return</a>
+</td>
+
                                         </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns">Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>OPCR</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
-                                         <tr>
-                                            <td>1</td>
-                                            <td>Tiger Nixon</td>
-                                            <td>Staff</td>
-                                            <td>CICS</td>
-                                            <td>06-21-2023</td>
-                                            <td class="ns" >Not Submitted</td>
-                                        </tr>
+                                        <?php }?>
                                     </tbody>
                                 </table>
                             </div>

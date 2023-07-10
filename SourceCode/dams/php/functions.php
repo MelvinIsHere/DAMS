@@ -1,7 +1,7 @@
 <?php
 
 	
-function insertQuery(string $fileName, string $path,string $users_id){
+function insertQuery($fileName,$path,$users_id){
 include "config.php";
  $query = "INSERT INTO file_table(file_name,directory,file_owner_id) VALUES ('$fileName','$path','$users_id')";
  $run = mysqli_query($conn,$query);
@@ -9,9 +9,9 @@ if (!$run) {
 		echo "Error: " . mysqli_error($conn);
 	}
 }
-function updateTaskStats($task_id){
+function updateTaskStats($office_id,$task_id){
 	include "config.php";
-	$update = mysqli_query($conn,"UPDATE task_status SET is_completed = '0' WHERE task_id = '$task_id'");
+	$update = mysqli_query($conn,"UPDATE task_status SET is_completed = '0' WHERE task_id = '$task_id' AND office_id = '$office_id'");
 	if (!$update) {
 		echo "Error: " . mysqli_error($conn);
 	}
@@ -25,6 +25,21 @@ function getName($user_id){
 	if ($info) {
 		$name =  $info['department_name'];
 		return $name;
+	}
+	else{
+		$error = mysqli_error($conn);
+		return $error;
+	}
+
+}
+
+function getDeptId($user_id){
+	include "config.php";
+	$sql = mysqli_query($conn,"SELECT department_id FROM departments WHERE $user_id = '$user_id'");
+	$info = mysqli_fetch_assoc($sql);
+	if ($info) {
+		$id =  $info['department_id'];
+		return $id;
 	}
 	else{
 		$error = mysqli_error($conn);
@@ -154,12 +169,35 @@ function activity_log_submitted_documents($users_id,$task_name){
 
 
 }
-function notifFilter($users_id){
-
+function returnTaskAccomplishment($file_owner_id){
+	include "config.php";
+	$sql = mysqli_query($conn,"UPDATE task_status SET status
+                                                    WHERE f.file_owner_id = '$file_owner_id'");
+	$file = mysqli_fetch_assoc();
+}
+function notifications_return($name,$task_name){
+	include "config.php";
+	$content = $name . "Return your task " . $task_name . "your file is wrong";
+	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','yes')");
+	if(!$sql){
+		return mysqli_error($conn);
+		
+	}
+	else{
+		return $conn->insert_id;
+	}
 
 }
-
-
+function user_notif_update($users_id,$notif_id){
+	include "config.php";
+	$sql = mysqli_query($conn,"INSERT INTO user_notifications(status,notif_id,user_id) VALUES(0,'$notif_id','$users_id')");
+	if(!$sql){
+		return mysqli_error($conn);
+	}
+	else{
+		return "success";
+	}
+}
 
  ?>
 

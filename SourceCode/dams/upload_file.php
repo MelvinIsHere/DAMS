@@ -34,11 +34,12 @@ include "php/functions.php";
                
             }
             else{
-                  $run =  insertQuery($fileName,$path,$users_id);
+                $run =  insertQuery($fileName,$path,$users_id);
                   
              
                move_uploaded_file($fileTmpName,$path);
-                $update = updateTaskStats($task_id);
+                $office_id = getDeptId($users_id);
+                $update = updateTaskStats($office_id,$task_id);
                 
                  $name = getName($users_id);
                 $task_name = getTaskName($task_id);
