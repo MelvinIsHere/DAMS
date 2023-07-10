@@ -42,9 +42,25 @@ session_start();
             <form method="POST" action="" id="form">
                 <div class="row" id="row">
                     <div class="col-xs-12 col-sm-7">
-                        <label>Task Name</label>
+                        <label for="lname" class="form-label">Task name</label>
+                                    <input class="form-control" list="task_names" name="task_name" id="task_name" placeholder="Enter task name">
+                                    <datalist id="task_names">
+                                        <?php 
+                                            include "../config.php";
+                                            $sql = "SELECT task_name FROM tasks_names";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                               $task_names = $row['task_name'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $task_names?>">
+                                      <?php }?>
+                                    </datalist>
+
+                    <!--     <label>Task Name</label>
                         <br>
-                        <input type="text" class="input-date" placeholder="Type task name..." name="task_name">
+                        <input type="text" class="input-date" placeholder="Type task name..." name="task_name"> -->
                         <br>
                         <br>
                         <label>Task Description</label>

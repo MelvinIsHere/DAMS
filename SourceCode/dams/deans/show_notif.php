@@ -24,7 +24,8 @@
                                                         LEFT JOIN 
                                                             user_notifications un ON un.notif_id = n.notif_id
                                                         WHERE 
-                                                        is_task = 'yes'";  
+                                                        is_task = 'yes'
+                                                        ORDER BY `date` DESC";  
 
                                             $result = $conn->query($sql);      //EXCUTION
                                             $result_array = [];
