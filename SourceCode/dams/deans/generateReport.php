@@ -19,6 +19,8 @@ use \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 
 
+
+
 $reader = IOFactory::createReader('Xlsx');
 $spreadsheet = $reader->load("loading.xlsx");
 
@@ -34,7 +36,7 @@ if(!$connection){
 $data = mysqli_query($connection, "
 
 
-SELECT DISTINCT
+SELECT 
 CONCAT(fc.lastname,',',fc.firstname,' ',fc.middlename) 'Name of Faculty',
 fc.is_permanent AS 'permanent',
 fc.is_guest AS 'Guest',
@@ -58,6 +60,10 @@ LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.firstname
 ");
+
+
+
+
 
 $collegeWhereStart = 3;
 $collegeCell = 3;
@@ -190,36 +196,66 @@ while ($item = mysqli_fetch_array($data)) {
             // Increment value
             $currentContentRow++;
 }
-    $counter = 7;
-    while($counter != $currentContentRow){
-
-
+    $row = 7;
+    $rowCount =1;
+    $cRow = 7;
+    while($row <= $currentContentRow){
         // Update the old cell value
-        $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $counter)->getCalculatedValue();
+        $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getCalculatedValue();
         // $cellValueNew = $currentCellValue;
+        $nextRow = $row + 1;
+         $nextvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $nextRow)->getCalculatedValue();
 
-        if ($cellValueCurrent ===  $cellValueOld) {
-            $counters = $counter -1;
+          if($cRow == 7){
+                 if ($cellValueCurrent ==  $nextvalue) {
+                 $spreadsheet->getActiveSheet()
+                    ->setCellValue('Q' . $row, " same");
+                $row++;
+                $rowCount++;
 
+                }   
+              else{
+                    $spreadsheet->getActiveSheet()->unmergeCells('A'.$cRow.':C'.$cRow);
+                    
+                   $spreadsheet->getActiveSheet()->mergeCells('A'.$row.':C'.$cRow);
+                   $spreadsheet->getActiveSheet()->mergeCells('A'.$row.':C'.$cRow);
+
+                   // Get style for the merged cells
+                   $spreadsheet->getActiveSheet()->getStyle('A'.$cRow)->getAlignment()->setHorizontal('center');
+
+                    // Set vertical alignment to center
+                   $cRow = $cRow + $rowCount;
+                   $row++;
+                   $rowCount = 1;
+                }
+        } 
+        else if ($cellValueCurrent ==  $nextvalue) {
+                 $spreadsheet->getActiveSheet()
+        ->setCellValue('Q' . $row, " same");
+            $row++;
+            $rowCount++;
              
-            $spreadsheet->getActiveSheet()->mergeCells('A'.$counter.':C'.$counters);  
-
-                 } 
+        }
 
         else{
-            $spreadsheet->getActiveSheet()->mergeCells('A'.$counter.':C'.($counter));
+        //      $spreadsheet->getActiveSheet()
+        // ->setCellValue('Q' . $row, "not the same");
+         
+           $spreadsheet->getActiveSheet()->mergeCells('A'.$row.':C'.$cRow);
+           $spreadsheet->getActiveSheet()->getStyle('A'.$cRow)->getAlignment()->setHorizontal('center');
+           $cRow = $cRow + $rowCount;
+           $row++;
+           $rowCount = 1;
             
 
         }
+       
 
 
-
-        // Update the old cell value
-        $cellValueOld = $cellValueCurrent;
-   
+      
 
 
-    $counter++;
+    
 
 }
 
