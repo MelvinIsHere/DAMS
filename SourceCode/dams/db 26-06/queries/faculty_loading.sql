@@ -14,6 +14,8 @@ LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
 LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
 LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
 LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+WHERE fl.`dept_id` = 8 # insert dept_id
 GROUP BY fl.`fac_load_id`
 
 GROUP BY cs.`course_id`
