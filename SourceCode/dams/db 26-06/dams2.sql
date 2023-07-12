@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 10, 2023 at 10:59 AM
+-- Generation Time: Jul 11, 2023 at 02:09 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.1.17
 
@@ -38,6 +38,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_course_sp` (IN `in_id` INT(8
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_department_sp` (IN `in_id` INT(8))   BEGIN
 		DELETE FROM `departments`
 		WHERE department_id = in_id;
+	END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_faculty_sp` (IN `in_id` INT(8))   BEGIN
+		DELETE FROM `faculties`
+		WHERE faculty_id = in_id;
 	END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_program_sp` (IN `in_id` INT(8))   BEGIN
@@ -94,6 +99,29 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `new_department_sp` (IN `in_name` VA
 		);
 	END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `new_faculty_sp` (IN `in_fname` VARCHAR(50), IN `in_lname` VARCHAR(50), IN `in_mname` VARCHAR(50), IN `in_suffix` VARCHAR(12), IN `in_dept` VARCHAR(12), IN `in_perm` BOOL, IN `in_guest` BOOL, IN `in_partTime` BOOL)   BEGIN
+		insert into faculties(`firstname`,
+			`lastname`,
+			`middlename`,
+			`suffix`,
+			`department_id`,
+			`is_permanent`,
+			`is_guest`,
+			`is_partTime`
+		)
+		values(in_fname,
+			in_lname,
+			in_mname,
+			in_suffix,
+			(SELECT department_id
+			FROM departments
+			WHERE department_abbrv = in_dept),
+			in_perm,
+			in_guest,
+			in_partTime
+		);
+	END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `new_program_sp` (IN `in_title` VARCHAR(50), IN `in_dept` VARCHAR(12), IN `in_abbrv` VARCHAR(12))   BEGIN
 		INSERT INTO `programs` (
 			`program_name`,
@@ -137,6 +165,84 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `new_semester_sp` (IN `in_desc` VARC
 		);
 	END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `new_task_sp` (IN `in_name` VARCHAR(50), IN `in_desc` VARCHAR(50), IN `in_docName` VARCHAR(50), IN `in_post` DATE, IN `in_due` DATE, IN `in_ovcaa` BOOL, IN `in_deans` BOOL, IN `in_heads` BOOL, IN `in_acadyr` VARCHAR(9), IN `in_sem` VARCHAR(12))   BEGIN
+		DECLARE LAST_INSERT_ID INT;
+
+		START TRANSACTION;
+
+	    -- Step 2: Insert into the first table
+		INSERT INTO tasks(`task_name`,
+			`task_desc`,
+			`document_id`,
+			`date_posted`,
+			`due_date`,
+			`for_ovcaa`,
+			`for_deans`,
+			`for_heads`,
+			`acad_year_id`,
+			`sem_id`
+		)
+		VALUES(in_name,
+			in_desc,
+			(SELECT doc_template_id
+			FROM document_templates
+			WHERE template_title=in_docName),
+			in_post,
+			in_due,
+			in_ovcaa,
+			in_deans,
+			in_heads,
+			(SELECT acad_year_id
+			FROM academic_year
+			WHERE acad_year = in_acadyr),
+			(SELECT semester_id
+			FROM semesters
+			WHERE sem_description=in_sem)
+		);
+		
+		-- Retrieve the last inserted ID
+		SET LAST_INSERT_ID = LAST_INSERT_ID();
+		
+		IF in_ovcaa=1 THEN
+			INSERT INTO `task_status_deans`(`task_id`,`office_id`,`is_completed`)
+			VALUES (LAST_INSERT_ID,
+				(SELECT department_id
+				FROM departments
+				WHERE department_abbrv="OVCAA"),
+				0
+			);
+		ELSEIF in_heads=1 THEN
+			INSERT INTO `task_status_deans`(`task_id`,`office_id`,`is_completed`)
+				VALUES (LAST_INSERT_ID,
+					(SELECT department_id
+					FROM departments
+					WHERE department_abbrv="CICS"),
+					0
+				);
+			INSERT INTO `task_status_deans`(`task_id`,`office_id`,`is_completed`)
+				VALUES (LAST_INSERT_ID,
+					(SELECT department_id
+					FROM departments
+					WHERE department_abbrv="CAS"),
+					0
+				);
+		end if;
+		COMMIT;
+	END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `show_fac_titles` (IN `in_fac_id` INT(8))   BEGIN
+		SELECT
+		CASE tt.`title_description`
+			WHEN 'Dean' THEN CONCAT(tt.`title_description`,' ',dp.department_abbrv)
+			ELSE tt.`title_description`
+		END "Titles"
+		FROM faculty_titles ft
+		LEFT JOIN titles tt ON ft.`title_id`=tt.`title_id`
+		LEFT JOIN faculties fc ON ft.`faculty_id`=fc.`faculty_id`
+		LEFT JOIN departments dp ON fc.`department_id`=dp.department_id
+		WHERE fc.`faculty_id` = in_fac_id; # 1 is ID of faculty
+	END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_academicYear_sp` (IN `in_id` INT(8), IN `in_desc` VARCHAR(9))   BEGIN
 		UPDATE `academic_year` 
 		SET 
@@ -164,6 +270,21 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_department_sp` (IN `in_id` I
 			`department_name` = in_name,
 			`department_abbrv` = in_abbrv
 		WHERE department_id = in_id;
+	END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_faculty_sp` (IN `in_fname` VARCHAR(50), IN `in_lname` VARCHAR(50), IN `in_mname` VARCHAR(50), IN `in_suffix` VARCHAR(12), IN `in_dept` VARCHAR(12), IN `in_perm` BOOL, IN `in_guest` BOOL, IN `in_partTime` BOOL)   BEGIN
+		UPDATE `faculties` 
+		SET `firstname`=in_fname,
+			`lastname`=in_lname,
+			`middlename`=in_mname,
+			`suffix`=in_suffix,
+			`department_id`=(SELECT department_id
+					FROM departments
+					WHERE department_abbrv = in_dept),
+			`is_permanent`=in_perm,
+			`is_guest`=in_guest,
+			`is_partTime`=in_partTime
+		WHERE faculty_id = in_id;
 	END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_program_sp` (IN `in_id` INT(8), IN `in_title` VARCHAR(50), IN `in_dept` VARCHAR(12), IN `in_abbrv` VARCHAR(12))   BEGIN
@@ -198,6 +319,30 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_semester_sp` (IN `in_id` INT
 		SET 
 			`sem_description` = in_desc
 		WHERE semester_id = in_id;
+	END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `view_facultyLoading_byDepartment_sp` (IN `in_dept_abbrv` VARCHAR(12))   BEGIN
+		SELECT
+		getFullName_surnameFirst(fc.firstname,fc.middlename,fc.lastname,fc.`suffix`) "Name of Faculty",
+		cs.course_code "Course Code",
+		getProg_sec(pr.`program_abbrv`,sc.`section_name`) "Section",
+		sc.no_of_students "No. of Students",
+		cs.`units` "Total Units",
+		cs.`lec_hrs_wk` "Lec. hrs/wk",
+		cs.`lab_hrs_wk` "Lab. hrs/wk",
+		SUM(cs.`lec_hrs_wk`+cs.`lab_hrs_wk`) "Total hrs/wk",
+		cs.`course_description` "Course Description"
+		FROM
+		faculty_loadings fl
+		LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+		LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
+		LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+		LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+		LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+		WHERE fl.`dept_id` = (select department_id
+		from departments
+		where department_abbrv=in_dept_abbrv)
+		GROUP BY fl.`fac_load_id`;
 	END$$
 
 --
@@ -399,25 +544,26 @@ CREATE TABLE `faculty_loadings` (
   `course_id` int(8) NOT NULL,
   `section_id` int(8) NOT NULL,
   `acad_year_id` int(8) NOT NULL,
-  `sem_id` int(8) NOT NULL
+  `sem_id` int(8) NOT NULL,
+  `dept_id` int(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `faculty_loadings`
 --
 
-INSERT INTO `faculty_loadings` (`fac_load_id`, `faculty_id`, `course_id`, `section_id`, `acad_year_id`, `sem_id`) VALUES
-(1, 1, 15, 12, 1, 2),
-(2, 2, 1, 15, 1, 2),
-(3, 2, 2, 16, 1, 2),
-(4, 2, 3, 16, 1, 2),
-(5, 3, 4, 3, 1, 2),
-(6, 3, 4, 4, 1, 2),
-(7, 15, 5, 5, 1, 2),
-(8, 15, 5, 6, 1, 2),
-(9, 16, 8, 1, 1, 2),
-(10, 16, 8, 2, 1, 2),
-(11, 16, 8, 3, 1, 2);
+INSERT INTO `faculty_loadings` (`fac_load_id`, `faculty_id`, `course_id`, `section_id`, `acad_year_id`, `sem_id`, `dept_id`) VALUES
+(1, 1, 15, 12, 1, 2, 8),
+(2, 2, 1, 15, 1, 2, 8),
+(3, 2, 2, 16, 1, 2, 8),
+(4, 2, 3, 16, 1, 2, 8),
+(5, 3, 4, 3, 1, 2, 8),
+(6, 3, 4, 4, 1, 2, 8),
+(7, 15, 5, 5, 1, 2, 8),
+(8, 15, 5, 6, 1, 2, 8),
+(9, 16, 8, 1, 1, 2, 8),
+(10, 16, 8, 2, 1, 2, 8),
+(11, 16, 8, 3, 1, 2, 8);
 
 -- --------------------------------------------------------
 
@@ -593,15 +739,16 @@ INSERT INTO `tasks` (`task_id`, `task_name`, `task_desc`, `document_id`, `date_p
 (7, 'TASK ', 'TASK', 0, '2023-07-03', '2023-07-03', 1, 0, 0, 0, 0),
 (8, 'TASK ', 'TASK', 0, '2023-07-03', '2023-07-03', 1, 0, 0, 0, 0),
 (9, 'TASK ', 'TASK', 0, '2023-07-03', '2023-07-03', 1, 0, 0, 0, 0),
-(10, 'Faculty Loading', 'Faculty Loading AY 22-23, First Sem)', 1, '2022-08-01', '2022-12-18', 0, 1, 0, 1, 1);
+(10, 'Faculty Loading', 'Faculty Loading AY 22-23, First Sem)', 1, '2022-08-01', '2022-12-18', 0, 1, 0, 1, 1),
+(11, 'Faculty Loading', 'Second Semester 23-24', 1, '0000-00-00', '0000-00-00', 0, 1, 0, 1, 2);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `task_status`
+-- Table structure for table `task_status_deans`
 --
 
-CREATE TABLE `task_status` (
+CREATE TABLE `task_status_deans` (
   `status_id` int(8) NOT NULL,
   `task_id` int(8) NOT NULL,
   `office_id` int(8) NOT NULL,
@@ -609,10 +756,10 @@ CREATE TABLE `task_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `task_status`
+-- Dumping data for table `task_status_deans`
 --
 
-INSERT INTO `task_status` (`status_id`, `task_id`, `office_id`, `is_completed`) VALUES
+INSERT INTO `task_status_deans` (`status_id`, `task_id`, `office_id`, `is_completed`) VALUES
 (1, 1, 9, 1),
 (2, 2, 8, 0),
 (3, 3, 8, 1),
@@ -813,9 +960,9 @@ ALTER TABLE `tasks`
   ADD PRIMARY KEY (`task_id`);
 
 --
--- Indexes for table `task_status`
+-- Indexes for table `task_status_deans`
 --
-ALTER TABLE `task_status`
+ALTER TABLE `task_status_deans`
   ADD PRIMARY KEY (`status_id`);
 
 --
@@ -852,7 +999,7 @@ ALTER TABLE `academic_year`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `course_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `course_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -870,7 +1017,7 @@ ALTER TABLE `document_templates`
 -- AUTO_INCREMENT for table `faculties`
 --
 ALTER TABLE `faculties`
-  MODIFY `faculty_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `faculty_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `faculty_loadings`
@@ -918,12 +1065,12 @@ ALTER TABLE `semesters`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `task_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `task_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `task_status`
+-- AUTO_INCREMENT for table `task_status_deans`
 --
-ALTER TABLE `task_status`
+ALTER TABLE `task_status_deans`
   MODIFY `status_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
