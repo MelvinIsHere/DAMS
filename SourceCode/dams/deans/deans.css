@@ -4601,6 +4601,18 @@ input[type="button"].btn-block {
   justify-content: space-between;*/
 }
 
+.editModal-body, #facultyName{
+  width: 100%;
+  border-radius: 5px;
+  border: solid 1px;
+}
+
+#courseCode{
+  width: 100%;
+  border-radius: 5px;
+  border: solid 1px; 
+}
+
 .card-title {
   margin-bottom: 0.75rem;
 }
