@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 11, 2023 at 02:09 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.1.17
+-- Generation Time: Jul 12, 2023 at 05:00 AM
+-- Server version: 10.4.25-MariaDB
+-- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -348,7 +348,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `view_facultyLoading_byDepartment_sp
 --
 -- Functions
 --
-CREATE DEFINER=`root`@`localhost` FUNCTION `getFullName` (`firstname` VARCHAR(50), `middlename` VARCHAR(50), `lastname` VARCHAR(50), `suffix` VARCHAR(4)) RETURNS VARCHAR(255) CHARSET utf8mb4 COLLATE utf8mb4_general_ci  BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `getFullName` (`firstname` VARCHAR(50), `middlename` VARCHAR(50), `lastname` VARCHAR(50), `suffix` VARCHAR(4)) RETURNS VARCHAR(255) CHARSET utf8mb4  BEGIN
     DECLARE full_name VARCHAR(255);
     SET full_name = firstname;
     
@@ -365,7 +365,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `getFullName` (`firstname` VARCHAR(50
     RETURN full_name;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `getFullName_surnameFirst` (`firstname` VARCHAR(50), `middlename` VARCHAR(50), `lastname` VARCHAR(50), `suffix` VARCHAR(4)) RETURNS VARCHAR(255) CHARSET utf8mb4 COLLATE utf8mb4_general_ci  BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `getFullName_surnameFirst` (`firstname` VARCHAR(50), `middlename` VARCHAR(50), `lastname` VARCHAR(50), `suffix` VARCHAR(4)) RETURNS VARCHAR(255) CHARSET utf8mb4  BEGIN
     DECLARE full_name VARCHAR(255);
     SET full_name = CONCAT(lastname, ',', ' ', firstname);
     
@@ -380,7 +380,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `getFullName_surnameFirst` (`firstnam
     RETURN full_name;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `getProg_sec` (`prog_abbrv` VARCHAR(12), `section` VARCHAR(8)) RETURNS VARCHAR(20) CHARSET utf8mb4 COLLATE utf8mb4_general_ci  BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `getProg_sec` (`prog_abbrv` VARCHAR(12), `section` VARCHAR(8)) RETURNS VARCHAR(20) CHARSET utf8mb4  BEGIN
     DECLARE prog_sec VARCHAR(20);
     SET prog_sec = CONCAT(prog_abbrv, ' ', section);
 
@@ -398,7 +398,7 @@ DELIMITER ;
 CREATE TABLE `academic_year` (
   `acad_year_id` int(8) NOT NULL,
   `acad_year` varchar(9) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `academic_year`
@@ -422,7 +422,7 @@ CREATE TABLE `courses` (
   `lec_hrs_wk` double(4,2) NOT NULL,
   `rle_hrs_wk` double(4,2) NOT NULL,
   `lab_hrs_wk` double(4,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `courses`
@@ -458,7 +458,7 @@ CREATE TABLE `departments` (
   `department_id` int(8) NOT NULL,
   `department_name` varchar(50) NOT NULL,
   `department_abbrv` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `departments`
@@ -483,7 +483,7 @@ CREATE TABLE `document_templates` (
   `ref_no` varchar(50) NOT NULL,
   `effectivity_date` date NOT NULL,
   `rev_no` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `document_templates`
@@ -508,7 +508,7 @@ CREATE TABLE `faculties` (
   `is_permanent` int(4) NOT NULL,
   `is_guest` int(4) NOT NULL,
   `is_partTime` int(4) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `faculties`
@@ -546,7 +546,7 @@ CREATE TABLE `faculty_loadings` (
   `acad_year_id` int(8) NOT NULL,
   `sem_id` int(8) NOT NULL,
   `dept_id` int(8) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `faculty_loadings`
@@ -575,7 +575,7 @@ CREATE TABLE `faculty_titles` (
   `fac_title_id` int(8) NOT NULL,
   `faculty_id` int(8) NOT NULL,
   `title_id` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `faculty_titles`
@@ -600,7 +600,7 @@ CREATE TABLE `file_table` (
   `directory` varchar(255) NOT NULL,
   `date` date NOT NULL DEFAULT current_timestamp(),
   `file_owner_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `file_table`
@@ -619,7 +619,7 @@ CREATE TABLE `notifications` (
   `notif_id` int(11) NOT NULL,
   `content` varchar(255) NOT NULL,
   `date` date NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `notifications`
@@ -639,7 +639,7 @@ CREATE TABLE `programs` (
   `program_title` varchar(50) NOT NULL,
   `department_id` int(8) NOT NULL,
   `program_abbrv` varchar(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `programs`
@@ -661,7 +661,7 @@ CREATE TABLE `sections` (
   `section_name` varchar(8) NOT NULL,
   `semester_id` int(8) NOT NULL,
   `no_of_students` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sections`
@@ -695,7 +695,7 @@ INSERT INTO `sections` (`section_id`, `program_id`, `section_name`, `semester_id
 CREATE TABLE `semesters` (
   `semester_id` int(8) NOT NULL,
   `sem_description` varchar(12) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `semesters`
@@ -704,6 +704,18 @@ CREATE TABLE `semesters` (
 INSERT INTO `semesters` (`semester_id`, `sem_description`) VALUES
 (1, 'First'),
 (2, 'Second');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_services`
+--
+
+CREATE TABLE `student_services` (
+  `student_service_id` int(8) NOT NULL,
+  `student_service_name` varchar(50) NOT NULL,
+  `student_service_abbrv` varchar(12) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -723,7 +735,7 @@ CREATE TABLE `tasks` (
   `for_heads` tinyint(1) NOT NULL,
   `acad_year_id` int(8) NOT NULL,
   `sem_id` int(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tasks`
@@ -753,7 +765,7 @@ CREATE TABLE `task_status_deans` (
   `task_id` int(8) NOT NULL,
   `office_id` int(8) NOT NULL,
   `is_completed` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `task_status_deans`
@@ -775,13 +787,39 @@ INSERT INTO `task_status_deans` (`status_id`, `task_id`, `office_id`, `is_comple
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `task_status_heads`
+--
+
+CREATE TABLE `task_status_heads` (
+  `status_id` int(8) NOT NULL,
+  `task_id` int(8) NOT NULL,
+  `office_id` int(8) NOT NULL,
+  `is_completed` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_status_ovcaa`
+--
+
+CREATE TABLE `task_status_ovcaa` (
+  `status_id` int(8) NOT NULL,
+  `task_id` int(8) NOT NULL,
+  `office_id` int(8) NOT NULL,
+  `is_completed` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `titles`
 --
 
 CREATE TABLE `titles` (
   `title_id` int(8) NOT NULL,
   `title_description` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `titles`
@@ -808,7 +846,7 @@ CREATE TABLE `users` (
   `img` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
@@ -830,7 +868,7 @@ CREATE TABLE `user_notifications` (
   `status` varchar(5) NOT NULL DEFAULT '0',
   `notif_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user_notifications`
@@ -954,6 +992,12 @@ ALTER TABLE `semesters`
   ADD PRIMARY KEY (`semester_id`);
 
 --
+-- Indexes for table `student_services`
+--
+ALTER TABLE `student_services`
+  ADD PRIMARY KEY (`student_service_id`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
@@ -963,6 +1007,18 @@ ALTER TABLE `tasks`
 -- Indexes for table `task_status_deans`
 --
 ALTER TABLE `task_status_deans`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `task_status_heads`
+--
+ALTER TABLE `task_status_heads`
+  ADD PRIMARY KEY (`status_id`);
+
+--
+-- Indexes for table `task_status_ovcaa`
+--
+ALTER TABLE `task_status_ovcaa`
   ADD PRIMARY KEY (`status_id`);
 
 --
@@ -1062,6 +1118,12 @@ ALTER TABLE `semesters`
   MODIFY `semester_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `student_services`
+--
+ALTER TABLE `student_services`
+  MODIFY `student_service_id` int(8) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
@@ -1072,6 +1134,18 @@ ALTER TABLE `tasks`
 --
 ALTER TABLE `task_status_deans`
   MODIFY `status_id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `task_status_heads`
+--
+ALTER TABLE `task_status_heads`
+  MODIFY `status_id` int(8) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `task_status_ovcaa`
+--
+ALTER TABLE `task_status_ovcaa`
+  MODIFY `status_id` int(8) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `titles`
