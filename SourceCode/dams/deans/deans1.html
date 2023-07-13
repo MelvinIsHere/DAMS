@@ -672,96 +672,59 @@
 
              <div class="container-fluid tabcontent" id="pendingDocu" style="display: none;">
                 <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h1">Pending Task</h1>
-                </div>
+                <div>
+                                        <!-- Page Heading -->
+                    <h1 class="h3 mb-1 text-gray-800">Pending Task</h1>
 
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
                     <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
+                        <div class="card" id="cardbtn" style="margin-top:20px">
+                            <div class="card-body" id="card-body" style="height: 140px;  width: auto;">
                                 <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
+                                    <h3 class="h3 mb-1 text-gray-800">Accomplishment Report</h3>
+                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
                                     
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="#" onclick="openCity(event,'pending-Details')" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                      <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                        <div class="col">
-                        <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
-                                <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
-                                    
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                                    <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" style="margin-top: 40px; margin-right: 50px;">View Assigned Task</a>
                                 </div>
                             </div>
                             
                         </div>
                     </div>
                     
-                        <div class="col">
+                    <div class="col">
                         <div class="card" style="margin-top:20px">
-                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
+                            <div class="card-body" id="card-body" style="height: 140px;  width:auto;">
                                 <div class="task_info" style="white-space: nowrap;">
-                                    <p class="task_title"><b>OPCR</b></p>
-                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
-                                    <p class="task_info_text">
-                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
+                                    <h3 class="h3 mb-1 text-gray-800">Faculty Loading</h3>
+                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
                                     
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                                    <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" style="margin-top: 40px; margin-right: 50px;">View Assigned Task</a>
                                 </div>
                             </div>
                             
                         </div>
                     </div>
+
+                    <div class="col">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body" id="card-body"
+                             style="height: 140px;  width: auto;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <h3 class="h3 mb-1 text-gray-800">Faculty Schedule</h3>
+                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" style="margin-top: 40px; margin-right: 50px;">View Assigned Task</a>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
         <script>
     const taskTitle = document.querySelectorAll('.task_title');
     taskTitle.forEach((taskTitle) => {

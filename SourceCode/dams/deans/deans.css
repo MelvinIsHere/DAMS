@@ -4582,6 +4582,17 @@ input[type="button"].btn-block {
   padding: 1.25rem;
   display: flex;
   justify-content: space-between;
+  width: auto;
+}
+
+#pendingTask-button{
+  flex: 1 1 auto;
+  min-height: 1px;
+  min-width: 20px;
+  max-width:1200px;
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
 }
  
 
