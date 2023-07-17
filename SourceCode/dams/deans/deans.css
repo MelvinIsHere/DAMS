@@ -2381,11 +2381,35 @@ fieldset:disabled a.btn {
 
 #viewTaskbtn{
   position: relative;
-
   width: 100%;
   max-width: 250px;
   min-width: 100px;
 }
+
+#viewPending{
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  min-width: 100px;
+  margin-left: 150%;
+}
+
+#viewPendingFaculty{
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  min-width: 100px;
+  margin-left: 180%;
+}
+
+#viewPendingSched{
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  min-width: 100px;
+  margin-left: 180%;
+}
+
 
 #viewTask-back{
   position: relative;
