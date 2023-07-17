@@ -19,7 +19,7 @@ session_start();
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id
+            LEFT JOIN departments d ON u.department_id = d.department_id
             WHERE unique_id = '$users_id' 
     
             ");
@@ -80,7 +80,7 @@ session_start();
                                                         $pending_count = mysqli_query($conn,"SELECT
                                                         COUNT(*)
                                                         FROM tasks tt
-                                                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                                                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                                                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
                                                         WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND ts.`is_completed` = 1;");
                                                         $result = mysqli_fetch_assoc($pending_count);
@@ -116,7 +116,7 @@ session_start();
                                                         SELECT
                                                         COUNT(*)
                                                         FROM tasks tt
-                                                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                                                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                                                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
                                                         WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND ts.`is_completed` = 0;");
                                                         $result = mysqli_fetch_assoc($completed_count);

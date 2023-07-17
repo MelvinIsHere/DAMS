@@ -17,7 +17,8 @@ if ($conn->connect_error) {
     if($deans == 1 ||  $ovcaa == 1 ){
 
         if ($deans == 1 && $ovcaa == 1) {
-              $id = adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans); //insert task into the deans
+                $doc_temp_id = getTemplateId($task_name);
+              $id = adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans); //insert task into the deans
 
 
                 $sql = "SELECT department_id FROM departments";
@@ -25,7 +26,7 @@ if ($conn->connect_error) {
                 if ($result) {
                     while($row = mysqli_fetch_array($result)){
                         $dept_id = $row['department_id'];
-                        $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
+                        $sql = mysqli_query($conn,"INSERT INTO task_status_deans(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
         }
         $notif_id = insertTaskNotification($task_name); //insert task notifications to others
         $user_notif = user_notif_dean($users_id,$notif_id); // insert thee status
@@ -42,8 +43,10 @@ if ($conn->connect_error) {
 
 
         else if($deans == 1 && $ovcaa != 1){
+            $doc_temp_id = getTemplateId($task_name);
+              $id = adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans); 
 
-           $id = adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans); //insert task into the deans
+           
 
 
                 $sql = "SELECT department_id FROM departments WHERE department_abbrv != 'OVCAA'";
@@ -51,7 +54,7 @@ if ($conn->connect_error) {
                 if ($result) {
                     while($row = mysqli_fetch_array($result)){
                         $dept_id = $row['department_id'];
-                        $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
+                        $sql = mysqli_query($conn,"INSERT INTO task_status_deans(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
         }
         $notif_id = insertTaskNotification($task_name); //insert task notifications to others
         $user_notif = user_notif_dean($users_id,$notif_id); // insert thee status
@@ -64,15 +67,15 @@ if ($conn->connect_error) {
     echo "success";
         }
         else{
-
-           $id = adminInsertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans); //insert task to ovcaa
+$doc_temp_id = getTemplateId($task_name);
+              $id = adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans); 
                 echo $id;
                 $sql = "SELECT department_id FROM departments WHERE department_abbrv = 'OVCAA'";
                 $result = mysqli_query($conn,$sql);
                 if ($result) {
                     while($row = mysqli_fetch_array($result)){
                         $dept_id = $row['department_id'];
-                        $sql = mysqli_query($conn,"INSERT INTO task_status(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
+                        $sql = mysqli_query($conn,"INSERT INTO task_status_deans(task_id,office_id,is_completed)VALUES('$id','$dept_id',1)");
         }
          $notif_id = insertTaskNotification($task_name); //insert task notifications to others
         $user_notif = user_notif_dean($users_id,$notif_id); // insert thee status

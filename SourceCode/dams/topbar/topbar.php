@@ -162,12 +162,12 @@
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item log" href="#log" data-toggle="modal" data-target="#logModal">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Activity Log
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal" >
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -197,4 +197,74 @@
             </div>
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+
+
+ <div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="logModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="LogLabel">Activity Log</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+
+
+                <div class="modal-body">
+                    <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Activity</th>
+                                            <th>Date</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        <?php include "../config.php";
+
+
+                                         $sql = "SELECT * FROM activity_log";
+                                         $result = $conn->query($sql);
+                                         while($row = mysqli_fetch_array($result)){
+                                          $id = $row['log_id'];
+                                          $activity = $row['activity'];
+                                          $date = $row['date'];  
+                                         
+
+
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $id ;?></td>
+                                            <td><?php echo $activity ;?></td>
+                                            <td><?php echo $date ;?></td>
+                                            
+                                        </tr>
+                                    <?php }?>
+                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                </div>
+
+
+
+              
+            </div>
+        </div>
+    
+
+
+     
+ 
+    <!-- Scrollable modal -->
 

@@ -19,8 +19,8 @@ session_start();
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id
-            WHERE unique_id = '$users_id' 
+            LEFT JOIN departments d ON u.department_id = d.department_id
+            WHERE user_id = '$id'
     
             ");
     $data_result = mysqli_fetch_assoc($data);
@@ -47,11 +47,11 @@ session_start();
                                     <datalist id="task_names">
                                         <?php 
                                             include "../config.php";
-                                            $sql = "SELECT task_name FROM tasks_names";
+                                            $sql = "SELECT template_title FROM document_templates";
                                             $result = mysqli_query($conn,$sql);
 
                                             while($row = mysqli_fetch_array($result)){
-                                               $task_names = $row['task_name'];
+                                               $task_names = $row['template_title'];
                                             
                                         ?>
                                       <option value="<?php echo $task_names?>">

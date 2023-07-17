@@ -19,8 +19,8 @@ session_start();
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id
-            WHERE unique_id = '$users_id' 
+            LEFT JOIN departments d ON u.department_id = d.department_id
+            WHERE user_id = '$id' 
     
             ");
     $data_result = mysqli_fetch_assoc($data);

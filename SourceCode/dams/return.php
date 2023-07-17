@@ -9,7 +9,7 @@ echo $status_id;
 include "config.php";
 include "php/functions.php";
  
- $update = mysqli_query($conn,"UPDATE task_status SET is_completed = 1 WHERE status_id = '$status_id'");
+ $update = mysqli_query($conn,"UPDATE task_status_deans SET is_completed = 1 WHERE status_id = '$status_id'");
 
     $name = getName($users_id);
     

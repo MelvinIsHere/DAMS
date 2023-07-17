@@ -19,7 +19,7 @@ session_start();
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id
+            LEFT JOIN departments d ON u.department_id = d.department_id
             WHERE unique_id = '$users_id' 
     
             ");
@@ -135,16 +135,18 @@ session_start();
                                                     ts.is_completed,
                                                     ts.status_id AS 'status_id',
                                                     t.due_date,
-                                                    t.task_name,
-                                                    f.file_id
+                                                    
+                                                    f.file_id, 
+                                                    dt.template_title AS 'task_name'
 
                                                     FROM departments dp
-                                                    LEFT JOIN users u ON u.user_id = dp.user_id
-                                                    LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                    LEFT JOIN users u ON u.department_id = dp.department_id 
+                                                    LEFT JOIN task_status_deans ts ON ts.`office_id` = dp.`department_id`
                                                     LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
                                                     LEFT JOIN file_table f ON f.file_owner_id = u.user_id
-                                                    WHERE task_name = 'Accomplishment Report'
-                                                    GROUP BY dp.user_id";
+                                                    LEFT JOIN document_templates dt ON dt.doc_template_id = t.document_id
+                                                    WHERE task_name = 'Faculty Loading'
+                                                    GROUP BY u.user_id";
                                                 $result = $conn->query($sql);
                                                 while($row = mysqli_fetch_array($result)){
                                                    $user_id = $row['user_id'];
@@ -237,12 +239,12 @@ session_start();
                                                     f.file_id
 
                                                     FROM departments dp
-                                                    LEFT JOIN users u ON u.user_id = dp.user_id
-                                                    LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                    LEFT JOIN users u ON u.department_id = dp.department_id
+                                                    LEFT JOIN task_status_deans ts ON ts.`office_id` = dp.`department_id`
                                                     LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
                                                     LEFT JOIN file_table f ON f.file_owner_id = u.user_id
                                                     WHERE task_name = 'Faculty Schedule'
-                                                    GROUP BY dp.user_id";
+                                                    GROUP BY dp.department_id";
                                                 $result = $conn->query($sql);
                                                 while($row = mysqli_fetch_array($result)){
                                                    $user_id = $row['user_id'];
@@ -337,8 +339,8 @@ session_start();
                                                     f.file_id
 
                                                     FROM departments dp
-                                                    LEFT JOIN users u ON u.user_id = dp.user_id
-                                                    LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
+                                                    LEFT JOIN users u ON u.department_id = dp.department_id
+                                                    LEFT JOIN task_status_deans ts ON ts.`office_id` = dp.`department_id`
                                                     LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
                                                     LEFT JOIN file_table f ON f.file_owner_id = u.user_id
                                                     WHERE task_name = 'Accomplishment Report'

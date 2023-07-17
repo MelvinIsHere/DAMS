@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Custom styles for this template-->
     <link href="deans.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="C:\Users\Bryan Russel\Documents\CapstoneProject\DAMS\SourceCode\dams\deans\bootstrap-3">
    
 </head>
 
@@ -339,7 +338,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingsModal">
+                                <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
                                 </a>
@@ -672,20 +671,74 @@
 
              <div class="container-fluid tabcontent" id="pendingDocu" style="display: none;">
                 <!-- Page Heading -->
-                <div>
-                                        <!-- Page Heading -->
-                    <h1 class="h3 mb-1 text-gray-800">Pending Task</h1>
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h1">Pending Task</h1>
+                </div>
 
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
                     <div class="col">
-                        <div class="card" id="cardbtn" style="margin-top:20px">
-                            <div class="card-body" id="card-body" style="height: 140px;  width: auto;">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
                                 <div class="task_info" style="white-space: nowrap;">
-                                    <h3 class="h3 mb-1 text-gray-800">Accomplishment Report</h3>
-                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
+                                    <p class="task_title"><b>OPCR</b></p>
+                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
+                                    <p class="task_info_text">
+                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
                                     
                                 </div>
                                 <div class="d-flex flex-column">
                                     <a href="#" class="btn btn-primary btn-sm" id="viewPending" style="position:relative ;margin-top: 40px; margin-right: 30px;">View Assigned Task</a>                               
+                                    <a href="#" onclick="openCity(event,'pending-Details')" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                      <div class="col">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <p class="task_title"><b>OPCR</b></p>
+                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
+                                    <p class="task_info_text">
+                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                      <div class="col">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <p class="task_title"><b>OPCR</b></p>
+                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
+                                    <p class="task_info_text">
+                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                        <div class="col">
+                        <div class="card" style="margin-top:20px">
+                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <p class="task_title"><b>OPCR</b></p>
+                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
+                                    <p class="task_info_text">
+                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
                                 </div>
                                 <div class="d-flex flex-column">
                                     <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" style="margin-top: 40px;">Button </a>
@@ -695,16 +748,19 @@
                         </div>
                     </div>
                     
-                    <div class="col">
+                        <div class="col">
                         <div class="card" style="margin-top:20px">
-                            <div class="card-body" id="card-body" style="height: 140px;  width:auto;">
+                            <div class="card-body d-flex justify-content-between" style="height: 140px;  width: 400px;">
                                 <div class="task_info" style="white-space: nowrap;">
-                                    <h3 class="h3 mb-1 text-gray-800">Faculty Loading</h3>
-                                    <p class="task_info_text"><span>Due Date: June 30, 2023</span></p>
+                                    <p class="task_title"><b>OPCR</b></p>
+                                    <p class="task_owner">Office of Vice Chancellor of Academic Affairs</p>
+                                    <p class="task_info_text">
+                                        <span>Posted: June 10, 2023</span>&nbsp;&nbsp;&nbsp;<span>Due Date: June 30, 2023</span></p>
                                     
                                 </div>
                                 <div class="d-flex flex-column">
                                     <a href="#" class="btn btn-primary btn-sm" id="viewPendingFaculty" style="margin-top: 40px; margin-right: 30px;">View Assigned Task</a>
+                                    <a href="#" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;">View</a>
                                 </div>
                                 <div class="d-flex flex-column">
                                     <a href="#" class="btn btn-primary btn-sm" id="viewTaskbtn" style="margin-top: 40px;">Button </a>
@@ -734,6 +790,7 @@
                         </div>
                     </div>
                 </div>
+
         <script>
     const taskTitle = document.querySelectorAll('.task_title');
     taskTitle.forEach((taskTitle) => {
@@ -823,7 +880,6 @@
                                             <th>Department</th>
                                             <th>Documents</th>
                                             <th>Document Status</th>
-                                            <th colspan="2">Action</th>
                                         </tr>
                                     </thead>
                                     
@@ -835,10 +891,6 @@
                                             <td>CICS</td>
                                             <td>Accomplishment Report </td>
                                             <td class="ns">Not Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>                                            
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -847,10 +899,6 @@
                                             <td>CICS</td>
                                             <td>Faculty Loading</td>
                                             <td class="submitted">Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -859,10 +907,6 @@
                                             <td>CICS</td>
                                             <td>Accomplishment Report</td>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -871,10 +915,6 @@
                                             <td>CICS</td>
                                             <td>Faculty Schedule</t>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -883,10 +923,6 @@
                                             <td>CICS</td>
                                             <td>Room Schedule</td>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                         <tr>
                                             <td>1</td>
@@ -895,10 +931,6 @@
                                             <td>CICS</td>
                                             <td>Room Schedule</td>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                         <tr>
                                             <td>1</td>
@@ -907,10 +939,6 @@
                                             <td>CICS</td>
                                             <td>Room Schedule</td>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                         <tr>
                                             <td>1</td>
@@ -919,10 +947,6 @@
                                             <td>CICS</td>
                                             <td>Room Schedule</td>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -931,10 +955,6 @@
                                             <td>CICS</td>
                                             <td>OPCR</td>
                                             <td class="submitted" >Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -943,10 +963,6 @@
                                             <td>CICS</td>
                                             <td>OPCR</td>
                                             <td class="ns" >Not Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -955,10 +971,6 @@
                                             <td>CICS</td>
                                             <td>OPCR</td>
                                             <td class="ns" >Not Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                          <tr>
                                             <td>1</td>
@@ -967,10 +979,6 @@
                                             <td>CICS</td>
                                             <td>OPCR</td>
                                             <td class="ns" >Not Submitted</td>
-                                            <td><a class="btn btn-success" href="#" data-toggle="modal" data-target="#editModal">
-                                            <i class="fas fa-pencil"></i></a></td>
-                                            <td><a class="btn btn-warning" href="#" data-toggle="modal" data-target="#deleteModal">
-                                            <i class="fas fa-trash"></i></a></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1166,7 +1174,7 @@
                                             <td>Tiger Woods</td>
                                             <td>Staff</td>
                                             <td>CICS</td>
-                                            <td>Accomplishment Report</td>
+                                            <td>Accomplishment Report </td>
                                             <td class="ns">Not Submitted</td>
                                         </tr>
                                          <tr>
@@ -1259,21 +1267,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-
-                        <div class="modal fade" id="modal">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss = "modal"&times;></button>
-                                        <h4>Edit Form</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <label>Username</label>
-                                        <input type="text" placeholder="Enter Username">
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -1988,152 +1981,7 @@ function openCity(evt, cityName) {
             </div>
         </div>
     </div>
-
-
-
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
-                </div>
-                <div class="modal-body" id="editModal-body">
-                    <label>Faculty</label>
-                    <input class="form-control input-lg" type="text" placeholder="Enter Faculty Name" id="facultyName">
-
-                    <label>Course Code</label>
-                    <input class="form-control input-lg" type="text" placeholder="Enter Couse Code" id="couseCode">
-
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-4">
-                            <label>Section</label>
-                            <select class="form-control input-lg" name="Section" id="section">
-                                <option value="IT 311">IT 311</option>
-                                <option value="">IT 312</option>
-                            </select>
-                        </div>
-                        <div class="col-xs-12 col-sm-8">
-                            <label>Semester</label>
-                            <input class="form-control input-lg" type="text" placeholder="Enter the semester" id="semester">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Back</button>
-                </div>
-            </div>
-        </div>
-    </div>    
-
-
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
-                </div>
-                <div class="modal-body" id="deleteModal-body">Are you sure to delete this information?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-warning" type="button">Delete</button>
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Back</button>
-                </div>
-            </div>
-        </div>
-    </div> 
-
-    <!-- Settings Modal  -->
-        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Account Settings</h5>
-                </div>
-                <div class="modal-body" id="editModal-body">
-                        <form class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-email">Firstname</label>
-                                    <input class="form-control" type="text" id="account-first" >
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-email">Lastname</label>
-                                    <input class="form-control" type="text" id="account-last" >
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-email">Email Address</label>
-                                    <input class="form-control" type="email" id="account-email" >
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-email">Username</label>
-                                    <input class="form-control" type="text" id="account-username" >
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-pass">New Password</label>
-                                    <input class="form-control" type="password" id="account-pass">
-                                    <input class="check" type="checkbox" onclick="myHello()">
-                                    <label class="label" style="color: black;">Show Password</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-pass">New Password</label>
-                                    <input class="form-control" type="password" id="account-pass">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="">Department</label>
-                                    <select class="form-control input-lg" name="sections" id="sections">
-                                        <option value="CICS">CICS</option>
-                                        <option value="CAS">CAS</option>
-                                        <option value="CET">CET</option>
-                                        <option value="CABEHEIM">CABEHEIM</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="account-pass">Upload Picture</label>
-                                    <input class="form-control" type="file" id="account-pass">
-                                </div>
-                            </div>                             
-
-                        </form>
-                        <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Back</button>
-                    <button class="btn btn-success" type="button" data-dismiss="modal">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>  
-
-
-    <script>
-            function myHello() {
-        var x = document.getElementById("account-pass");
-        if (x.type === "account-pass") {
-            x.type = "text";
-          } else {
-            x.type = "account-passs";
-          }
-        }
-    </script>
-
-
+  
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
