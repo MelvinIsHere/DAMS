@@ -1,6 +1,7 @@
 <?php
 session_start();
 $users_id = $_SESSION['user_id'];
+$dept_name = $_SESSION['dept_name'];
 
 include "php/functions.php";
 
@@ -38,7 +39,7 @@ include "php/functions.php";
                   
              
                move_uploaded_file($fileTmpName,$path);
-                $office_id = getDeptId($users_id);
+                $office_id = getDeptId($dept_name);
                 $update = updateTaskStats($office_id,$task_id);
                 
                  $name = getName($users_id);
@@ -55,7 +56,7 @@ include "php/functions.php";
 
 
                 if(!empty($user_notif)){
-                     echo "Work Submitted";
+                     echo "Work Submitted" . $office_id;
                 }
                 else{
                   echo "error";

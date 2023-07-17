@@ -19,7 +19,7 @@ session_start();
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id
+            LEFT JOIN departments d ON u.department_id = d.department_id
             WHERE unique_id = '$users_id' 
     
             ");
@@ -63,7 +63,7 @@ session_start();
                         tt.due_date AS due_date,
                         ts.`is_completed`
                         FROM tasks tt
-                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
                         WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND is_completed = 1 
     ";
@@ -88,7 +88,7 @@ session_start();
                         
                     </div>
                     <div class="d-flex flex-column">
-                        <a href="pending.php?id=<?php echo $taskid; ?>" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 30px;">View</a>
+                        <a href="task_fill_up.php?id=<?php echo $taskid; ?>" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 30px;">View</a>
                     </div>
                 </div>
 

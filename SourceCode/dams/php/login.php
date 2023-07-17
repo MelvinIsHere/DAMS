@@ -1,8 +1,9 @@
 <?php 
     session_start();
     include_once "db_con.php";
-    $email =  $_POST['email'];
+    $email =  $_POST['username'];
     $password = $_POST['password'];
+    
     if(!empty($email) && !empty($password)){
           $sql = mysqli_query($conn,"SELECT
             u.user_id, 
@@ -15,7 +16,7 @@
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id WHERE email = '{$email}' ");
+            LEFT JOIN departments d ON u.department_id = d.department_id WHERE email = '{$email}' ");
 
         
         if(mysqli_num_rows($sql) > 0){

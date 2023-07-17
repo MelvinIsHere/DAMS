@@ -19,7 +19,7 @@ session_start();
             d.department_name,
             d.department_abbrv
             FROM users u
-            LEFT JOIN departments d ON u.user_id = d.user_id
+            LEFT JOIN departments d ON u.department_id = d.department_id
             WHERE unique_id = '$users_id' 
     
             ");
@@ -71,12 +71,12 @@ session_start();
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 
                                                     <?php
-                                                        $pending_count = mysqli_query($conn," SELECT
+                                                        $pending_count = mysqli_query($conn,"  SELECT
                         COUNT(*)
                         FROM tasks tt
-                        LEFT JOIN task_status ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1;");
+                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -108,17 +108,12 @@ session_start();
                                                 Completed Task</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                     <?php
-                                                        $pending_count = mysqli_query($conn,"SELECT
-                                                        COUNT(*)
-
-
-                                                        FROM departments dp
-                                                        LEFT JOIN users u ON u.user_id = dp.user_id
-                                                        LEFT JOIN task_status ts ON ts.`office_id` = dp.`department_id`
-                                                        LEFT JOIN tasks t ON t.`task_id` = ts.`task_id`
-                                                        WHERE dp.user_id = '$id' AND is_completed = 0
-                                                        AND t.for_deans = 1
-                                                        ");
+                                                        $pending_count = mysqli_query($conn,"  SELECT
+                        COUNT(*)
+                        FROM tasks tt
+                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 0");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -209,7 +204,7 @@ session_start();
                                             }
 
                                             $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
-                                                      FROM task_status
+                                                      FROM task_status_deans
                                                       WHERE office_id = 8";
 
                                             $result = $conn->query($query);
@@ -233,7 +228,7 @@ session_start();
                                                 }
 
                                                 $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
-                                                          FROM task_status
+                                                          FROM task_status_deans
                                                           WHERE office_id = 8";
 
                                                 $result = $conn->query($query);

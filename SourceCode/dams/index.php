@@ -1,42 +1,66 @@
-
-<?php include_once "header.php"; ?>
-<style type="text/css">
-  .form form .error-text{
-  color: green;
-  padding: 8px 10px;
-  text-align: center;
-  border-radius: 5px;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  margin-bottom: 10px;
-  display: none;
-}
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="login2.css">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 <body>
-  <div class="wrapper">
-    <section class="form login">
-      <header>AutoDoc</header>
-      <form action="php/login.php" method="POST" enctype="multipart/form-data" autocomplete="off">
-        <div class="error-text"></div>
-        <div class="field input">
-          <label>Email Address</label>
-          <input type="text" name="email" placeholder="Enter your email" required>
+  <div class="container">
+    <div class="img">
+      <img src="logo.png">
+    </div>
+    <div class="login-content">
+      <form action="php/login.php" method="POST">
+        <img src="header Copy.jpg" width="100%">
+        <h4 class="title">Document Automation Management System</h4>
+              <div class="input-div one">
+                 <div class="i">
+                    <i class="fas fa-user"></i>
+                 </div>
+                 <div class="div">
+                    <h5>Username</h5>
+                    <input type="text" class="input" name="username">
+                 </div>
+              </div>
+              <div class="input-div pass">
+                 <div class="i"> 
+                    <i class="fas fa-lock"></i>
+                 </div>
+                 <div class="div">
+                    <h5>Password</h5>
+                    <input type="password" class="input" name="password">
+                 </div>
+              </div>
+              <a href="">Forgot Password?|Click Here</a>
+              <br>
+              <button type="submit" class="btn" name="submit">Login</button>
+              <a href="signup.html" style="text-align:left;">Doesn't have an account? Click Here</a>
+            </form>
         </div>
-        <div class="field input">
-          <label>Password</label>
-          <input type="password" name="password" placeholder="Enter your password" required>
-          <i class="fas fa-eye"></i>
-        </div>
-        <div class="field button">
-          <input type="submit" name="submit" value="Login">
-        </div>
-      </form>
-      
-    </section>
-  </div>
-<!--   
-  <script src="javascript/pass-show-hide.js"></script>
-  <script src="javascript/login-2.js"></script>  -->
+    </div>
+    <script>
+    const inputs = document.querySelectorAll(".input");
 
+  function addcl(){
+    let parent = this.parentNode.parentNode;
+    parent.classList.add("focus");
+    }
+
+    function remcl(){
+      let parent = this.parentNode.parentNode;
+      if(this.value == ""){
+        parent.classList.remove("focus");
+      }
+    }
+
+
+    inputs.forEach(input => {
+      input.addEventListener("focus", addcl);
+      input.addEventListener("blur", remcl);
+    });
+      </script>
 </body>
 </html>
