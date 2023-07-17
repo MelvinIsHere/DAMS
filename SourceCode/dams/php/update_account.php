@@ -18,17 +18,17 @@
                          $update_account = mysqli_query($conn, "UPDATE users SET email = '$email',password = '$encrypt_pass',
                                                                 type = '$type' WHERE user_id = '$user_id'");
                         if($update_account){
-                                echo "The account has been updated!";                                            
+                                header("Location: ../admin/account_management.php?Message : The account has been updated!");                                            
                                         }else{
-                                            // echo "Something went wrong. Please try again!";
-                                            echo mysqli_error($conn);
+                                            header("Location: ../admin/account_management.php?Message : Something went wrong. Please try again!");
+                                            
                                         }
                   
                 }else{
-                    echo "$email is not a valid email!";
+                    header("Location: ../admin/account_management.php?Message : " . $email . " is not a valid email!");
                 }
             }else{
-                echo "All input fields are required!";
+                header("Location: ../admin/account_management.php?Message : All input fields are required!");
             } 
    
     

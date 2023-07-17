@@ -9,14 +9,14 @@ $department_id = $_POST['dept_id'];
 if(!empty($department_id)){
 	$sql = mysqli_query($conn,"DELETE FROM departments WHERE department_id = '$department_id'");
 	if($sql){
-		echo "The department has been successfully removed!";
+		header("Location: ../admin/manage_departments.php?Message : The department has been successfully removed!");
 	}
 	else{
-		echo "Something went wrong removing the department";
+		header("Location: ../admin/manage_departments.php?Message : Something went wrong removing the department");
 	}
 }
 else{
-	echo "Something went wrong removing the department";
+	header("Location: ../admin/manage_departments.php?Message : Something went wrong removing the department");
 }
 
 

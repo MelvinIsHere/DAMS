@@ -36,31 +36,80 @@ include "php/functions.php";
             }
             else{
                 $run =  insertQuery($fileName,$path,$users_id);
-                  
-             
-               move_uploaded_file($fileTmpName,$path);
-                $office_id = getDeptId($dept_name);
-                $update = updateTaskStats($office_id,$task_id);
-                
-                 $name = getName($users_id);
-                $task_name = getTaskName($task_id);
-
-                $notif = notifications($name,$task_name);
-                
-                $user_notif = user_notif_dean($users_id,$notif);
-
-                $act_log = activity_log_submitted_documents($users_id,$task_name);
-                
-
-              
+                if($run != ""){
+                     move_uploaded_file($fileTmpName,$path);
+                    $office_id = getDeptId($dept_name);
+                    if($office_id != ""){
+                         $update = updateTaskStats($office_id,$task_id);
+                         if($update != ""){
 
 
-                if(!empty($user_notif)){
-                     echo "Work Submitted" . $office_id;
+                                 $name = getName($users_id);
+                                 if($name != ""){
+                                      $task_name = getTaskName($task_id);
+                                      if($task_name != ""){
+                                           $notif = notifications($name,$task_name);
+                                           if($notif != ""){
+                                               $user_notif = user_notif_dean($users_id,$notif);
+                                               if($user_notif != ""){
+                                                 $act_log = activity_log_submitted_documents($users_id,$task_name);
+                                                 if($act_log != ""){
+                                                    if(!empty($user_notif)){
+                                                     echo "Work Submitted" . $office_id;
+                                                            }
+                                                            else{
+                                                              echo "error";
+                                                                    }
+
+                                                 }else{
+                                                    echo "Something went wrong";
+                                                 }
+                                                
+
+                                              
+
+
+                                                
+
+                                           }else{
+                                            echo "Something went wrong";
+                                           }
+
+                                               }else{
+                                                echo "Something went wrong";
+                                               }
+
+                                               
+                                
+                             
+                                      
+                                      }else{
+                                        echo "Something went wrong";
+                                      }
+
+                             
+                                 }
+                                 else{
+                                    echo "Something went wrong";
+                                 }
+                              
+                         }  
+                         else{
+                            echo "Something went wrong a";
+                         }
+                          
+                    }else{
+                        echo "Something Went wrong getting the data about the department";
+                    }
+                   
+
                 }
                 else{
-                  echo "error";
+                    echo "Something went wrong submittng the file";
                 }
+                  
+             
+              
 
                
                

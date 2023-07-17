@@ -296,7 +296,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="update_faculties">
+                <form id="update_faculties" action="../php/update_faculties_admin.php" method="POST">
                     
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Edit Faculty</h5>
@@ -351,7 +351,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="delete_loading">
+                <form id="delete_loading" action="../php/delete_faculties_admin.php" method="POST">
                     <div class="modal-header">
                     
                     <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
@@ -459,7 +459,7 @@ session_start();
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_loading").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -488,8 +488,8 @@ $(document).ready(function() {
       });
    });
 });
-</script>
-
+</script> -->
+<!-- 
 <script type="text/javascript">
 $(document).ready(function() {
    $("#update_faculties").submit(function(e) {
@@ -519,7 +519,7 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
 
 

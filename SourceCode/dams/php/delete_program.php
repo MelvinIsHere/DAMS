@@ -11,17 +11,17 @@ if(!empty($program_id)){
 		$sql = mysqli_query($conn,"DELETE FROM programs WHERE program_id = '$program_id'");
 		if($sql){
 			
-			echo "Program has been successfully deleted!";
+			header("Location: ../admin/program_management.php?Message : Program has been successfully deleted!");
 
 		
 		}
 		else{
-			echo "There is something wrong deleting the program ";	
+			header("Location: ../admin/program_management.php?Message : There is something wrong deleting the program ");	
 		}
 
 }
 else{
-	echo "There is something wrong deleting the program ";	
+	header("Location: ../admin/program_management.php?Message : There is something wrong deleting the program ");	
 }
 
 

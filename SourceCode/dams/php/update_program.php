@@ -13,17 +13,17 @@ if(!empty($program_id)){
 									WHERE program_id = '$program_id'");
 		if($sql){
 			
-			echo "Program ".$program_name." has been successfully updated!";
+			header("Location: ../admin/program_management.php?Message : Program ".$program_name." has been successfully updated!");
 
 		
 		}
 		else{
-			echo "There is something wrong updating the program ". $program_name;	
+			header("Location: ../admin/program_management.php?Message : There is something wrong updating the program ". $program_name);	
 		}
 
 }
 else{
-	echo "There are no program such as " .$program_name;
+	header("Location: ../admin/program_management.php?Message : There are no program such as " .$program_name);
 }
 
 

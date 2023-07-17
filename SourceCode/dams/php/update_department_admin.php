@@ -9,12 +9,12 @@ $department_id = $_POST['dept_id'];
 $sql = mysqli_query($conn,"UPDATE departments SET department_name = '$department_name',department_abbrv = '$department_abbrv' 
 							WHERE department_id = '$department_id'");
 if($sql){
-	echo "The department " . $department_name . " has been successfully updated!";
+	header("Location: ../admin/manage_departments.php?Message : The department " . $department_name . " has been successfully updated!");
 
 
 }
 else{
-	echo "The department ".$department_name." data update has failed!"; 
+	header("Location: ../admin/manage_departments.php?Message : The department ".$department_name." data update has failed!"); 
 }
 
 

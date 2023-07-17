@@ -23,7 +23,7 @@ session_start();
             d.department_abbrv
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE unique_id = '$users_id' 
+            WHERE user_id = '$id' 
     
             ");
     $data_result = mysqli_fetch_assoc($data);
@@ -281,7 +281,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="update_account">
+                <form id="update_account" action="../php/update_account.php" method="POST">
                     
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Edit Account</h5>
@@ -342,7 +342,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="delete_account">
+                <form id="delete_account" action="../php/delete_account.php" method="POST">
                     <div class="modal-header">
                     
                     <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
@@ -448,7 +448,7 @@ session_start();
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script><!-- 
 <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_account").submit(function(e) {
@@ -478,9 +478,9 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#update_account").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -509,7 +509,7 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
 <script type="text/javascript">
 $(document).ready(function() {

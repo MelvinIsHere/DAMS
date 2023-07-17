@@ -1,7 +1,7 @@
 <?php
     session_start();
-    include_once "db_con.php";
-    include_once "functions.php";
+    include "db_con.php";
+    include "functions.php";
   
     $user_id = mysqli_real_escape_string($conn, $_POST['user_id']);
     
@@ -9,16 +9,16 @@
 
         $sql = mysqli_query($conn,"DELETE FROM users WHERE user_id = '$user_id'");
         if($sql){
-            echo "The account has been successfully deleted!";
+            header("Location: ../admin/account_management.php?Message : The account has been successfully deleted!");
         }
         else{
-            echo "There are something wrong deleting the account!";
+            header("Location: ../admin/account_management.php?Message : There are something wrong deleting the account!");
         }
        
 
     }
     else{
-        echo "Something Went wrong!";
+        header("Location: ../admin/account_management.php?Message : Something Went wrong!");
     }
     
 ?>

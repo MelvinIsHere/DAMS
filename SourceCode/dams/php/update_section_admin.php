@@ -9,15 +9,15 @@ $section_id = getSectionId($section);
 if($section_id != ""){
 	$sql = mysqli_query($conn,"UPDATE sections SET no_of_students = '$students' WHERE section_id = '$section_id'");
 	if($sql){
-		echo $section . " has successfully updated!";
+		header("Location: ../admin/section_management.php?Message : ".$section . " has successfully updated!");
 	}
 	else{
-		echo $section ." update failed" ;
+		header("Location: ../admin/section_management.php?Message : ".$section ." update failed");
 
 	}
 }
 else{
-	echo $section ." update failed" ;
+	header("Location: ../admin/section_management.php?Message : ".$section ." update failed");
 }
 
 

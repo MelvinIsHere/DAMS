@@ -6,14 +6,18 @@ include "config.php";
  $query = "INSERT INTO file_table(file_name,directory,file_owner_id) VALUES ('$fileName','$path','$users_id')";
  $run = mysqli_query($conn,$query);
 if (!$run) {
-		echo "Error: " . mysqli_error($conn);
+		$vars = mysql_error($conn);
+	}else{
+		return "success";
 	}
 }
 function updateTaskStats($office_id,$task_id){
 	include "config.php";
 	$update = mysqli_query($conn,"UPDATE task_status_deans SET is_completed = '0' WHERE task_id = '$task_id' AND office_id = '$office_id'");
 	if (!$update) {
-		echo "Error: " . mysqli_error($conn);
+		return "";
+	}else{
+		return "success";
 	}
 
 }
@@ -27,8 +31,8 @@ function getName($user_id){
 		return $name;
 	}
 	else{
-		$error = mysqli_error($conn);
-		return $error;
+		
+		return "";
 	}
 
 }
@@ -55,7 +59,7 @@ function  getTaskName($task_id){
 	$task = mysqli_fetch_assoc($sql);
 	$task_name = $task['task_name'];
 	if(!$sql){
-		return mysqli_error($conn);
+		return "";
 	}
 	else{
 		return $task_name;
@@ -67,7 +71,7 @@ function notifications($name,$task_name){
 	$content = $name . "Submitted a file in " . $task_name . "!";
 	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','no')");
 	if(!$sql){
-		return mysqli_error($conn);
+		return "";
 		
 	}
 	else{
@@ -77,13 +81,33 @@ function notifications($name,$task_name){
 }
 function user_notif_dean($users_id,$notif_id){
 	include "config.php";
-	$sql = mysqli_query($conn,"INSERT INTO user_notifications(status,notif_id,user_id) VALUES(0,'$notif_id','$users_id')");
-	if(!$sql){
-		return mysqli_error($conn);
-	}
-	else{
-		return "success";
-	}
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE user_id != '$users_id'";
+$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
 }
 
 
@@ -166,6 +190,12 @@ function activity_log_submitted_documents($users_id,$task_name){
 	$email = getEmail($users_id);
 	$activity = $email . "  Submitted a document in " . $task_name;   
 	$act_log = mysqli_query($conn,"INSERT INTO activity_log(activity,user_id) VALUES('$activity','$users_id')")	;
+	if(!$act_log){
+			return "";
+	}
+	else{
+		return "success";
+	}
 
 
 

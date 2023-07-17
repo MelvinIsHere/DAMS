@@ -293,7 +293,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="update_courses">
+                <form id="update_courses" action="../php/update_courses_admin.php" method="POST">
                     
 
 
@@ -367,7 +367,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="delete_course">
+                <form id="delete_course" action="../php/delete_course_admin.php" method="POST">
                     <div class="modal-header">
                     
                     <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
@@ -470,7 +470,7 @@ session_start();
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_course").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -499,8 +499,8 @@ $(document).ready(function() {
       });
    });
 });
-</script>
-
+</script> -->
+<!-- 
 <script type="text/javascript">
 $(document).ready(function() {
    $("#update_courses").submit(function(e) {
@@ -530,7 +530,7 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
 
 

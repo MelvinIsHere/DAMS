@@ -284,7 +284,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="update_program">
+                <form id="update_program" action="../php/update_program.php" method="POST">
                     
 
 
@@ -344,7 +344,7 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="delete_program">
+                <form id="delete_program" action="../php/delete_program.php" method="POST">
                     <div class="modal-header">
                     
                     <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
@@ -417,7 +417,7 @@ session_start();
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_program").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -446,8 +446,8 @@ $(document).ready(function() {
       });
    });
 });
-</script>
-
+</script> -->
+<!-- 
 <script type="text/javascript">
 $(document).ready(function() {
    $("#update_program").submit(function(e) {
@@ -477,7 +477,7 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
 
 
