@@ -339,7 +339,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="settings.html">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingsModal">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
                                 </a>
@@ -2034,7 +2034,97 @@ function openCity(evt, cityName) {
                 </div>
             </div>
         </div>
+    </div> 
+
+    <!-- Settings Modal  -->
+        <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Account Settings</h5>
+                </div>
+                <div class="modal-body" id="editModal-body">
+                        <form class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-email">Firstname</label>
+                                    <input class="form-control" type="text" id="account-first" >
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-email">Lastname</label>
+                                    <input class="form-control" type="text" id="account-last" >
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-email">Email Address</label>
+                                    <input class="form-control" type="email" id="account-email" >
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-email">Username</label>
+                                    <input class="form-control" type="text" id="account-username" >
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-pass">New Password</label>
+                                    <input class="form-control" type="password" id="account-pass">
+                                    <input class="check" type="checkbox" onclick="myHello()">
+                                    <label class="label" style="color: black;">Show Password</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-pass">New Password</label>
+                                    <input class="form-control" type="password" id="account-pass">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="">Department</label>
+                                    <select class="form-control input-lg" name="sections" id="sections">
+                                        <option value="CICS">CICS</option>
+                                        <option value="CAS">CAS</option>
+                                        <option value="CET">CET</option>
+                                        <option value="CABEHEIM">CABEHEIM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="account-pass">Upload Picture</label>
+                                    <input class="form-control" type="file" id="account-pass">
+                                </div>
+                            </div>                             
+
+                        </form>
+                        <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Back</button>
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
     </div>  
+
+
+    <script>
+            function myHello() {
+        var x = document.getElementById("account-pass");
+        if (x.type === "account-pass") {
+            x.type = "text";
+          } else {
+            x.type = "account-passs";
+          }
+        }
+    </script>
+
+
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
