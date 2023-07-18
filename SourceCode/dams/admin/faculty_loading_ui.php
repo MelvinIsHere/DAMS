@@ -5,7 +5,6 @@ session_start();
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
     $id = $_SESSION['user_id'];
-    $department_name = $_SESSION['dept_name'];
 
 
 
@@ -18,12 +17,11 @@ session_start();
             u.img,
             u.status,
             u.type,
-            d.department_id AS 'department_id',
             d.department_name,
             d.department_abbrv
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE user_id = '$id' 
+             WHERE user_id = '$id' 
     
             ");
     
@@ -34,6 +32,8 @@ session_start();
          $department_name = $row['department_name'];
         $img = $row['img'];
         $type =$row['type'];
+
+
 
 
 ?>
@@ -53,7 +53,7 @@ session_start();
     <?php include "../topbar/topbar.php"; ?>
 
 <div class="container-fluid tabcontent" id="createfill-Up">
-                    <h1 class="h3 mb-1 text-gray-800">Faculty Management</h1>
+                    <h1 class="h3 mb-1 text-gray-800">Create Documents | Faculty Loading</h1>
 
                     <div class="card-body">
                             <div class="table-responsive">
@@ -61,11 +61,11 @@ session_start();
                 <div class="table-title">
                     <div class="row">
                         <div class="col-xs-6">
-                            <h2>All Faculties</b></h2>
+                            <h2>Faculty Loading</b></h2>
                         </div>
                         <div class="col-xs-6">
-                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty</span></a>
-                              
+                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty Loading</span></a>
+                              <a href="generateReport.php" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                                                 
                         </div>
                     </div>
@@ -74,10 +74,14 @@ session_start();
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Faculty Name</th>
-                            <th>Type</th>
-                            <th>Department</th>
-                           
+                            <th>Name of Faculty</th>
+                            <th>Course Code</th>
+                            <th>Section</th>
+                            <th>No. of Students</th>
+                            <th>Lec. hrs/wk</th>
+                            <th>Lab. hrs/wk</th>
+                            <th>Total hrs/wk</th>
+                            <th>Course Description</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -98,24 +102,42 @@ session_start();
                             $adjacents = "2";
 
                             $result_count = mysqli_query($conn, "SELECT
-                            COUNT(*)  AS total_records FROM faculties");
+                            COUNT(*) AS total_records
+                            FROM
+                            faculty_loadings fl
+                            LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+                            LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
+                            LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+                            LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+                            LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+                            
+                            ");
                             $total_records = mysqli_fetch_array($result_count);
                             $total_records = $total_records['total_records'];
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
 
                             $sql = "SELECT
-                                    f.faculty_id,
-                                    f.firstname,
-                                    f.lastname,
-                                    f.middlename,
-                                    f.suffix,
-                                    f.is_permanent,
-                                    f.is_guest,
-                                    f.is_partTime,
-                                    d.`department_name`
-                                    FROM faculties f
-                                    LEFT JOIN departments d ON d.`department_id` = f.`department_id`";
+                                    getFullName_surnameFirst(fc.firstname,fc.middlename,fc.lastname,fc.`suffix`) 'Name of Faculty',
+                                    cs.course_code 'Course Code',
+                                    getProg_sec(pr.`program_abbrv`,sc.`section_name`) 'Section',
+                                    sc.no_of_students 'No. of Students',
+                                    cs.`units` 'Total Units',
+                                    cs.`lec_hrs_wk` 'Lec. hrs/wk',
+                                    cs.`lab_hrs_wk` 'Lab. hrs/wk',
+                                    SUM(cs.`lec_hrs_wk`+cs.`lab_hrs_wk`) 'Total hrs/wk',
+                                    cs.`course_description` 'Course Description',
+                                    fl.fac_load_id AS 'Loading Id'
+                                    FROM
+                                    faculty_loadings fl
+                                    LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+                                    LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
+                                    LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+                                    LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+                                    LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+                                    WHERE fl.`dept_id` = 8 # insert dept_id
+                                    GROUP BY fl.`fac_load_id`
+                                    ";
                             $results = $conn->query($sql);
                             if(!$results){
                                 die("Query failed: " . mysqli_error($conn));
@@ -123,38 +145,30 @@ session_start();
                             $results->data_seek($off_set);
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
-                                $id = $row['faculty_id'];
-                                $first_name = $row['firstname'];
-                                $last_name = $row['lastname'];
-                                $middle_name = $row['middlename'];
-                                $suffix = $row['suffix'];
-                                $is_permanent = $row['is_permanent'];
-                                $is_guest = $row['is_guest'];
-                                $is_partTime = $row['is_partTime'];
-                                $department_name = $row['department_name'];
+                                $id = $row['Loading Id'];
+                                $name = $row['Name of Faculty'];
+                                $course_code = $row['Course Code'];
+                                $section = $row['Section'];
+                                $studs = $row['No. of Students'];
+                                $lec = $row['Lec. hrs/wk'];
+                                $lab = $row['Lab. hrs/wk'];
+                                $total = $row['Total hrs/wk'];
+                                $course_description = $row['Course Description'];
+
                                 $count++;
                             
 
                          ?>
                         <tr>
-                            <td class="faculty_id"><?php echo $id;?></td>
-                            <td><?php echo $first_name . " " . $middle_name . " " . $last_name . " " . $suffix;?></td>
-                            <td><?php
-                            if($is_permanent == 1){
-                                echo "Permanent";
-                            }
-                            elseif($is_guest == 1){
-                                echo "Temporary";
-                            }
-                            else{
-                                echo "Part Time";
-                            }
-
-
-
-                            ;?></td>
-                            <td><?php echo $department_name;?></td>
-                            
+                            <td class="loading_id"><?php echo $id;?></td>
+                            <td><?php echo $name;?></td>
+                            <td><?php echo $course_code;?></td>
+                            <td><?php echo $section;?></td>
+                            <td><?php echo $studs;?></td>
+                            <td><?php echo $lec; ?></td>
+                            <td><?php echo $lab; ?></td>
+                            <td><?php echo $total; ?></td>
+                            <td><?php echo $course_description; ?></td>
                             <td>
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
@@ -252,12 +266,12 @@ session_start();
 
                                     console.log(data);
 
-                                     var faculty_id  = $(this).closest('tr').find('.faculty_id').text();
-                                    console.log(faculty_id);
-                                    $('#faculty_id').val(faculty_id);;
+                                     var loading_id  = $(this).closest('tr').find('.loading_id').text();
+                                    console.log(loading_id)
+                                    $('#loading_id').val(loading_id);;
                                     $('#faculty_name').val(data[1]);
-                                    $('#type').val(data[2]);
-                                    
+                                    $('#course_code').val(data[2]);
+                                    $('#section').val(data[3]);
                                     
 
                                 });
@@ -269,9 +283,9 @@ session_start();
                                 $('.delete').on('click',function(e){
                                     e.preventDefault();
 
-                                    var faculty_id  = $(this).closest('tr').find('.faculty_id').text();
-                                    console.log(faculty_id);
-                                    $('#delete_id').val(faculty_id);;
+                                    var loading_id  = $(this).closest('tr').find('.loading_id').text();
+                                    console.log(loading_id)
+                                    $('#delete_id').val(loading_id);;
                                     $('#deleteModal').modal('show');  
 
                                 });
@@ -296,37 +310,94 @@ session_start();
                 <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-md" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form id="update_faculties" action="../php/update_faculties_admin.php" method="POST">
+                <form id="update_loading">
                     
+
+
+
+
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit Faculty</h5>
-                    </div>
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
+                </div>
                 <div class="modal-body" id="editModal-body">
-                    <div class="form-group">
-                            <label for="faculty_name" class="form-label"> Faculty Name</label>
-                                    <input type="text" name="faculty_id" id="faculty_id" hidden style="height: 0px; width:0px">
-                                    <input class="form-control"  name="faculty_name" id="faculty_name" placeholder="Enter Faculty Name ">
-                        
-                    </div>
-                                  
+
+                   <label for="faculty_name" class="form-label"> Faculty Name</label>
+                   <input type="text" name="loading_id" id="loading_id" hidden style="height: 0px; width:0px">
+                                    <input class="form-control" list="faculty_names" name="faculty_name" id="faculty_name" placeholder="Ente Faculty Name ">
+                                    <datalist id="faculty_names">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT firstname,lastname,middlename,suffix FROM faculties";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $faculty_name = $row['lastname'] . " " . $row['firstname'] . " " . $row['middlename'] . " " . $row['suffix'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $faculty_name ?>">
+                                      <?php }?>
+                                    </datalist>
+
 <!-- ########################################################################################################################## -->
-                     <div class="form-group">
-                             <label for="type" class="form-label">Type</label>
-                                    <input class="form-control" list="browsers" name="type" id="type" placeholder="Choose a faculty type" required>
-                                    <datalist id="browsers">
-                                       
-                                      <option value="Permanent">
-                                      <option value="Temporary">
-                                      <option value="Part time">
+
+
+                    <label for="course_code" class="form-label">Course Code</label>
+                                    <input class="form-control" list="course_codes" name="course_code" id="course_code" placeholder="Ente Course Code ">
+                                    <datalist id="course_codes">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT course_code FROM courses";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $course_code = $row['course_code'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $course_code ?>">
+                                      <?php }?>
+                                    </datalist>
+
+
+<!-- ########################################################################################################################## -->                                    
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4">
+                             <label for="section" class="form-label">Section</label>
+                                    <input class="form-control" list="inis" name="section" id="section" placeholder="Ente Section ">
+                                    <datalist id="inis">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT section_name FROM sections";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $md = $row['section_name'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $md ?>">
+                                      <?php }?>
                                     </datalist>
                         </div>
 
-                    
-<!-- ########################################################################################################################## -->
+
+
+<!-- ########################################################################################################################## -->                        
+                        <div class="col-xs-12 col-sm-8">
+                         <label for="semester" class="form-label">Semester</label>
+                                    <input class="form-control" list="semesters" name="semester" id="semester" placeholder="Enter Semester ">
+                                    <datalist id="semesters">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT sem_description FROM semesters";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $sem_description = $row['sem_description'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $sem_description ?>">
+                                      <?php }?>
+                                    </datalist>
+                        </div>
                     </div>
-                
+                </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" type="submit" >Save</button>
                     <button class="btn btn-warning" type="button" data-dismiss="modal">Back</button>
@@ -353,13 +424,13 @@ session_start();
         aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
-                <form id="delete_loading" action="../php/delete_faculties_admin.php" method="POST">
+                <form id="delete_loading">
                     <div class="modal-header">
                     
                     <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
                 </div>
                 <div class="modal-body" id="deleteModal-body">
-                    <input type="" name="faculty_id" id="delete_id" style="width:0px;height:0px" hidden>
+                    <input type="" name="loading_id" id="delete_id">
 
                 Are you sure to delete this information?
             </div>
@@ -375,76 +446,99 @@ session_start();
     </div> 
     <!-- Edit Modal HTML -->
     <div id="addEmployeeModal" class="modal fade">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <form method="POST" action="../php/insert_faculties_admin.php">
+                <form method="POST" action="../php/insert_faculty_loading.php">
                     <div class="modal-header">                      
-                        <h4 class="modal-title">Add Faculty Member</h4>
+                        <h4 class="modal-title">Add Employee</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
-                    <div class="modal-body"> 
-                                           
-                      <div class="form-group">
-                                           
-                                   <label for="lname" class="form-label">last Name</label>
-                                    <input class="form-control" name="last_name" id="lname" placeholder="Enter last name" required>
-                                                      
-                        </div>
-                         <div class="form-group">
-                           <label for="fname" class="form-label">First Name</label>
-                                    <input class="form-control" name="first_name" id="fname" placeholder="Enter first name" required>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                               <div class="form-group">
-                            
-                                    <label for="mi" class="form-label">Middle Initial</label>
-                                        <input class="form-control" name="middle_name" id="mi" placeholder="Enter middle initial">
-                                </div>
-                                    
-                            </div>
-                             <div class="col">
-                               <div class="form-group">
-                                    <label for="suffix" class="form-label">Suffix</label>
-                                    <input class="form-control" name="suffix" id="suffix" placeholder="Enter suffix">
-                                </div>
-                            </div>
-                        </div>
-                     
-                            <div class="form-group">
-
-                            <label for="department" class="form-label">Department Name</label>
-                            <input class="form-control"  list="departments" name="department_name" id="department" placeholder="Enter department name" required>
-                              <datalist id="departments">
+                    <div class="modal-body">                    
+                        <div class="form-group">
+                            <label for="lname" class="form-label">Faculty</label>
+                                    <input class="form-control" list="lnames" name="faculty" id="lname" placeholder="Enter faculty name">
+                                    <datalist id="lnames">
                                         <?php 
-                                            $sql = "SELECT DISTINCT department_name FROM departments";
+                                            $sql = "SELECT DISTINCT faculty_id,firstname,lastname,middlename FROM faculties";
                                             $result = mysqli_query($conn,$sql);
 
                                             while($row = mysqli_fetch_array($result)){
-                                                $department_name = $row['department_name'];
+                                                $id = $row['faculty_id'];
+                                                $name =   $row['lastname'] .' ' . $row['firstname'] .' '.$row['middlename'] ;
                                             
                                         ?>
-                                      <option value="<?php echo $department_name ?>">
+                                      <option value="<?php echo $name?>">
                                       <?php }?>
                                     </datalist>
-
-
                         </div>
-
-                       
                         <div class="form-group">
-                             <label for="browser" class="form-label">Type</label>
-                                    <input class="form-control" list="browsers" name="type" id="browser" placeholder="Choose a faculty type" required>
+                             <label for="browser" class="form-label">Course Code</label>
+                                    <input class="form-control" list="browsers" name="course_code" id="browser" placeholder="Choose a Course Code">
                                     <datalist id="browsers">
-                                       
-                                      <option value="Permanent">
-                                      <option value="Temporary">
-                                      <option value="Part time">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT course_code FROM courses";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $code = $row['course_code'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $code ?>">
+                                      <?php }?>
                                     </datalist>
                         </div>
+                        <div class="form-group">
+                            <div class="row">
+                                  <div class="col">
+                                   <label for="ini" class="form-label">Section</label>
+                                    <input class="form-control" list="inis" name="section" id="ini" placeholder="Ente Section ">
+                                    <datalist id="inis">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT section_name FROM sections";
+                                            $result = mysqli_query($conn,$sql);
 
+                                            while($row = mysqli_fetch_array($result)){
+                                                $md = $row['section_name'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $md ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                                <div class="col">
+                                   <label for="sem" class="form-label">Semester</label>
+                                    <input class="form-control" list="sems" name="semester" id="sem" placeholder="Semester">
+                                    <datalist id="sems">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT sem_description FROM semesters";
+                                            $result = mysqli_query($conn,$sql);
 
-                     
+                                            while($row = mysqli_fetch_array($result)){
+                                                $md = $row['sem_description'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $md ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                                <div class="col">
+                                   <label for="acads" class="form-label">Semester</label>
+                                    <input class="form-control" list="academ" name="acad" id="acads" placeholder="Academic year">
+                                    <datalist id="academ">
+                                        <?php 
+                                            $sql = "SELECT DISTINCT acad_year FROM academic_year";
+                                            $result = mysqli_query($conn,$sql);
+
+                                            while($row = mysqli_fetch_array($result)){
+                                                $acad = $row['acad_year'];
+                                            
+                                        ?>
+                                      <option value="<?php echo $acad ?>">
+                                      <?php }?>
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
                                   
                     </div>
                     <div class="modal-footer">
@@ -461,7 +555,7 @@ session_start();
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<!-- <script type="text/javascript">
+<script type="text/javascript">
 $(document).ready(function() {
    $("#delete_loading").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -471,7 +565,7 @@ $(document).ready(function() {
 
       // Send the AJAX request
       $.ajax({
-         url: "../php/delete_faculties.php", // PHP file to handle the insertion
+         url: "../php/delete_faculty_loading.php", // PHP file to handle the insertion
          type: "POST",
          data: formData,
          processData: false,
@@ -490,11 +584,11 @@ $(document).ready(function() {
       });
    });
 });
-</script> -->
-<!-- 
+</script>
+
 <script type="text/javascript">
 $(document).ready(function() {
-   $("#update_faculties").submit(function(e) {
+   $("#update_loading").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
 
       // Get the form data
@@ -502,7 +596,7 @@ $(document).ready(function() {
 
       // Send the AJAX request
       $.ajax({
-         url: "../php/update_faculties.php", // PHP file to handle the insertion
+         url: "../php/update_faculty_loading.php", // PHP file to handle the insertion
          type: "POST",
          data: formData,
          processData: false,
@@ -521,7 +615,7 @@ $(document).ready(function() {
       });
    });
 });
-</script> -->
+</script>
 
 
 

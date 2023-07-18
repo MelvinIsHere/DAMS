@@ -6,7 +6,7 @@
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Deans of Colleges<sup></sup></div>
+                <div class="sidebar-brand-text mx-3"><?php echo $type; ?></div>
             </a>
 
             <!-- Divider -->
@@ -60,7 +60,7 @@
                         <a class="collapse-item tablinks"  href="faculties_management.php">Faculties Management</a>
                         <a class="collapse-item tablinks"  href="courses_management.php">Course Management</a>
                         <a class="collapse-item tablinks"  href="faculty_titles_management.php">Title Management</a>
-                        <a class="collapse-item tablinks"  href="create_task.php">Programs</a>
+                        
                     </div>
                 </div>
             </li>

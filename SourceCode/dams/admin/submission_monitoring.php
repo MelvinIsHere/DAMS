@@ -20,14 +20,18 @@ session_start();
             d.department_abbrv
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE unique_id = '$users_id' 
+           WHERE user_id = '$id' 
     
             ");
-    $data_result = mysqli_fetch_assoc($data);
-    $department_name = $data_result['department_name'];
+    
 
-    if($data_result){
+   
 
+    while($row = mysqli_fetch_array($data)){
+         $department_name = $row['department_name'];
+        $img = $row['img'];
+
+        $type =$row['type'];
 
 ?>
 <!DOCTYPE html>
@@ -100,13 +104,24 @@ session_start();
                 </div>
             </div>
             <!-- Faculty Loading -->
-                <div class="container-fluid tabcontent" id="viewFacultyLoading" style="display:none;">
-                    <h1 class="h3 mb-1 text-gray-800">Documents Tracking</h1>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="faculty_loading_table" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
+                <div class="container-fluid tabcontent" id="viewFacultyLoading" style="display: none;">
+    <h1 class="h3 mb-1 text-gray-800">Program Management</h1>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <h2>Programs</b></h2>
+                        </div>
+                        <div class="col-xs-6">
+                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Program</span></a>                                                                              
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
                                             <th>id</th>
                                             <th>Email</th>
                                             <th>Position</th>
@@ -115,18 +130,32 @@ session_start();
                                             <th>Document Status</th>
                                             <th>Action</th>
                                         </tr>
-                                    </thead>
-                                    
-                                       <tbody>
-                                         <?php 
-                                             $conn = new mysqli("localhost","root","","dams2");
-                                            if ($conn->connect_error) {
-                                                    die("Connection failed : " . $conn->connect_error);
-                                            }
+                    </thead>
+                    <tbody>
+                        <?php
 
-                                                $sql = "
+                                include "../config.php";
 
-                                                SELECT DISTINCT
+                            if(isset($_GET['page_no']) && $_GET['page_no'] !=""){
+                                $page_no = $_GET['page_no'];
+                            }else{
+                                $page_no = 1;
+                            }
+                            $total_records_per_page = 6;
+                            $off_set = ($page_no - 1) * $total_records_per_page;
+                            $previous_page = $page_no - 1;
+                            $next_page = $page_no + 1;
+                            $adjacents = "2";
+
+                            $result_count = mysqli_query($conn, "SELECT
+                                    COUNT(*) AS total_records
+                                    FROM programs");
+                            $total_records = mysqli_fetch_array($result_count);
+                            $total_records = $total_records['total_records'];
+                            $total_no_of_page = ceil($total_records / $total_records_per_page);
+                            $second_last = $total_no_of_page - 1;
+
+                            $sql = "SELECT DISTINCT
                                                     dp.`department_name`,
                                                     dp.`department_abbrv`,
                                                     u.user_id,
@@ -147,9 +176,14 @@ session_start();
                                                     LEFT JOIN document_templates dt ON dt.doc_template_id = t.document_id
                                                     WHERE task_name = 'Faculty Loading'
                                                     GROUP BY u.user_id";
-                                                $result = $conn->query($sql);
-                                                while($row = mysqli_fetch_array($result)){
-                                                   $user_id = $row['user_id'];
+                            $results = $conn->query($sql);
+                            if(!$results){
+                                die("Query failed: " . mysqli_error($conn));
+                            }
+                            $results->data_seek($off_set);
+                            $count = 1;
+                            while ($row = mysqli_fetch_array($results)) {
+                               $user_id = $row['user_id'];
                                                    $email = $row['email'];
                                                    $position = $row['type'];
                                                    $abbrv = $row['department_abbrv'];
@@ -158,13 +192,12 @@ session_start();
                                                    $file_id = $row['file_id'];
                                                    $status_id = $row['status_id'];
 
+                                $count++;
+                            
 
-                                                    
-                                                    
-                                                
-                                            ?>
-                                        <tr>
-                                            <td><?php echo $user_id;?></td>
+                         ?>
+                        <tr>
+                            <td><?php echo $user_id;?></td>
                                             <td><?php echo $email;?></td>
                                             <td><?php echo $position;?></td>
                                             <td><?php echo $abbrv;?></td>
@@ -184,21 +217,153 @@ session_start();
                                                 }
 
                                              ?></td>
-                                             <td><a class="btn btn-primary" href="../view_files.php?id=<?php echo $file_id?>">View<a><a class="btn btn-primary" href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report"><i class="fa-thin fa-eye"></i></a>
-</td>
+                            
+                            <td style="display: inline-flex; ">
+                                <a href="../view_files.php?id=<?php echo $file_id?>" class="btn btn-success" style="margin-right: 10px">View</a>
+                                <a href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report" class="btn-warning btn">Return</a>
+                            </td>
+                        </tr>
+                    <?php 
 
-                                        </tr>
-                                        <?php }?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                         // Break the loop if the desired limit is reached
+    if ($count > $total_records_per_page) {
+        break;
+    }
+                    }?>
+                        
+                    </tbody>
+                </table>
+                
+        </div>
+        <!-- end of table wrapper -->
+    <ul class="pagination pull-right">
+    <li class="pull-left btn btn-default disabled">showing page <?php echo $page_no . " of " . $total_no_of_page; ?></li>
+    <li <?php if ($page_no <= 1) { echo "class='disabled page-item'"; } ?>>
+        <a <?php if ($page_no > 1) { echo "href='?page_no=$previous_page'"; } ?>>Previous</a>
+    </li>
 
-                   
-                    <div class="d-flex flex-column">
-                        <a href="#" class="btn btn-warning btn-sm" id="viewTask-back" onclick="openCity(event, 'viewMonitoring')" style="margin-top: 20px;margin-bottom: 20px; margin-right: 50px;">Back</a>
+    <?php
+    if ($total_no_of_page <= 10) {
+        for ($counter = 1; $counter <= $total_no_of_page; $counter++) {
+            if ($counter == $page_no) {
+                echo "<li class='active page-item'><a>$counter</a></li>";
+            } else {
+                echo "<li><a href='?page_no=$counter'>$counter</a></li>";
+            }
+        }
+    } elseif ($total_no_of_page > 10) {
+        if ($page_no <= 4) {
+            for ($counter = 1; $counter <= 8; $counter++) {
+                if ($counter == $page_no) {
+                    echo "<li class='active page-item'><a>$counter</a></li>";
+                } else {
+                    echo "<li><a href='?page_no=$counter'>$counter</a></li>";
+                }
+            }
+            echo "<li class='page-item'><a>...</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$second_last'>$second_last</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$total_no_of_page'>$total_no_of_page</a></li>";
+        } elseif ($page_no > 4 && $page_no < $total_no_of_page - 4) {
+            echo "<li class='page-item'><a href='?page_no=1'>1</a></li>";
+            echo "<li class='page-item'><a href='?page_no=2'>2</a></li>";
+            echo "<li class='page-item'><a>...</a></li>";
+
+            for ($counter = $page_no - $adjacents; $counter <= $page_no + $adjacents; $counter++) {
+                if ($counter == $page_no) {
+                    echo "<li class='active page-item'><a>$counter</a></li>";
+                } else {
+                    echo "<li><a href='?page_no=$counter'>$counter</a></li>";
+                }
+            }
+            echo "<li class='page-item'><a>...</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$second_last'>$second_last</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$total_no_of_page'>$total_no_of_page</a></li>";
+        } else {
+            echo "<li class='page-item'><a href='?page_no=1'>1</a></li>";
+            echo "<li class='page-item'><a href='?page_no=2'>2</a></li>";
+            echo "<li class='page-item'><a>...</a></li>";
+            for ($counter = $total_no_of_page - 6; $counter <= $total_no_of_page; $counter++) {
+                if ($counter == $page_no) {
+                    echo "<li class='active page-item'><a>$counter</a></li>";
+                } else {
+                    echo "<li><a href='?page_no=$counter'>$counter</a></li>";
+                }
+            }
+        }
+    }
+    ?>
+    <li <?php if ($page_no >= $total_no_of_page) { echo "class='disabled page-item'"; } ?>>
+        <a <?php if ($page_no < $total_no_of_page) { echo "href='?page_no=$next_page'"; } ?>>Next</a>
+    </li>
+    <?php
+    if ($page_no < $total_no_of_page) {
+        echo "<li class = 'page-item'><a href='?page_no=$total_no_of_page'>Last &rsquo;</a></li>";
+    }
+    ?>
+</ul>
+<!-- end of table responsive -->
+</div>  
+
+
+
+
+                            <script type="text/javascript">
+                                $(document).ready(function() {
+                                $('.edit').on('click',function(){
+                                    $('#editModal').modal('show');
+
+                                    $tr = $(this).closest('tr');
+
+                                    var data = $tr.children("td").map(function(){
+                                        return $(this).text();
+                                    }).get();
+
+                                    console.log(data);
+
+                                     var program_id  = $(this).closest('tr').find('.program_id').text();
+                                    console.log(program_id)
+                                    $('#program_id').val(program_id);;
+                                    $('#program_name').val(data[1]);
+                                    $('#program_abbrv').val(data[2]);
+                                    
+                                    
+
+                                });
+                                });
+
+
+
+                                $(document).ready(function() {
+                                $('.delete').on('click',function(e){
+                                    e.preventDefault();
+
+                                    var program_id  = $(this).closest('tr').find('.program_id').text();
+                                    console.log(program_id)
+                                    $('#delete_id').val(program_id);;
+                                    $('#deleteModal').modal('show');  
+
+                                });
+                                });
+                            </script>
+                        <!-- 
+                        <script type="text/javascript">
+                          $(document).ready(function() {
+                            $('a[data-toggle="modal"]').click(function() {
+                              var id = $(this).data('id');
+                              $('#h').text(id);
+                            });
+                          });
+                        </script>
+                    
+
+                     end of card bory -->
                     </div>
-                </div>
+
+
+                    
+<!-- end of container -->
+</div>
+</div>
                                 <!-- Faculty Sched -->
                 <div class="container-fluid tabcontent" id="viewFacultySched" style="display:none;">
                     <h1 class="h3 mb-1 text-gray-800">Documents Tracking| Faculty Schedule</h1>

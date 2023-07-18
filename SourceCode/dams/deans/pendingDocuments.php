@@ -17,17 +17,22 @@ session_start();
             u.status,
             u.type,
             d.department_name,
-            d.department_abbrv
+            d.department_abbrv,
+            d.department_id
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE user_id = '$id' 
+ WHERE user_id = '$id' 
     
             ");
-    $data_result = mysqli_fetch_assoc($data);
-    $department_name = $data_result['department_name'];
+    
 
-    if($data_result){
+   
 
+    while($row = mysqli_fetch_array($data)){
+         $department_name = $row['department_name'];
+        $img = $row['img'];
+        $type =$row['type'];
+        $department_id = $row['department_id'];
 
 ?>
 <!DOCTYPE html>
@@ -168,7 +173,7 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1;";
+                        WHERE tt.for_deans = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 1;";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
                     $taskid = $row['task_id'];

@@ -20,13 +20,17 @@ session_start();
             d.department_abbrv
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE unique_id = '$users_id' 
+             WHERE user_id = '$id' 
     
             ");
-    $data_result = mysqli_fetch_assoc($data);
-    $department_name = $data_result['department_name'];
+    
 
-    if($data_result){
+   
+
+    while($row = mysqli_fetch_array($data)){
+         $department_name = $row['department_name'];
+        $img = $row['img'];
+        $type =$row['type'];
 
 
 ?>
@@ -44,9 +48,9 @@ session_start();
             <!-- Main Content -->
             <div id="content">
     <?php include "../topbar/topbar.php"; ?>
-     <div class="container-fluid tabcontent" id="pendingDocu">
+    <div class="container-fluid tabcontent" id="pendingDocu">
     <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+   <!--  <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h1">Pending Task</h1>
     </div>
 
@@ -56,17 +60,27 @@ session_start();
             if ($conn->connect_error) {
                     die("Connection failed : " . $conn->connect_error);
             }
+
+            // $dept_name_sql = mysqli_query($conn,"SELECT department_abbrv FROM departments WHERE department_name = '$department_name'");
+            // $dept_res = mysqli_fetch_assoc($dept_name_sql);
+
+            // $dept_name = $dept_res['department_abbrv'];
+
+            // echo $dept_name;
+
+
+
+
                 $sql = "SELECT
-                        tt.task_id AS task_id,
-                        tt.task_name AS task_name,
+                         tt.task_name AS task_name,
                         tt.date_posted AS date_posted,
                         tt.due_date AS due_date,
-                        ts.`is_completed`
+                        ts.`is_completed`,
+                        ts.task_id AS task_id
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_ovcaa = 1 AND dp.`department_abbrv`='OVCAA' AND is_completed = 1 
-    ";
+                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1;";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
                     $taskid = $row['task_id'];
@@ -87,12 +101,24 @@ session_start();
                             <span><?php echo $posted; ?></span>&nbsp;&nbsp;&nbsp;<span><?php echo $deadline; ?></span></p>
                         
                     </div>
-                    <div class="d-flex flex-column">
-                        <a href="task_fill_up.php?id=<?php echo $taskid; ?>" class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 30px;">View</a>
-                    </div>
+                     <div class="d-flex flex-column">
+                                    <a href="navigator.php?name=<?php echo $taskName; ?>"  class="btn btn-primary btn-sm" style="margin-top: 40px; margin-right: 50px;" name="task">View</a>
+
+                                </div>
+                                <script type="text/javascript">
+
+
+                                </script>
                 </div>
 
             </div>
+               <script type="text/javascript">
+
+                function console_log(link){
+                     console.log('Clicked Link:', link);
+    }
+    
+    </script>
         
         </div>
        <?php }?>
@@ -115,9 +141,71 @@ session_start();
 
 </script>
 
+    </div> -->
+
+      <div class="container-fluid tabcontent" id="viewMonitoring">
+                <div>
+                                        <!-- Page Heading -->
+                    <h1 class="h3 mb-1 text-gray-800">Submission Monitoring</h1>
+                     <?php 
+             $conn = new mysqli("localhost","root","","dams2");
+            if ($conn->connect_error) {
+                    die("Connection failed : " . $conn->connect_error);
+            }
+
+            // $dept_name_sql = mysqli_query($conn,"SELECT department_abbrv FROM departments WHERE department_name = '$department_name'");
+            // $dept_res = mysqli_fetch_assoc($dept_name_sql);
+
+            // $dept_name = $dept_res['department_abbrv'];
+
+            // echo $dept_name;
 
 
-    </div>
+
+
+                $sql = "SELECT
+                         tt.task_name AS task_name,
+                        tt.date_posted AS date_posted,
+                        tt.due_date AS due_date,
+                        ts.`is_completed`,
+                        ts.task_id AS task_id
+                        FROM tasks tt
+                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
+                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                        WHERE tt.for_ovcaa = 1  AND ts.`is_completed` = 1;";
+                $result = $conn->query($sql);
+                while($row = mysqli_fetch_array($result)){
+                    $taskid = $row['task_id'];
+                    $taskName = $row['task_name'];
+                    $posted = $row['date_posted'];
+                    $deadline = $row['due_date'];
+                    
+                    
+                
+            ?>
+
+                    <div class="col">
+                        <div class="card" id="cardbtn" style="margin-top:20px">
+                            <div class="card-body" id="card-body" style="height: 140px;  width: auto;">
+                                <div class="task_info" style="white-space: nowrap;">
+                                    <h3 class="h3 mb-1 text-gray-800"><?php echo $taskName; ?></h3>
+                                    <p class="task_info_text"><span>Due Date: <?php echo $deadline; ?></span></p>
+                                    
+                                </div>
+                                <div class="d-flex flex-column" style="display:inline-flex;">
+                                    <a href="pending.php?id=<?php echo $taskid;?>" class="btn btn-primary btn-sm" id="viewTaskbtn">Upload</a>
+                                    <a href="navigator.php?name=<?php echo $taskName; ?>" class="btn btn-primary btn-sm" id="viewTaskbtn">View Assigned Task</a>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    
+            <?php }?>
+                   
+                </div>
+            </div>
 </div>
 
     <!-- Bootstrap core JavaScript-->

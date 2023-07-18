@@ -17,16 +17,23 @@ session_start();
             u.status,
             u.type,
             d.department_name,
-            d.department_abbrv
+            d.department_abbrv,
+            d.department_id
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE unique_id = '$users_id' 
+             WHERE user_id = '$id' 
     
             ");
-    $data_result = mysqli_fetch_assoc($data);
-    $department_name = $data_result['department_name'];
+    
 
-    if($data_result){
+   
+
+    while($row = mysqli_fetch_array($data)){
+         $department_name = $row['department_name'];
+         $department_id = $row['department_id'];
+        $img = $row['img'];
+        $type =$row['type'];
+
 
 
 ?>
@@ -35,6 +42,8 @@ session_start();
 <?php include "../header/header_deans.php"; ?>
 
 <body id="page-top">
+
+
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -76,7 +85,7 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 1");
+                        WHERE tt.for_deans = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 1");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -113,7 +122,7 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_deans = 1 AND dp.`department_abbrv`='CICS' AND ts.`is_completed` = 0");
+                        WHERE tt.for_deans = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 0");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -205,7 +214,7 @@ session_start();
 
                                             $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
                                                       FROM task_status_deans
-                                                      WHERE office_id = 8";
+                                                      WHERE office_id = '$department_id'";
 
                                             $result = $conn->query($query);
                                             if ($result->num_rows > 0) {
@@ -229,7 +238,7 @@ session_start();
 
                                                 $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
                                                           FROM task_status_deans
-                                                          WHERE office_id = 8";
+                                                          WHERE office_id = '$department_id'";
 
                                                 $result = $conn->query($query);
                                                 if ($result->num_rows > 0) {

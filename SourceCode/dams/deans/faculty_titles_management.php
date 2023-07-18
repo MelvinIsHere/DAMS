@@ -23,15 +23,18 @@ session_start();
             d.department_abbrv
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
-            WHERE unique_id = '$users_id' 
+            WHERE user_id = '$id' 
     
             ");
-    $data_result = mysqli_fetch_assoc($data);
-    $department_name = $data_result['department_name'];
-    $department_id = $data_result['department_id'];
     
 
-    if($data_result){
+   
+
+    while($row = mysqli_fetch_array($data)){
+         $department_name = $row['department_name'];
+        $img = $row['img'];
+        $type =$row['type'];
+        $department_id = $row['department_id'];
 
 
 ?>
