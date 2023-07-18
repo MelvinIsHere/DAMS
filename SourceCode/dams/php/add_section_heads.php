@@ -1,0 +1,51 @@
+<?php
+
+include "config.php";
+include "functions.php";
+$section_name = $_POST['section_name'];
+$students = $_POST['students'];
+$programs = $_POST['programs'];
+$semester = $_POST['semester'];
+
+$program_id = getProgramId($programs);
+if($program_id != "error"){
+	$semester_id = getSemesterId($semester);
+
+	if($program_id != ""){
+
+
+			if(!empty($students)){
+
+				$sql = mysqli_query($conn,"INSERT INTO sections(program_id,section_name,semester_id,no_of_students)
+											VALUES('$program_id','$section_name','$semester_id','$students')");
+				if($sql){
+					header("Location: ../heads/section_management.php?Message : Section  Successfully Added!");
+				}
+				else{
+					header("Location: ../heads/section_management.php?Message : Adding Unsuccess!");	
+				}
+			}
+			else{
+
+				$sql = mysqli_query($conn,"INSERT INTO sections(program_id,section_name,semester_id,no_of_students)
+											VALUES('$program_id','$section_name','$semester_id',0)");
+				if($sql){
+					header("Location: ../heads/section_management.php?Message : Section  Successfully Added!");
+				}
+				else{
+					header("Location: ../heads/section_management.php?Message : Adding Unsuccess!");	
+				}
+			}
+		
+	}
+	else{
+		echo "error";
+	}
+
+}
+else{
+	echo "error";
+}
+
+
+?>

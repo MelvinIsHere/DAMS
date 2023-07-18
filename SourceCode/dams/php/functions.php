@@ -68,7 +68,7 @@ function  getTaskName($task_id){
 }
 function notifications($name,$task_name){
 	include "config.php";
-	$content = $name . "Submitted a file in " . $task_name . "!";
+	$content = $name . " Submitted a file in " . $task_name . "!";
 	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','no')");
 	if(!$sql){
 		return "";
@@ -79,12 +79,176 @@ function notifications($name,$task_name){
 	}
 
 }
-function user_notif_dean($users_id,$notif_id){
+function user_notif_dean($users_id,$notif_id,$type){
 	include "config.php";
 	// Assuming you have already established the database connection using $conn
 
-		$user_ids_query = "SELECT user_id FROM users WHERE user_id != '$users_id'";
-$user_ids_result = mysqli_query($conn, $user_ids_query);
+		$user_ids_query = "SELECT user_id FROM users WHERE type = '$type'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
+}
+
+
+
+function user_notif_ovcaa($users_id,$notif_id,$type){
+	include "config.php";
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE type = '$type'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
+}
+
+function user_notif_dean_heads($users_id,$notif_id,$type1,$type2){
+	include "config.php";
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE type = '$type1' OR type = '$type2'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
+}
+
+
+function user_notif_dean_ovcaa($users_id,$notif_id,$type1,$type2){
+	include "config.php";
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE type = '$type1' OR type = '$type2'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
+}
+
+function user_notif_all($users_id,$notif_id,$type1,$type2,$type3){
+	include "config.php";
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE type = '$type1' OR type = '$type2' OR type = '$type3'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
+}
+
+function user_notif_dean_only($users_id,$notif_id,$type1){
+	include "config.php";
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE type = '$type1'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
 
 if ($user_ids_result) {
     $success = true; // Variable to track the success status
@@ -138,12 +302,13 @@ function  getDept_id($task_id){
                     }
                 }
             }
-function adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans){
+function adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans,$heads){
 	include "config.php";
-	   $conn -> query("INSERT INTO tasks (task_name, task_desc,document_id, date_posted, due_date, for_ovcaa,for_deans) VALUES ('$task_name','$description','$doc_temp_id', '$dateStart', '$dateEnd','$ovcaa', '$deans')");
+	   $conn -> query("INSERT INTO tasks (task_name, task_desc,document_id, date_posted, due_date, for_ovcaa,for_deans,for_heads) VALUES ('$task_name','$description','$doc_temp_id', '$dateStart', '$dateEnd','$ovcaa', '$deans','$heads')");
                 // $result = $conn->query($sql);
                 // Print auto-generated id
                 $id = $conn -> insert_id;
+
 
             return $id;
                 

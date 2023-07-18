@@ -53,11 +53,11 @@
                                 <h6 class="dropdown-header">
                                     Notifications
                                 </h6>
-                                <div class="notif">
+                                <div class="notif" style="overflow: scroll; max-height: 400px;">
                                     
                                 </div>
                                
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                                
                             </div>
                         </li>
                         <script type="text/javascript">

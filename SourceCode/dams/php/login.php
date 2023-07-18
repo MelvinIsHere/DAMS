@@ -39,10 +39,16 @@
                     $_SESSION['type'] = $row['type'];
                     $_SESSION['dept_name'] = $row['department_name'];
                     }
-                    else if($type === "staffs"){
-                        header("Location: ../staffs/staff.php");
+                    else if($type === "Heads"){
+                         $_SESSION['unique_id'] = $row['unique_id'];
+                    $_SESSION['user_id'] = $row['user_id'];
+                   
+                    $_SESSION['email'] = $row['email'];
+                    $_SESSION['type'] = $row['type'];
+                    $_SESSION['dept_name'] = $row['department_name'];
+                        header("Location: ../heads/heads.php");
                     }
-                     else if($type === "Dean" || $type === "Heads"){
+                     else if($type === "Dean"){
                     $_SESSION['unique_id'] = $row['unique_id'];
                     $_SESSION['user_id'] = $row['user_id'];
                    

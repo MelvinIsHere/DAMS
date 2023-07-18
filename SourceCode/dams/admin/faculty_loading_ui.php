@@ -18,7 +18,8 @@ session_start();
             u.status,
             u.type,
             d.department_name,
-            d.department_abbrv
+            d.department_abbrv,
+            d.department_id,
             FROM users u
             LEFT JOIN departments d ON u.department_id = d.department_id
              WHERE user_id = '$id' 
@@ -30,6 +31,7 @@ session_start();
 
     while($row = mysqli_fetch_array($data)){
          $department_name = $row['department_name'];
+         $department_id = $row['department_id'];
         $img = $row['img'];
         $type =$row['type'];
 
@@ -135,7 +137,7 @@ session_start();
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
                                     LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
                                     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
-                                    WHERE fl.`dept_id` = 8 # insert dept_id
+                                    WHERE fl.`dept_id` = '$department_id' # insert dept_id
                                     GROUP BY fl.`fac_load_id`
                                     ";
                             $results = $conn->query($sql);

@@ -48,9 +48,10 @@ include "php/functions.php";
                                  if($name != ""){
                                       $task_name = getTaskName($task_id);
                                       if($task_name != ""){
-                                           $notif = notifications($name,$task_name);
+                                           $notif = notifications($dept_name,$task_name);
                                            if($notif != ""){
-                                               $user_notif = user_notif_dean($users_id,$notif);
+                                            $type = "Admin";
+                                               $user_notif = user_notif_ovcaa($users_id,$notif,$type);
                                                if($user_notif != ""){
                                                  $act_log = activity_log_submitted_documents($users_id,$task_name);
                                                  if($act_log != ""){

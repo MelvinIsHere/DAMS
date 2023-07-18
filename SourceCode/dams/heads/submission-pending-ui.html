@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pending Task | Submsission</title>
+	<link rel="stylesheet" type="text/css" href="deans.css">
+	<link rel="stylesheet" type="text/css" href="submission-pending-ui.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+</head>
+<body>
+	 <nav class="navigation">
+      <h3 class="title-nav">Pending Documents | Faculty Loading</h3><br>
+    </nav>
+	<center>
+        <form>
+            <div class="row" id="row">
+                <div class="col-xs-12 col-sm-7">
+                  <div class="header">
+                    <h3>Melvin Felicisimo</h3>
+                    <h6>June 27, 2023</h6>
+                  </div>
+
+                    <hr class="hr">
+                    <p class="due-date">Due Date: June 30, 2023</p>
+                    <p>From your Google Developer Profile, kindly attach a screenshot of your<br>
+                        1. account (showing the account name and # of badge/s)<br>
+                        2. actual badge/s<br>
+                        <br>
+                        See google doc for reference.
+                    </p>
+                </div>
+                <div class="col-xs-12 col-sm-4" id="upload">
+                  <center>
+	                <div class="body">
+        					  <div class="wrapper">
+        					    <header>File Uploader JavaScript</header>
+        					    <form action="#">
+        					      <input class="file-input" type="file" name="file" hidden>
+        					      <i class="fas fa-cloud-upload-alt"></i>
+        					      <p>Browse File to Upload</p>
+        					    </form>
+        					    <section class="progress-area"></section>
+        					    <section class="uploaded-area"></section>
+                       <a class="btn btn-primary btn-sm" href="">Submit</a>
+        					  </div>
+                  </center>
+		            </div>
+                </div>
+            </div>
+       </form>
+   </center>
+<a class="btn btn-warning btn-sm" href="deans1.html">Back</a>
+ 
+
+<!-- <?php
+  $file_name =  $_FILES['file']['name'];
+  $tmp_name = $_FILES['file']['tmp_name'];
+  $file_up_name = time().$file_name;
+  move_uploaded_file($tmp_name, "files/".$file_up_name);
+?> -->
+
+
+
+
+<script>
+const form = document.querySelector("form"),
+fileInput = document.querySelector(".file-input"),
+progressArea = document.querySelector(".progress-area"),
+uploadedArea = document.querySelector(".uploaded-area");
+
+form.addEventListener("click", () =>{
+  fileInput.click();
+});
+
+fileInput.onchange = ({target})=>{
+  let file = target.files[0];
+  if(file){
+    let fileName = file.name;
+    if(fileName.length >= 12){
+      let splitName = fileName.split('.');
+      fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
+    }
+    uploadFile(fileName);
+  }
+}
+
+function uploadFile(name){
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", "php/upload.php");
+  xhr.upload.addEventListener("progress", ({loaded, total}) =>{
+    let fileLoaded = Math.floor((loaded / total) * 100);
+    let fileTotal = Math.floor(total / 1000);
+    let fileSize;
+    (fileTotal < 1024) ? fileSize = fileTotal + " KB" : fileSize = (loaded / (1024*1024)).toFixed(2) + " MB";
+    let progressHTML = `<li class="row">
+                          <i class="fas fa-file-alt"></i>
+                          <div class="content">
+                            <div class="details">
+                              <span class="name">${name} • Uploading</span>
+                              <span class="percent">${fileLoaded}%</span>
+                            </div>
+                            <div class="progress-bar">
+                              <div class="progress" style="width: ${fileLoaded}%"></div>
+                            </div>
+                          </div>
+                        </li>`;
+    uploadedArea.classList.add("onprogress");
+    progressArea.innerHTML = progressHTML;
+    if(loaded == total){
+      progressArea.innerHTML = "";
+      let uploadedHTML = `<li class="row">
+                            <div class="content upload">
+                              <i class="fas fa-file-alt"></i>
+                              <div class="details">
+                                <span class="name">${name} • Uploaded</span>
+                                <span class="size">${fileSize}</span>
+                              </div>
+                            </div>
+                            <i class="fas fa-check"></i>
+                          </li>`;
+      uploadedArea.classList.remove("onprogress");
+      uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML);
+    }
+  });
+  let data = new FormData(form);
+  xhr.send(data);
+}
+</script>
+
+</body>
+</html>

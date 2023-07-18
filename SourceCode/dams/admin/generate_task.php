@@ -81,8 +81,9 @@ session_start();
                             <br><br>
                         <div>
                             <h5>Assigned to:</h5>
-                            <input type="checkbox" name="dean" value="1"> Deans of Colleges   
-                            <input type="checkbox" name="ovcaa" value="1">  Office of Vice Chancellor of Academic Affairs
+                            <input type="checkbox" name="dean" value="1"> Deans of Colleges  <br> 
+                            <input type="checkbox" name="ovcaa" value="1">  Office of Vice Chancellor of Academic Affairs <br>
+                            <input type="checkbox" name="heads" value="1">  Heads of Offices
                         </div>
                         </div>
                         <br>

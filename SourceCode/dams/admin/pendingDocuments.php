@@ -172,7 +172,7 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_ovcaa = 1  AND ts.`is_completed` = 1;";
+                        WHERE tt.for_heads = 1 AND ts.`is_completed` = 1;";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
                     $taskid = $row['task_id'];

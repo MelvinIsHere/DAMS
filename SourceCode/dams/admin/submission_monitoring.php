@@ -105,17 +105,17 @@ session_start();
             </div>
             <!-- Faculty Loading -->
                 <div class="container-fluid tabcontent" id="viewFacultyLoading" style="display: none;">
-    <h1 class="h3 mb-1 text-gray-800">Program Management</h1>
+    <h1 class="h3 mb-1 text-gray-800">Faculty Loading Submission Monitoring</h1>
     <div class="card-body">
         <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
                         <div class="col-xs-6">
-                            <h2>Programs</b></h2>
+                            <h2>Faculty Loading</b></h2>
                         </div>
                         <div class="col-xs-6">
-                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Program</span></a>                                                                              
+                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty Loading</span></a>                                                                              
                         </div>
                     </div>
                 </div>
