@@ -35,6 +35,7 @@ session_start();
         $img = $row['img'];
         $type =$row['type'];
         $department_id = $row['department_id'];
+        $department_abbrv = $row['department_abbrv'];
 
 
 ?>
@@ -68,7 +69,7 @@ session_start();
                         </div>
                     </div>
                 </div>
-                <table class="table table-striped table-hover">
+                <table class="table table-striped table-hover" id="table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -78,11 +79,94 @@ session_start();
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                      <tbody>
                         <?php
 
                                 include "../config.php";
+                                 
+                             if(isset($_GET['search'])){
+                                $search = $_GET['search'];
 
+                            if(isset($_GET['page_no']) && $_GET['page_no'] !=""){
+                                $page_no = $_GET['page_no'];
+                            }else{
+                                $page_no = 1;
+                            }
+                            $total_records_per_page = 6;
+                            $off_set = ($page_no - 1) * $total_records_per_page;
+                            $previous_page = $page_no - 1;
+                            $next_page = $page_no + 1;
+                            $adjacents = "2";
+
+                            $result_count = mysqli_query($conn, "SELECT DISTINCT
+                                    COUNT(*) AS total_records,
+                                    ft.fac_title_id,
+                                    f.firstname,
+                                    f.lastname,
+                                    f.middlename,
+                                    f.suffix,
+                                    f.department_id,
+                                    t.title_description
+                                    FROM faculty_titles ft
+                                    LEFT JOIN faculties f ON f.`faculty_id` = ft.faculty_id
+                                    LEFT JOIN titles t ON t.`title_id` = ft.title_id
+                                    WHERE f.department_id = '$department_id' 
+                                    AND CONCAT(f.firstname,f.middlename,f.lastname,f.suffix) LIKE '%$search%'
+                                    AND t.title_description LIKE '%search%'");
+                            $total_records = mysqli_fetch_array($result_count);
+                            $total_records = $total_records['total_records'];
+                            $total_no_of_page = ceil($total_records / $total_records_per_page);
+                            $second_last = $total_no_of_page - 1;
+
+                            $sql = "SELECT
+                                    ft.fac_title_id,
+                                    f.firstname,
+                                    f.lastname,
+                                    f.middlename,
+                                    f.suffix,
+                                    f.department_id,
+                                    t.title_description
+                                    FROM faculty_titles ft
+                                    LEFT JOIN faculties f ON f.`faculty_id` = ft.faculty_id
+                                    LEFT JOIN titles t ON t.`title_id` = ft.title_id
+                                    WHERE department_id = '$department_id'
+                                    AND CONCAT(f.firstname,f.middlename,f.lastname,f.suffix, t.title_description) LIKE '%$search%'
+                                   ";
+                            $results = $conn->query($sql);
+                            if(!$results){
+                                die("Query failed: " . mysqli_error($conn));
+                            }
+                            $results->data_seek($off_set);
+                            $count = 1;
+                            while ($row = mysqli_fetch_array($results)) {
+                                $id = $row['fac_title_id'];
+                                $first_name = $row['firstname'];
+                                $last_name = $row['lastname'];
+                                $middle_name = $row['middlename'];
+                                $suffix = $row['suffix'];
+                                $title = $row['title_description'];
+
+                                $count++;
+                            
+
+                         ?>
+                        <tr>
+                            <td class="faculty_title_id"><?php echo $id;?></td>
+                            <td><?php echo  $last_name . " " .$first_name . " " .  $middle_name . " " . $suffix;?></td>
+                            <td><?php echo $title;?></td>
+                            
+                            <td>
+                                <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                                <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                            </td>
+                        </tr>
+                    <?php 
+
+                         // Break the loop if the desired limit is reached
+    if ($count > $total_records_per_page) {
+        break;
+    }
+                    }}else{
                             if(isset($_GET['page_no']) && $_GET['page_no'] !=""){
                                 $page_no = $_GET['page_no'];
                             }else{
@@ -151,6 +235,7 @@ session_start();
     if ($count > $total_records_per_page) {
         break;
     }
+                    }
                     }?>
                         
                     </tbody>
@@ -158,7 +243,83 @@ session_start();
                 
         </div>
         <!-- end of table wrapper -->
-    <ul class="pagination pull-right">
+      <?php 
+    if(isset($_GET['search'])){
+
+    ?>
+        <!-- end of table wrapper -->
+     <ul class="pagination pull-right">
+    <li class="pull-left btn btn-default disabled">showing page <?php echo $page_no . " of " . $total_no_of_page; ?></li>
+    <li <?php if ($page_no <= 1) { echo "class='disabled page-item'"; } ?>>
+        <a <?php if ($page_no > 1) { echo "href='?page_no=$previous_page&search={$_GET["search"]}'"; } ?>>Previous</a>
+    </li>
+
+    <?php
+    if ($total_no_of_page <= 10) {
+        for ($counter = 1; $counter <= $total_no_of_page; $counter++) {
+            if ($counter == $page_no) {
+                echo "<li class='active page-item'><a>$counter</a></li>";
+            } else {
+                echo "<li><a href='?page_no=$counter&search={$_GET["search"]}'>$counter</a></li>";
+
+            }
+        }
+    } elseif ($total_no_of_page > 10) {
+        if ($page_no <= 4) {
+            for ($counter = 1; $counter <= 8; $counter++) {
+                if ($counter == $page_no) {
+                    echo "<li class='active page-item'><a>$counter</a></li>";
+                } else {
+                    echo "<li><a href='?page_no=$counter&search={$_GET["search"]}'>$counter</a></li>";
+                }
+            }
+            echo "<li class='page-item'><a>...</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$second_lastr&search={$_GET["search"]}'>$second_last</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$total_no_of_page&search={$_GET["search"]}'>$total_no_of_page</a></li>";
+        } elseif ($page_no > 4 && $page_no < $total_no_of_page - 4) {
+            echo "<li class='page-item'><a href='?page_no=1'>1</a></li>";
+            echo "<li class='page-item'><a href='?page_no=2'>2</a></li>";
+            echo "<li class='page-item'><a>...</a></li>";
+
+            for ($counter = $page_no - $adjacents; $counter <= $page_no + $adjacents; $counter++) {
+                if ($counter == $page_no) {
+                    echo "<li class='active page-item'><a>$counter</a></li>";
+                } else {
+                    echo "<li><a href='?page_no=$counter&search={$_GET["search"]}'>$counter</a></li>";
+                }
+            }
+            echo "<li class='page-item'><a>...</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$second_last'>$second_last</a></li>";
+            echo "<li class='page-item'><a href='?page_no=$total_no_of_page'>$total_no_of_page</a></li>";
+        } else {
+            echo "<li class='page-item'><a href='?page_no=1'>1</a></li>";
+            echo "<li class='page-item'><a href='?page_no=2'>2</a></li>";
+            echo "<li class='page-item'><a>...</a></li>";
+            for ($counter = $total_no_of_page - 6; $counter <= $total_no_of_page; $counter++) {
+                if ($counter == $page_no) {
+                    echo "<li class='active page-item'><a>$counter</a></li>";
+                } else {
+                    echo "<li><a href='?page_no=$counter&search={$_GET["search"]}'>$counter</a></li>";
+                }
+            }
+        }
+    }
+    ?>
+    <li <?php if ($page_no >= $total_no_of_page) { echo "class='disabled page-item'"; } ?>>
+        <a <?php if ($page_no < $total_no_of_page) { echo "href='?page_no=$next_page&search={$_GET["search"]}'"; } ?>>Next</a>
+    </li>
+    <?php
+    if ($page_no < $total_no_of_page) {
+        echo "<li class = 'page-item'><a href='?page_no=$total_no_of_page&search={$_GET["search"]}'>Last &rsquo;</a></li>";
+    }
+    ?>
+</ul>
+
+<?php }else{
+
+?>
+       
+     <ul class="pagination pull-right">
     <li class="pull-left btn btn-default disabled">showing page <?php echo $page_no . " of " . $total_no_of_page; ?></li>
     <li <?php if ($page_no <= 1) { echo "class='disabled page-item'"; } ?>>
         <a <?php if ($page_no > 1) { echo "href='?page_no=$previous_page'"; } ?>>Previous</a>
@@ -171,6 +332,7 @@ session_start();
                 echo "<li class='active page-item'><a>$counter</a></li>";
             } else {
                 echo "<li><a href='?page_no=$counter'>$counter</a></li>";
+
             }
         }
     } elseif ($total_no_of_page > 10) {
@@ -223,6 +385,8 @@ session_start();
     }
     ?>
 </ul>
+<?php 
+}?>
 <!-- end of table responsive -->
 </div>  
 
@@ -449,8 +613,43 @@ session_start();
 
 
 
+      <script>
+          let table = new DataTable('#table');
+      </script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<?php 
+if(isset($_SESSION['alert'])){
+    $value = $_SESSION['alert'];
+    if($value == "success"){
+        $message = $_SESSION['message'];
+        echo "
+        <script type='text/javascript'>
+            swal({
+                title: 'Success!',
+                text: '$message',
+                icon: 'success'
+            });
+        </script>";
+    } elseif($value == "error"){
+        $message = $_SESSION['message'];
+        echo "
+        <script type='text/javascript'>
+            swal({
+                title: 'Error!',
+                text: '$message',
+                icon: 'error'
+            });
+        </script>";
+    }
+    // Clear the session alert and message after displaying
+    unset($_SESSION['alert']);
+    unset($_SESSION['message']);
+}
+?>
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>-->
 <!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_title").submit(function(e) {
@@ -518,33 +717,34 @@ $(document).ready(function() {
 
       
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
+    <!--<script src="vendor/jquery/jquery.min.js"></script>-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!--<script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
  
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!--<script src="js/sb-admin-2.min.js"></script>-->
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!--<script src="vendor/chart.js/Chart.min.js"></script>-->
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <!--<script src="js/demo/chart-area-demo.js"></script>-->
+    <!--<script src="js/demo/chart-pie-demo.js"></script>-->
 
-    <script src="js/demo/datatables-demo.js"></script>
-    <script src="js/demo/viewTask_details.js"></script>
+    <!--<script src="js/demo/datatables-demo.js"></script>-->
+    <!--<script src="js/demo/viewTask_details.js"></script>-->
     
-    <script src="js/demo/admin_faculty_loading.js"></script>
-    <script src="js/demo/faculty_sched_table.js"></script>
+    <!--<script src="js/demo/admin_faculty_loading.js"></script>-->
+    <!--<script src="js/demo/faculty_sched_table.js"></script>-->
      <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!--<script src="js/sb-admin-2.min.js"></script>-->
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <!--<script src="vendor/datatables/jquery.dataTables.min.js"></script>-->
+    <!--<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>-->
+    <script src="js/sb-admin-2.min.js"></script>
 
 
 

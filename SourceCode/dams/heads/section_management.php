@@ -30,11 +30,13 @@ session_start();
 
    
 
-    while($row = mysqli_fetch_array($data)){
+    if($data){
+        $row = mysqli_fetch_assoc($data);
          $department_name = $row['department_name'];
         $img = $row['img'];
         $type =$row['type'];
         $department_id = $row['department_id'];
+        $department_abbrv = $row['department_abbrv'];
 
 
 ?>
@@ -65,7 +67,7 @@ session_start();
                             <h2>Sections in <?php echo $department_name;?></b></h2>
                         </div>
                         <div class="col-xs-6">
-                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Section</span></a>
+                            <a href="#addEmployeeModal" class="btn btn-success add" data-toggle="modal" ><i class="material-icons">&#xE147;</i> <span>Add New Section</span></a>
                               
                                                 
                         </div>
@@ -106,7 +108,7 @@ session_start();
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
 
-                            $sql = "SELECT
+                            $sql = "SELECT DISTINCT
                                     s.section_id AS 'Section Id',
                                     p.program_abbrv AS 'Program Abbrv',
                                     s.section_name AS 'Section Name',
@@ -238,6 +240,16 @@ session_start();
                                     $('#section_name').val(data[1]);
                                     $('#students').val(data[2]);
                                     
+                                    
+
+                                });
+                                });
+                                
+                                  $(document).ready(function() {
+                                $('.add').on('click',function(){
+                                    $('#addEmployeeModal').modal('show');
+
+                                   
                                     
 
                                 });
@@ -445,7 +457,7 @@ session_start();
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>-->
 <!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_section").submit(function(e) {
@@ -513,33 +525,33 @@ $(document).ready(function() {
 
       
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
+    <!--<script src="vendor/jquery/jquery.min.js"></script>-->
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!--<script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
  
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!--<script src="js/sb-admin-2.min.js"></script>-->
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!--<script src="vendor/chart.js/Chart.min.js"></script>-->
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <!--<script src="js/demo/chart-area-demo.js"></script>-->
+    <!--<script src="js/demo/chart-pie-demo.js"></script>-->
 
-    <script src="js/demo/datatables-demo.js"></script>
-    <script src="js/demo/viewTask_details.js"></script>
+    <!--<script src="js/demo/datatables-demo.js"></script>-->
+    <!--<script src="js/demo/viewTask_details.js"></script>-->
     
-    <script src="js/demo/admin_faculty_loading.js"></script>
-    <script src="js/demo/faculty_sched_table.js"></script>
+    <!--<script src="js/demo/admin_faculty_loading.js"></script>-->
+    <!--<script src="js/demo/faculty_sched_table.js"></script>-->
      <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!--<script src="js/sb-admin-2.min.js"></script>-->
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <!--<script src="vendor/datatables/jquery.dataTables.min.js"></script>-->
+    <!--<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>-->
 
 
 

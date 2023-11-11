@@ -1,11 +1,13 @@
 <?php
     session_start();
-    include_once "db_con.php";
+    include_once "config.php";
     include_once "functions.php";
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $type = mysqli_real_escape_string($conn, $_POST['type']);
     $user_id = mysqli_real_escape_string($conn, $_POST['user_id']);
+    $error = "error";
+    $success = "success";
     
     
 
@@ -18,17 +20,33 @@
                          $update_account = mysqli_query($conn, "UPDATE users SET email = '$email',password = '$encrypt_pass',
                                                                 type = '$type' WHERE user_id = '$user_id'");
                         if($update_account){
-                                header("Location: ../admin/account_management.php?Message : The account has been updated!");                                            
+                                $message = "The account has been successfully updated!";
+                                
+
+                                            $_SESSION['alert'] = $success; 
+                                             $_SESSION['message'] =  $message;   //failed to insert
+                                             header("Location: ../admin/account_management.php");                                            
                                         }else{
-                                            header("Location: ../admin/account_management.php?Message : Something went wrong. Please try again!");
+                                            $message = "Something went wrong updating the account information!";
+                                            
+                                             
+                                            $_SESSION['alert'] = $error; 
+                                             $_SESSION['message'] =  $message;   //failed to insert
+                                             header("Location: ../admin/account_management.php");
                                             
                                         }
                   
                 }else{
-                    header("Location: ../admin/account_management.php?Message : " . $email . " is not a valid email!");
+                    $message = $email . " is not a valid email!";
+                    $_SESSION['alert'] = $error; 
+                    $_SESSION['message'] =  $message;   //failed to insert
+                    header("Location: ../admin/account_management.php");
                 }
             }else{
-                header("Location: ../admin/account_management.php?Message : All input fields are required!");
+                $message = "All input fields are required!";
+                $_SESSION['alert'] = $error; 
+                $_SESSION['message'] =  $message;   //failed to insert
+                header("Location: ../admin/account_management.php");
             } 
    
     

@@ -104,12 +104,13 @@ session_start();
                             COUNT(*) AS total_records
                             FROM
                             faculty_loadings fl
-                            LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
-                            LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
-                            LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
-                            LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
-                            LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
-                            WHERE fl.`dept_id` = '$department_id' # insert dept_id
+                           LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+                                    LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
+                                    LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+                                    LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+                                    LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+                                    WHERE fl.`dept_id` = '$department_id' # insert dept_id
+                                    GROUP BY fl.`fac_load_id`
                             ");
                             $total_records = mysqli_fetch_array($result_count);
                             $total_records = $total_records['total_records'];
@@ -555,7 +556,7 @@ session_start();
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>-->
 <script type="text/javascript">
 $(document).ready(function() {
    $("#delete_loading").submit(function(e) {
@@ -623,33 +624,33 @@ $(document).ready(function() {
 
       
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!--<script src="vendor/jquery/jquery.min.js"></script>-->
+    <!--<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!--<script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
  
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!--<script src="js/sb-admin-2.min.js"></script>-->
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!--<script src="vendor/chart.js/Chart.min.js"></script>-->
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <!--<script src="js/demo/chart-area-demo.js"></script>-->
+    <!--<script src="js/demo/chart-pie-demo.js"></script>-->
 
-    <script src="js/demo/datatables-demo.js"></script>
-    <script src="js/demo/viewTask_details.js"></script>
+    <!--<script src="js/demo/datatables-demo.js"></script>-->
+    <!--<script src="js/demo/viewTask_details.js"></script>-->
     
-    <script src="js/demo/admin_faculty_loading.js"></script>
-    <script src="js/demo/faculty_sched_table.js"></script>
+    <!--<script src="js/demo/admin_faculty_loading.js"></script>-->
+    <!--<script src="js/demo/faculty_sched_table.js"></script>-->
      <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!--<script src="js/sb-admin-2.min.js"></script>-->
 
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <!--<script src="vendor/datatables/jquery.dataTables.min.js"></script>-->
+    <!--<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>-->
 
 
 

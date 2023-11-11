@@ -1,11 +1,12 @@
 <?php
-
+session_start();
 include "config.php";
 include "functions.php";
 $program_id = $_POST['program_id'];
 $program_name = $_POST['program_name'];
 $program_abbrv = $_POST['program_abbrv'];
-
+$error = "error";
+$success = "success";
 
 if(!empty($program_id)){
 	
@@ -13,17 +14,28 @@ if(!empty($program_id)){
 									WHERE program_id = '$program_id'");
 		if($sql){
 			
-			header("Location: ../admin/program_management.php?Message : Program ".$program_name." has been successfully updated!");
+			$message = "Program ".$program_name." has been successfully updated!";
+			$_SESSION['alert'] = $success; 
+	        $_SESSION['message'] =  $message;   //failed to insert
+	        header("Location: ../admin/program_management.php");	
+
 
 		
 		}
 		else{
-			header("Location: ../admin/program_management.php?Message : There is something wrong updating the program ". $program_name);	
+			
+			$message = "Something wrong updating the program $program_name";
+			$_SESSION['alert'] = $error; 
+	        $_SESSION['message'] =  $message;   //failed to insert
+	        header("Location: ../admin/program_management.php");	
 		}
 
 }
 else{
-	header("Location: ../admin/program_management.php?Message : There are no program such as " .$program_name);
+	$message = "There are no program such as " .$program_name;
+	$_SESSION['alert'] = $error; 
+    $_SESSION['message'] =  $message;   //failed to insert
+    header("Location: ../admin/program_management.php");	
 }
 
 

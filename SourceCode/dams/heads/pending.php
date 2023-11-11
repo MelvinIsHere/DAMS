@@ -31,104 +31,136 @@ $task_id = $_GET['id'];
             $task_name = $task_data['task_name'];
             $task_posted = $task_data['date_posted'];
             $task_due = $task_data['due_date'];
-            $task_desc = $task_data['task_desc']
+            $task_desc = $task_data['task_desc'];
+            $status_id = $_GET['status_id'];
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pending Task | Submsission</title>
-    <link rel="stylesheet" type="text/css" href="deans.css">
-    <link rel="stylesheet" type="text/css" href="submission-pending-ui.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <title>Pending Task | Submission</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Add your custom styles in styles.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
-<body>
-     <nav class="navigation">
-      <h3 class="title-nav">Pending Documents</h3><br>
-    </nav>
-    <center>
-        
-            <div class="row" id="row">
-                <div class="col-xs-12 col-sm-7">
-                  <div class="header">
-                    <h3><?php echo $task_name;?></h3>
-                    <h6><?php echo $task_posted;?></h6>
-                  </div>
 
-                    <hr class="hr">
-                    <p class="due-date">Due Date: <?php echo $task_posted;?></p>
-                    <p><?php echo $task_desc; ?><br> 
-                        <br>
-                        See google doc for reference.
-                    </p>
-                </div>
-                <div class="col-xs-12 col-sm-4" id="upload">
-                  <center>
-                    <div class="body">
-                      <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST" enctype="multipart/form-data" id="form">
-                              <div class="wrapper">
-                                <header>File Uploader JavaScript</header>
-                                
-                                  <input require class="file-input" type="file" name="file" hidden  accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-                                  <i class="fas fa-cloud-upload-alt"></i>
-                                  <p>Browse File to Upload</p>
-                                
-                                <section class="progress-area"></section>
-                                <section class="uploaded-area"></section>
-                       <a class="btn btn-primary btn-sm" href="#">Upload</a>
-                              </div>
-                        
-                  </center>
+<body>
+    <nav class="navbar navbar-dark" style="background: #A52A2A;height: 100px">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Pending Documents</span>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo $task_name; ?></h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><strong>Due date : </strong><?php echo $task_posted; ?></h6>
+                        <hr>
+                        <h5 class="card-title">Description</h5>
+                        <p class="card-text"><?php echo $task_desc; ?><br>See google doc for reference.</p>
                     </div>
                 </div>
-                <input type="text" name="task_id" value="<?php echo $task_id; ?>" style="width: 0px; height: 0px; display: none;">
             </div>
-            <br><br><br><br>
-            <button type="submit" name="submit" id="submit"class="btn btn-success pull-right ">Submit</button>
-       </form>
-   </center>
-<!-- <a class="btn btn-warning btn-sm" href="deans.php">Back</a> -->
- 
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data"
+                            id="form">
+                            <div class="form-group">
+                                <label for="file">Choose File:</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="file" name="file" required>
+                                    <label class="custom-file-label" for="file">Select file...</label>
+                                </div>
+                            </div>
+                            <input type="" name="task_status_id" value="<?php echo $status_id;?>" hidden>
+                            <input type="text" name="task_id" value="<?php echo $task_id; ?>" style="width: 0px; height: 0px; display: none;">
+                            <div id="file-info" class="mt-3"></div>
+
+                            <div class="progress mt-3" style="display: none;">
+                                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <ul class="uploaded-area"></ul>
+
+                            <button type="submit" class="btn btn-success btn-block" name="submit" id="submit">Submit</button>
+                        </form>
+                        <div class="progress mt-3" style="display: none;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> -->
 <script type="text/javascript">
-$(document).ready(function() {
-   $("#form").submit(function(e) {
-      e.preventDefault(); // Prevent the form from submitting normally
+$(document).ready(function () {
+    $("#form").submit(function (e) {
+        e.preventDefault();
 
-      // Get the form data
-      var formData = new FormData(this);
+        var formData = new FormData(this);
 
-      // Send the AJAX request
-      $.ajax({
-         url: "../upload_file.php", // PHP file to handle the insertion
-         type: "POST",
-         data: formData,
-         processData: false,
-         contentType: false,
-         success: function(response) {
-            // Handle the response from the PHP file
-          
-              alert(response);
-
-              window.location.href = "pendingDocuments.php";
-
-         // Show a success message or do something with the response
-            
-         },
-         error: function(xhr, status, error) {
-            // Handle errors
-            console.error(error); // Log the error message
-         }
-      });
-   });
+        $.ajax({
+            url: "../upload_file.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                // Handle the success response
+                alert(response);
+                window.location.href = "pendingDocuments.php";
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error(error);
+                alert("Error occurred while uploading the file. Please try again later.");
+            }
+        });
+    });
 });
 </script>
 
 
+<script type="text/javascript">
+  $(document).ready(function() {
+    // When the file input changes
+    $("#file").change(function() {
+        // Get the selected file
+        var file = $(this)[0].files[0];
 
+        // Display file information dynamically
+        var fileInfo = `<strong>File Information:</strong><br>`;
+        fileInfo += `Name: ${file.name}<br>`;
+        fileInfo += `Size: ${formatFileSize(file.size)}<br>`;
+        fileInfo += `Type: ${file.type}`;
+
+        // Display the file information in the 'file-info' div
+        $("#file-info").html(fileInfo);
+    });
+
+    // Function to format file size in human-readable format
+    function formatFileSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    }
+});
+
+</script>
 
 
 
@@ -196,7 +228,49 @@ function uploadFile(name){
   xhr.send(data);
 }
 </script>
+  <script type="text/javascript">
+        $(document).ready(function () {
+            const form = document.getElementById("form");
+            const fileInput = document.getElementById("file");
+            const progressArea = document.querySelector(".progress");
+            const uploadedArea = document.querySelector(".uploaded-area");
 
+            fileInput.addEventListener("change", function () {
+                let file = fileInput.files[0];
+                if (file) {
+                    let fileName = file.name;
+                    if (fileName.length >= 12) {
+                        let splitName = fileName.split('.');
+                        fileName = splitName[0].substring(0, 13) + "... ." + splitName[1];
+                    }
+
+                    let xhr = new XMLHttpRequest();
+                    xhr.open("POST", "php/upload.php");
+                    xhr.upload.addEventListener("progress", function (event) {
+                        let percent = Math.round((event.loaded / event.total) * 100);
+                        progressArea.style.display = "block";
+                        progressArea.innerHTML = `${percent}%`;
+                        progressArea.style.width = `${percent}%`;
+
+                        if (percent === 100) {
+                            progressArea.innerHTML = "Uploaded!";
+                            setTimeout(() => {
+                                progressArea.style.display = "none";
+                            }, 1000);
+                        }
+                    });
+
+                    let formData = new FormData(form);
+                    xhr.send(formData);
+                }
+            });
+        });
+    </script>
+
+   <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+     <script src="script.js"></script> <!--Add your custom JavaScript in script.js -->
 </body>
 </html>
 <?php }

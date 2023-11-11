@@ -5,7 +5,8 @@
 
 
         
-        $conn = new mysqli("localhost", "root", "", "dams2");
+        
+$conn = new mysqli("localhost", "root", "", "dams2");
                                         if ($conn->connect_error) {
                                                 die("Connection failed : " . $conn->connect_error);
                                         }

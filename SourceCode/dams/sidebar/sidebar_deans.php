@@ -1,12 +1,10 @@
  <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav  sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color:#A52A2A;" id="sidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3"><?php echo $type; ?></div>
+                
+                <div class="sidebar-brand-text mx-3"><?php echo $department_abbrv; ?></div>
             </a>
 
             <!-- Divider -->
@@ -15,7 +13,7 @@
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link tablinks"  href="deans.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <i class="fas fa-fw fa-home"></i>
                     <span>Dashboard</span></a>
             </li>
 
@@ -30,7 +28,7 @@
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed tablinks"  href="pendingDocuments.php">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-fw fa-tasks"></i>
                     <span>Pending</span>
                 </a>
                         
@@ -49,7 +47,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Department Manager</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -79,10 +77,20 @@
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                <button class="rounded-circle border-0" id="sidebarToggle" onclick="displaySidebar()"></button>
             </div>
 
            
 
         </ul>
         <!-- End of Sidebar -->
+<script type="text/javascript">
+    function displaySidebar(){
+        var sidebar = document.getElementById('sidebar');
+        if(sidebar.style.display = "none"){
+            sidebar.style.display = "block";
+        }else{
+            sidebar.style.display = "none";
+        }
+    }
+</script>

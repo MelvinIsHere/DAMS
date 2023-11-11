@@ -5,10 +5,7 @@
 
 
         
-        $conn = new mysqli("localhost", "root", "", "dams2");
-                                        if ($conn->connect_error) {
-                                                die("Connection failed : " . $conn->connect_error);
-                                        }
+     include "../config.php";
                                        
 
                 // END NG CONNECTION
@@ -24,7 +21,7 @@
                                                         LEFT JOIN 
                                                             user_notifications un ON un.notif_id = n.notif_id
                                                         WHERE 
-                                                        is_task = 'yes'
+                                                        is_task = 'yes' AND un.user_id = '$id'
                                                         ORDER BY `date` DESC";  
 
                                             $result = $conn->query($sql);      //EXCUTION

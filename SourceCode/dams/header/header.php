@@ -18,29 +18,58 @@
     <!-- Custom styles for this template-->
     <link href="css/admin.css" rel="stylesheet">
     <link href="deans.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <link rel="stylesheet" href="createTask.css">
 
+<!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-
-<!-- pag may error uncomment this -->
-
-   <!--  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
- -->
 
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap.min.css">
+
+
+<!-- sweet alert -->
+<!-- Include SweetAlert CSS -->
+<script src="sweetalert2.all.min.js"></script>
+<!-- Optional: include a polyfill for ES6 Promises for IE11 -->
+<script src="//cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>
+<script src="sweetalert2.min.js"></script>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="sweetalert2.min.css">
 
 
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <script src="vendor\fontawesome-free\svgs\solid"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+ 
+  
+
+ 
+     <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+
+
+
+
+
+    
+     <!-- Custom scripts for all pages-->
+    
 
     <style>
     body {
@@ -61,7 +90,7 @@
     }
     .table-title {        
         padding-bottom: 15px;
-        background: #435d7d;
+        background: #A52A2A;
         color: #fff;
         padding: 16px 30px;
         margin: -20px -25px 10px;
@@ -70,6 +99,7 @@
     .table-title h2 {
         margin: 5px 0 0;
         font-size: 24px;
+        color:white;
     }
     .table-title .btn-group {
         float: right;
@@ -98,6 +128,7 @@
         border-color: #e9e9e9;
         padding: 12px 15px;
         vertical-align: middle;
+         word-wrap: break-word;
     }
     table.table tr th:first-child {
         width: 60px;
@@ -265,6 +296,11 @@
     .modal form label {
         font-weight: normal;
     }   
+    .setting-holder{
+        background-color: #D9D9D9;
+        min-width: 800px;
+        height: 200px;
+    }
 </style>
     
 

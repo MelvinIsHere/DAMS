@@ -3,11 +3,7 @@
         $users_id = $_SESSION['user_id'];
       include "../php/functions.php";
 
-        
-        $conn = new mysqli("localhost", "root", "", "dams2");
-                                        if ($conn->connect_error) {
-                                                die("Connection failed : " . $conn->connect_error);
-                                        }
+    include "../config.php";
 
                 // END NG CONNECTION
                                                 //<- START NG QUERY NG SELECT ALL DATA SA DATABASE TABLE

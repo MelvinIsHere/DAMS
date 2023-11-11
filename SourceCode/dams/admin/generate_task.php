@@ -25,6 +25,7 @@ session_start();
             ");
     $data_result = mysqli_fetch_assoc($data);
     $department_name = $data_result['department_name'];
+    
 
     if($data_result){
 
@@ -33,13 +34,13 @@ session_start();
 <!DOCTYPE html>
 <html>
 <?php  include "../header/header.php"?>
-<body>
-    <nav class="navigation">
-        <h3 class="title-nav">Create Task</h3><br>
+<body style="background-color: white;">
+    <nav class="navigation" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background: #A52A2A;">
+        <center><h3 class="title-nav">CREATE TASK</h3><br></center>
     </nav>
     <center>
         <div>
-            <form method="POST" action="" id="form">
+            <form method="POST" action="task.php" id="form">
                 <div class="row" id="row">
                     <div class="col-xs-12 col-sm-7">
                         <label for="lname" class="form-label">Task name</label>
@@ -83,11 +84,12 @@ session_start();
                             <h5>Assigned to:</h5>
                             <input type="checkbox" name="dean" value="1"> Deans of Colleges  <br> 
                             <input type="checkbox" name="ovcaa" value="1">  Office of Vice Chancellor of Academic Affairs <br>
-                            <input type="checkbox" name="heads" value="1">  Heads of Offices
+                            <input type="checkbox" name="heads" value="1">  Heads of Offices <br>
+                            <input type="checkbox" name="staffs" value="1">  Staffs
                         </div>
                         </div>
                         <br>
-                        <button id="submit"type="submit"  name="submit"class="btn btn-primary btn-upload">Upload</button>
+                        <button id="submit"type="submit"  name="submit"class="btn btn-primary btn-upload" style="background-color:#1cc88a;">Upload</button>
                     </div>
                 </div>
 
@@ -97,7 +99,7 @@ session_start();
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#form").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -124,9 +126,43 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<?php 
+if(isset($_SESSION['alert'])){
+    $value = $_SESSION['alert'];
+    if($value == "success"){
+        $message = $_SESSION['message'];
+        echo "
+        <script type='text/javascript'>
+            swal({
+                title: 'Success!',
+                text: '$message',
+                icon: 'success'
+            });
+        </script>";
+    } elseif($value == "error"){
+        $message = $_SESSION['message'];
+        echo "
+        <script type='text/javascript'>
+            swal({
+                title: 'Error!',
+                text: '$message',
+                icon: 'error'
+            });
+        </script>";
+    }
+    // Clear the session alert and message after displaying
+    unset($_SESSION['alert']);
+    unset($_SESSION['message']);
+}
+?>
 </body>
 </html>
 
-<?php }}?>
+<?php }}
+else{
+
+    header("Location: ../index.php");
+}?>

@@ -2,10 +2,39 @@
 
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+                   <!-- Sidebar Toggle (Topbar) -->
+                    
+                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    
+
+                    <!-- Topbar Search -->
+                    <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <?php 
+                            if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                           <?php }
+
+                            ?>
+                            <?php
+
+                            if(isset($_GET['section_name'])){?>
+                                 <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                            <?php }?>
+
+                             
+                            <div class="input-group-append">
+                                <button class="btn " type="submit" style="color:white;background-color:#A52A2A">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
                  
 
@@ -23,9 +52,8 @@
                                 aria-labelledby="searchDropdown">
                                 <form class="form-inline mr-auto w-100 navbar-search">
                                     <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
+                                         <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
@@ -40,7 +68,7 @@
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="upNotif()">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
                                 <span class="badge badge-danger badge-counter" id="count_notif"></span>
@@ -51,7 +79,7 @@
                             <!-- Dropdown - Alerts -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in "
                                 aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
+                                <h6 class="dropdown-header" style="background-color:#00BFA5">
                                     Notifications
                                 </h6>
                                  <div class="notif" style="overflow: scroll; max-height: 400px;">
@@ -104,7 +132,7 @@
                                                     ' <a class="dropdown-item d-flex align-items-center" href="#">\
                                                         <div class="mr-3">\
                                                             <div class="icon-circle bg-success">\
-                                                                <i class="fas fa-donate text-white"></i>\
+                                                                <i class="fas fa-bell text-white"></i>\
                                                             </div>\
                                                         </div>\
                                                         <div>\
@@ -150,25 +178,25 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $department_name;?></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $email;?></span>
                                 <img class="img-profile rounded-circle"
                                     src="<?php echo '../php/images/'.$img?>" >
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
+                                <!--<a class="dropdown-item" href="#">-->
+                                <!--    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>-->
+                                <!--    Profile-->
+                                <!--</a>-->
+                                <!--<a class="dropdown-item" href="#">-->
+                                <!--    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>-->
+                                <!--    Settings-->
+                                <!--</a>-->
+                                <!--<a class="dropdown-item" href="#">-->
+                                <!--    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>-->
+                                <!--    Activity Log-->
+                                <!--</a>-->
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -201,3 +229,13 @@
         </div>
     </div>
                 <!-- End of Topbar -->
+<script type="text/javascript">
+    function displaySidebar(){
+        var sidebar = document.getElementById('sidebar');
+        if(sidebar.style.display = "none"){
+            sidebar.style.display = "block";
+        }else{
+            sidebar.style.display = "none";
+        }
+    }
+</script>

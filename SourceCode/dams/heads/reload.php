@@ -4,7 +4,8 @@
       include "../php/functions.php";
 
         
-        $conn = new mysqli("localhost", "root", "", "dams2");
+        
+$conn = new mysqli("localhost", "root", "", "dams2");
                                         if ($conn->connect_error) {
                                                 die("Connection failed : " . $conn->connect_error);
                                         }
@@ -33,7 +34,7 @@
                                                                 LEFT JOIN 
                                                                     user_notifications un2 ON un2.notif_id = n2.notif_id
                                                                 WHERE 
-                                                                    un2.user_id != '$users_id';
+                                                                    un2.user_id = '$users_id';
                                                                     );
                                                                         
                                                             

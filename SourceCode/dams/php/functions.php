@@ -1,9 +1,9 @@
 <?php
 
 	
-function insertQuery($fileName,$path,$users_id){
+function insertQuery($fileName,$path,$users_id,$status_id){
 include "config.php";
- $query = "INSERT INTO file_table(file_name,directory,file_owner_id) VALUES ('$fileName','$path','$users_id')";
+ $query = "INSERT INTO file_table(file_name,directory,file_owner_id,task_status_id) VALUES ('$fileName','$path','$users_id','$status_id')";
  $run = mysqli_query($conn,$query);
 if (!$run) {
 		$vars = mysql_error($conn);
@@ -11,11 +11,11 @@ if (!$run) {
 		return "success";
 	}
 }
-function updateTaskStats($office_id,$task_id){
+function updateTaskStats($users_id,$task_id,$status_id){
 	include "config.php";
-	$update = mysqli_query($conn,"UPDATE task_status_deans SET is_completed = '0' WHERE task_id = '$task_id' AND office_id = '$office_id'");
+	$update = mysqli_query($conn,"UPDATE task_status_deans SET is_completed = '0' WHERE task_id = '$task_id' AND user_id = '$users_id' AND status_id = '$status_id'");
 	if (!$update) {
-		return "";
+		return mysqli_error($conn);
 	}else{
 		return "success";
 	}
@@ -275,6 +275,39 @@ if ($user_ids_result) {
 }
 
 
+function user_notif_return($user_id,$notif_id){
+	include "config.php";
+	// Assuming you have already established the database connection using $conn
+
+		$user_ids_query = "SELECT user_id FROM users WHERE user_id = '$user_id'";
+
+		$user_ids_result = mysqli_query($conn, $user_ids_query);
+
+if ($user_ids_result) {
+    $success = true; // Variable to track the success status
+    while ($row = mysqli_fetch_array($user_ids_result)) {
+        $id = $row['user_id'];
+
+        $sql = mysqli_query($conn, "INSERT INTO user_notifications(status, notif_id, user_id) VALUES(0, '$notif_id', '$id')");
+        if (!$sql) {
+            $success = false; // If any insert fails, set success to false
+            break; // Exit the loop early since there's no need to continue
+        }
+    }
+
+    if ($success) {
+        return "success";
+    } else {
+        return "";
+    }
+} else {
+    // Handle the case when the query execution fails
+    return "";
+}
+
+}
+
+
 
 //tasks
 function insertTask($task_name,$description,$dateStart,$dateEnd,$ovcaa,$deans,$department){
@@ -302,9 +335,9 @@ function  getDept_id($task_id){
                     }
                 }
             }
-function adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans,$heads){
+function adminInsertTask($task_name,$description,$doc_temp_id,$dateEnd,$ovcaa,$deans,$heads,$staffs){
 	include "config.php";
-	   $conn -> query("INSERT INTO tasks (task_name, task_desc,document_id, date_posted, due_date, for_ovcaa,for_deans,for_heads) VALUES ('$task_name','$description','$doc_temp_id', '$dateStart', '$dateEnd','$ovcaa', '$deans','$heads')");
+	   $conn -> query("INSERT INTO tasks (task_name, task_desc,document_id, due_date, for_ovcaa,for_deans,for_heads,for_staffs) VALUES ('$task_name','$description','$doc_temp_id', '$dateEnd','$ovcaa', '$deans','$heads','$staffs')");
                 // $result = $conn->query($sql);
                 // Print auto-generated id
                 $id = $conn -> insert_id;
@@ -320,7 +353,7 @@ function insertTaskNotification($task_name){
 	
 	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','yes')");
 	if(!$sql){
-		return mysqli_error($conn);
+		return "";
 		
 	}
 	else{
@@ -371,12 +404,12 @@ function returnTaskAccomplishment($file_owner_id){
                                                     WHERE f.file_owner_id = '$file_owner_id'");
 	$file = mysqli_fetch_assoc();
 }
-function notifications_return($name,$task_name){
+function notifications_return($task_name){
 	include "config.php";
-	$content = $name . "Return your task " . $task_name . "your file is wrong";
+	$content = "Admin has return your task " . $task_name . " your file is wrong";
 	$sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','yes')");
 	if(!$sql){
-		return mysqli_error($conn);
+		return "";
 		
 	}
 	else{
@@ -384,11 +417,11 @@ function notifications_return($name,$task_name){
 	}
 
 }
-function user_notif_update($users_id,$notif_id){
+function user_notif_update($user_id,$notif_id){
 	include "config.php";
-	$sql = mysqli_query($conn,"INSERT INTO user_notifications(status,notif_id,user_id) VALUES(0,'$notif_id','$users_id')");
+	$sql = mysqli_query($conn,"INSERT INTO user_notifications(status,notif_id,user_id) VALUES(0,'$notif_id','$user_id')");
 	if(!$sql){
-		return mysqli_error($conn);
+		return "";
 	}
 	else{
 		return "success";
@@ -401,7 +434,7 @@ function getTemplateId($task_name){
 	$array = mysqli_fetch_assoc($sql);
 	$temp_id = $array['doc_template_id'];
 	if(!$sql){
-		return mysqli_error($conn);
+		return "";
 	}
 	else{
 		return $temp_id;
@@ -449,7 +482,8 @@ function getCourseData($course_code){
 }
 function getSectionData($section){
 	include "config.php";
-	$section_data = mysqli_query($conn,"SELECT section_id FROM sections WHERE section_name = '$section'");
+	$section_data = mysqli_query($conn,"SELECT  s.section_id FROM sections s
+            LEFT JOIN programs p ON p.program_id = s.program_id WHERE CONCAT('BS',p.program_abbrv, ' ' , s.section_name) = '$section'");
 	$section = mysqli_fetch_assoc($section_data);
 	$section_id = $section['section_id'];
 	if(!$section_data){
@@ -572,5 +606,88 @@ function getTitleId($title){
 
 }
 
+
+
+
+
+//for faculty loading verifications
+
+function verify_faculty_loading_data($faculty_id){
+	include "config.php";
+	$verify = mysqli_query($conn,"SELECT
+                                    getFullName_surnameFirst(fc.firstname,fc.middlename,fc.lastname,fc.`suffix`) 'Name of Faculty',
+                                    cs.course_code 'Course Code',
+                                    getProg_sec(pr.`program_abbrv`,sc.`section_name`) 'Section',
+                                    sc.no_of_students 'No. of Students',
+                                    cs.`units` 'Total Units',
+                                    cs.`lec_hrs_wk` 'Lec. hrs/wk',
+                                    cs.`lab_hrs_wk` 'Lab. hrs/wk',
+                                    SUM(cs.`lec_hrs_wk`+cs.`lab_hrs_wk`) 'Total hrs/wk',
+                                    cs.`course_description` 'Course Description',
+                                    fl.fac_load_id AS 'Loading Id'
+                                    FROM
+                                    faculty_loadings fl
+                                    LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+                                    LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
+                                    LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+                                    LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+                                    LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+                                    LEFT JOIN semesters s ON s.`semester_id` ON fl.`sem_id`
+                                    LEFT JOIN academic_year ay ON ay.`acad_year_id` = fl.`acad_year_id`
+                                    WHERE fc.faculty_id = '$faculty_id' 	
+                                    GROUP BY fl.`fac_load_id`
+");
+	if(mysqli_num_rows($verify) > 1){
+		$total_units = 0;
+		$row = mysqli_fetch_array($verify);
+		
+		while($total_units <= 18){
+			$units = $row['Total Units'];
+			$total_units = $units + $total_units;
+		}
+		if($total_units <= 18){
+			return false; // good to go
+		}else{
+			
+			return true;//reach max units
+		}
+
+	}
+	else{
+	    return false;
+	}
+
+}
+function verify_academic_year($academic_year){
+include "config.php";
+
+// Assuming the data is sent via POST
+
+$sql = mysqli_query($conn, "SELECT acad_year FROM academic_year WHERE acad_year = '$academic_year'");
+if (mysqli_num_rows($sql) > 0) {
+	$update_status_before = mysqli_query($conn,"UPDATE academic_year SET status = 'NOT ACTIVE'");
+	if($update_status_before){
+		$update = mysqli_query($conn, "UPDATE academic_year SET status = 'ACTIVE' WHERE acad_year = '$academic_year'");
+    if ($update) {
+        return "success";
+    } else {
+        return "";
+    }
+	}
+	else{
+      return "";
+	}
+    
+} else {
+    return "Not Found";
+}
+
+}
+//end of faculty loading verifications
+
+
+
+                 
  ?>
+             
 
