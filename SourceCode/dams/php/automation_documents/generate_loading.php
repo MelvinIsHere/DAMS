@@ -34,7 +34,7 @@ if(!$conn){
 }
 // ...
 $acad_id = $_SESSION['acad_id'];
-$sem_id = $_SESSION['semester_id'];
+$semester_id = $_SESSION['semester_id'];
 $dept_id = $_GET['dept_id'];
 $dept_abbrv = $_GET['dept_abbrv'];
 
@@ -42,7 +42,7 @@ $dept_abbrv = $_GET['dept_abbrv'];
 
 
 
-$active_semester = mysqli_query($conn, "SELECT sem_description FROM semesters WHERE semester_id = '$sem_id'");
+$active_semester = mysqli_query($conn, "SELECT sem_description FROM semesters WHERE semester_id = '$semester_id'");
 if($active_semester){
     if(mysqli_num_rows($active_semester) > 0){
         $row = mysqli_fetch_assoc($active_semester);
@@ -136,8 +136,8 @@ LEFT JOIN departments d ON d.`department_id` = fc.`department_id`
 LEFT JOIN semesters s ON s.semester_id = fl.sem_id
 LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
 WHERE fc.is_permanent = 1 AND d.`department_id` = '$dept_id'
-AND s.status = 'ACTIVE'
-AND ay.status = 'ACTIVE'
+AND s.semester_id = '$semester_id'
+AND ay.acad_year_id = '$acad_id'
 
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.firstname");
@@ -148,8 +148,9 @@ $row_start_permanent = 7;
 $data_permanent = [];
 
 if($permanent_query){
-    $permanent = true;
+    
     if(mysqli_num_rows($permanent_query) > 0){
+        $permanent = true;
         while ($row = mysqli_fetch_array($permanent_query)) {
               $facultyname = $row['Name of Faculty'];
               $course_code =  $row['Course Code'];
@@ -299,6 +300,7 @@ while($row_start_permanent >= $rowStart){
         $total_lab_hrs = 0;
         $total_hrs_wk = 0;              
     }
+      
 }
 
 
@@ -379,15 +381,17 @@ while($row <= $row_start_permanent){
 
 
 
-
-
-$row_start_guest = 0;
-if($permanent){
-    $row_start_guest = $row_start_permanent +1;
-}else{
-    $row_start_guest = 11;
-    
+$cellvalue = "";
+$row_start_guest = $row_start_permanent;
+$row_start_content_guest= $row_start_permanent;
+while($cellvalue != " TEMPORARY FACULTY"){
+     $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_guest)->getCalculatedValue();
+       $spreadsheet->getActiveSheet()
+                    ->setCellValue('P'.$row_start_guest, $row_start_guest);
+     $row_start_guest++;
+     $row_start_content_guest++;
 }
+
 $guest = false;
 
 
@@ -419,8 +423,8 @@ LEFT JOIN departments d ON d.`department_id` = fc.`department_id`
 LEFT JOIN semesters s ON s.semester_id = fl.sem_id
 LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
 WHERE fc.is_guest = 1 AND d.`department_id` = '$dept_id'
-AND s.status = 'ACTIVE'
-AND ay.status = 'ACTIVE'
+AND s.semester_id = '$semester_id'
+AND ay.acad_year_id = '$acad_id'
 
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.firstname");
@@ -431,8 +435,10 @@ ORDER BY  fc.firstname");
 $data_guest = [];
 
 if($guest_query){
-    $guest = true;
+    
     if(mysqli_num_rows($guest_query) > 0){
+        $guest = true;
+   
         while ($row = mysqli_fetch_array($guest_query)) {
               $facultyname = $row['Name of Faculty'];
               $course_code =  $row['Course Code'];
@@ -502,21 +508,12 @@ if($guest_query){
               
 
        }
-    }else{
-
-    }
-}else{
-
-}
-$spreadsheet->getActiveSheet()->removeRow($row_start_guest, 1);
 
 
 
 
 
-
-
-$rowStart = $row_start_permanent +1;; //the start of the counting
+$rowStart = $row_start_content_guest;; //the start of the counting
 $oldval = ""; //the current old val
 //varibales to increment
 $totalUnits = 0;
@@ -591,9 +588,12 @@ while($row_start_guest >= $rowStart){
 
 
 
-$row = $row_start_permanent +1;
+
+
+
+$row = $row_start_content_guest;
 $rowCount =1;
-$cRow = $row_start_permanent+1;
+$cRow = $row_start_content_guest;
 while($row <= $row_start_guest){
     //get the current cell value
     $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getCalculatedValue();
@@ -605,27 +605,7 @@ while($row <= $row_start_guest){
     if($cellValueCurrent ==  " PART-TIME FACULTY"){
         break;
     }
-    //if the current row is row index 7 just increment
-    if($cRow == 7){
-        if ($cellValueCurrent ==  $nextvalue) {                
-            $row++;
-            $rowCount++;
-        }else{      
-            //else merge cells for the line              
-            $spreadsheet->getActiveSheet()->mergeCells('A'.$cRow.':C'.$row);
-            // Get style for the merged cells // Set vertical alignment to center
-            $spreadsheet->getActiveSheet()->getStyle('A'.$cRow)->getAlignment()->setHorizontal('center');
-            //set the line wrap to be true
-            $spreadsheet->getActiveSheet()->getStyle('A'.$cRow)->getAlignment()->setWrapText(true); 
-            //set the starting merge to be the last merging + 1 so we will start on the next value
-            $cRow = $cRow + $rowCount; 
-            //increment the row
-            $row++;
-            //re assign the row count
-            $rowCount = 1;
-        }
-    } 
-    elseif ($cellValueCurrent ==  $nextvalue) {
+   if ($cellValueCurrent ==  $nextvalue) {
         //if same value then increment the row and the row count
             $row++;
             $rowCount++;
@@ -645,34 +625,79 @@ while($row <= $row_start_guest){
     }
        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//guest faculty
-
-
-$row_start_part_time = 0;
-if($guest){
-    $row_start_part_time = $row_start_guest +1;
+       $spreadsheet->getActiveSheet()->removeRow($row_start_guest, 1);
+    }else{
+             
+    }
 }else{
-    $row_start_part_time = 15;
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//part time faculty
+
+$cellvalue = "";
+$row_start_part_time = $row_start_guest;
+$row_start_content_part_time = $row_start_guest;
+while($cellvalue != " PART-TIME FACULTY"){
+     $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_part_time)->getCalculatedValue();
+       $spreadsheet->getActiveSheet()
+                    ->setCellValue('P'.$row_start_part_time, $row_start_part_time);
+     $row_start_part_time++;
+     $row_start_content_part_time++;
+}
+
+
+
+// if($guest){
+//     $row_start_content_part_time = $row_start_guest +1;
+//     $row_start_part_time = $row_start_guest +1;
+// }elseif(!$guest){
+//     $row_start_content_part_time = $row_start_permanent + 5;
+//     $row_start_part_time = $row_start_permanent + 5;
+//     $spreadsheet->getActiveSheet()
+//                     ->setCellValue('P'.$row_start_guest,"aaa");
+// }elseif($guest && !$permanent){
+//      $row_start_part_time = $row_start_guest +1;
+      
+// }
+// else{
+//     $row_start_part_time = 15;
+// }
 
 
 
@@ -706,8 +731,8 @@ LEFT JOIN departments d ON d.`department_id` = fc.`department_id`
 LEFT JOIN semesters s ON s.semester_id = fl.sem_id
 LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
 WHERE fc.is_partTime = 1 AND d.`department_id` = '$dept_id'
-AND s.status = 'ACTIVE'
-AND ay.status = 'ACTIVE'
+AND s.semester_id = '$semester_id'
+AND ay.acad_year_id = '$acad_id'
 
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.firstname");
@@ -720,6 +745,7 @@ $data_partTime = [];
 if($part_time_query){
     $part = true;
     if(mysqli_num_rows($part_time_query) > 0){
+        
         while ($row = mysqli_fetch_array($part_time_query)) {
               $facultyname = $row['Name of Faculty'];
               $course_code =  $row['Course Code'];
@@ -806,7 +832,7 @@ $spreadsheet->getActiveSheet()->removeRow($row_start_part_time, 1);
 
 
 
-$rowStart = $row_start_guest +1;; //the start of the counting
+$rowStart = $row_start_content_part_time; //the start of the counting
 $oldval = ""; //the current old val
 //varibales to increment
 $totalUnits = 0;
@@ -842,7 +868,7 @@ while($row_start_part_time >= $rowStart){
     //if same value for next and current just increment the rowstart so it can still continue to count or add
     if ($cellValue ==  $nextvalue) {                    
         $rowStart++;                                        
-    }elseif($cellValue == " PART-TIME FACULTY"){
+    }elseif(empty($cellValue)){
         break;
     }else{
 
@@ -880,9 +906,9 @@ while($row_start_part_time >= $rowStart){
 
 
 
-$row = $row_start_guest +1;
+$row = $row_start_content_part_time;
 $rowCount =1;
-$cRow = $row_start_guest+1;
+$cRow = $row_start_content_part_time;
 while($row <= $row_start_part_time){
     //get the current cell value
     $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getCalculatedValue();
@@ -891,30 +917,10 @@ while($row <= $row_start_part_time){
     //get the next cell value
     $nextvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $nextRow)->getCalculatedValue();
     //if true break the loop
-    if($cellValueCurrent ==  " PART-TIME FACULTY"){
+    if(empty($cellValueCurrent)){
         break;
     }
-    //if the current row is row index 7 just increment
-    if($cRow == 7){
-        if ($cellValueCurrent ==  $nextvalue) {                
-            $row++;
-            $rowCount++;
-        }else{      
-            //else merge cells for the line              
-            $spreadsheet->getActiveSheet()->mergeCells('A'.$cRow.':C'.$row);
-            // Get style for the merged cells // Set vertical alignment to center
-            $spreadsheet->getActiveSheet()->getStyle('A'.$cRow)->getAlignment()->setHorizontal('center');
-            //set the line wrap to be true
-            $spreadsheet->getActiveSheet()->getStyle('A'.$cRow)->getAlignment()->setWrapText(true); 
-            //set the starting merge to be the last merging + 1 so we will start on the next value
-            $cRow = $cRow + $rowCount; 
-            //increment the row
-            $row++;
-            //re assign the row count
-            $rowCount = 1;
-        }
-    } 
-    elseif ($cellValueCurrent ==  $nextvalue) {
+   if ($cellValueCurrent ==  $nextvalue) {
         //if same value then increment the row and the row count
             $row++;
             $rowCount++;

@@ -73,16 +73,38 @@ session_start();
                             <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Class Schedule</b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                    <div class="row">                      
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Class Schedule</span></a>
-                            <a href="../php/automation_documents/generate_class_schedule.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>&section=<?php echo $_GET['section_name']?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
-
-                            
+                            <!-- <a href="../php/automation_documents/generate_class_schedule.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>&section=<?php echo $_GET['section_name']?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>  -->
                         </div>
+                         <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div>  
                                                    
                     </div>
                 </div>
@@ -144,7 +166,7 @@ session_start();
 
                                     
 
-                                    WHERE fs.department_id = '$department_id' AND ay.status = 'ACTIVE' AND sm.status = 'ACTIVE'
+                                WHERE fs.department_id = '$department_id' AND ay.status = 'ACTIVE' AND sm.status = 'ACTIVE'
                                 AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
                             
                             
@@ -154,42 +176,40 @@ session_start();
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
 
-                            $sql = " SELECT 
+                            $sql = "  SELECT 
                                 cs.class_sched_id,
-                                fs.faculty_id,
-                                fs.day,
-                                f.firstname,
-                                f.lastname,
-                                f.middlename,
-                                f.suffix,
+                                fl.faculty_id,
+                                cs.day,
+                                fc.firstname,
+                                fc.lastname,
+                                fc.middlename,
+                                fc.suffix,
                                 c.course_code,
-                                p.`program_abbrv`,
-                                s.section_name,
-                                s.`no_of_students`,
+                                pr.`program_abbrv`,
+                                sc.section_name,
+                                sc.`no_of_students`,
                                 r.room_name,
                                 t1.time_s,
                                 t2.time_e,
-                                d.department_name,
-                                sm.`sem_description`,
-                                ay.`acad_year`
+                                dp.department_name,
+                                s.`sem_description`,
+                                ay.`acad_year`,
+                                fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_schedule fs ON fs.faculty_sched_id = cs.faculty_schedule_id
-                                LEFT JOIN faculties f ON f.faculty_id = fs.faculty_id
-                                LEFT JOIN courses c ON c.course_id = fs.course_id
-                                LEFT JOIN sections s ON s.section_id = fs.section_id
-                                LEFT JOIN rooms r ON r.room_id = fs.room_id
-                                LEFT JOIN `time` t1 ON t1.time_id = fs.time_start_id
-                                LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
-                                LEFT JOIN departments d ON d.department_id = fs.department_id
-                                LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                LEFT JOIN semesters sm ON sm.`semester_id` = fs.`semester_id`
-                                LEFT JOIN academic_year ay ON ay.`acad_year_id` = fs.`acad_year_id`
-
-                                    
-
-                                    WHERE fs.department_id = '$department_id' AND ay.status = 'ACTIVE' AND sm.status = 'ACTIVE'
-                                    AND CONCAT('BS',p.program_abbrv,' ',s.section_name) = '{$_GET['section_name']}'
-                                    AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                              LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+                                    LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
+                                    LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+                                    LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+                                    LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+                                    LEFT JOIN semesters s ON s.semester_id = fl.sem_id
+                                    LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                                    LEFT JOIN rooms r ON r.`room_id` = cs.room_id
+                                    LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
+                                    LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id                                    
+                                    WHERE pr.department_id = '$department_id' AND ay.status = 'ACTIVE' AND s.status = 'ACTIVE'
+                                    AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) = '{$_GET['section_name']}'
+                                    AND CONCAT(r.room_name,cs.day) LIKE '%$search%'
                                     ";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -198,7 +218,7 @@ session_start();
                             $results->data_seek($off_set);
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
-                                $id = $row['class_sched_id'];
+                                 $id = $row['class_sched_id'];
                                 $faculty_name = $row['lastname'] . " " . $row['firstname'] . " " . $row['middlename'] . " " . $row['suffix'];
                                 $course_code = $row['course_code'];
                                 $section = "BS".$row['program_abbrv'] . " " . $row['section_name'];
@@ -207,14 +227,21 @@ session_start();
                                 $day = $row['day'];
                                 $room_name = $row['room_name'];
                                 $class_hours = $row['time_s']. " - " .$row['time_e'];
-
+                                $needed = $row['needed'];
                                 $count++;
                             
 
                          ?>
                           <tr>
-                            <td class="loading_id"><?php echo $id;?></td>
-                            <td><?php echo $faculty_name;?></td>
+                             <td class="loading_id"><?php echo $id;?></td>
+                            <td><?php
+
+                               if(!empty($needed)){
+                                echo $needed;
+                               }else{
+                                echo $faculty_name;
+                               }
+                            ?></td>
 
 
                             
@@ -259,7 +286,7 @@ session_start();
                                         
 
                                       FROM class_schedule cs
-                                 LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -273,6 +300,8 @@ session_start();
                                     WHERE pr.`department_id` = '$department_id'
                                     AND s.status = 'ACTIVE'
                                     AND ay.status = 'ACTIVE'
+                                      
+                                    AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) ='$section_name'
                                     
                                     
                             
@@ -303,7 +332,7 @@ session_start();
                                 ay.`acad_year`,
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -605,6 +634,7 @@ session_start();
                 <div class="modal-body" id="editModal-body">
                    <label for="faculty_name" class="form-label"> Faculty Name</label>
                    <input type="text" name="loading_id" id="loading_id" hidden style="height: 0px; width:0px">
+                   <input type="text" name="department_id" hidden style="height: 0px; width:0px" value="<?php echo $department_id;?>">
                    <div class="form-group">                       
                         <input class="form-control" list="faculty_names" name="faculty_name" id="faculty_name" placeholder="Ente Faculty Name " disabled>
                                     <datalist id="faculty_names">
@@ -796,7 +826,7 @@ session_start();
             $sql = "
            
                                     
-                                      SELECT DISTINCT
+                                    SELECT DISTINCT
                                   
                                     cs.course_code 'Course Code'
                                     

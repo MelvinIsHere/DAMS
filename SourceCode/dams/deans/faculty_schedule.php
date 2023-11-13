@@ -73,15 +73,36 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2></h2>
+                        <div class="col d-flex justify-content-start">
+                              <a href="../php/automation_documents/generate_faculty_schedule.php?dept_id=<?php echo $department_id;?>&dept_abbrv=<?php echo $department_abbrv;?>&department_name=<?php echo $department_name; ?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
                         </div>
-                        <div class="col-xs-6">
-                           
-                             <a href="../php/automation_documents/generate_faculty_schedule.php?dept_id=<?php echo $department_id;?>&dept_abbrv=<?php echo $department_abbrv;?>&department_name=<?php echo $department_name; ?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
+                        <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
 
-                            
-                        </div>
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div>               
                                                    
                     </div>
                 </div>

@@ -6,11 +6,11 @@ $department_id = $_GET['department_id'];
 echo $department_id;
 $error = "error";
 $success = "success";
-$matrix_sql = " SELECT 
+$matrix_sql = "SELECT 
 				cs.class_sched_id
 		    FROM class_schedule cs
 		    LEFT JOIN room_utilization_matrixes ru ON cs.class_sched_id = ru.class_sched_id
-		    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+		    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
 		    WHERE fl.`dept_id` = '$department_id'
 
             ";

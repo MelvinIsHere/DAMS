@@ -147,7 +147,7 @@ function get_section_id_by_section_name_update($section,$dept_id){
 	}
 }
 
-function get_class_sched_id($section_id,$department_id,$course_id){
+function get_fac_load_id($section_id,$department_id,$course_id){
 
 include "config.php";
 

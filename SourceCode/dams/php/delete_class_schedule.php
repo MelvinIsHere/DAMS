@@ -19,6 +19,7 @@ if ($sql) {
         $_SESSION['message'] =  $message;   //failed to insert
         header("Location: ../deans/class_schedule_individual.php?section_name=$section_name");
 }
+
 function deleteClassinFacSched($sched_id){
     include "config.php";
     $sql = "DELETE FROM faculty_schedule WHERE class_sched_id = '$sched_id'";

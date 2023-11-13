@@ -5,7 +5,8 @@ session_start();
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
     $id = $_SESSION['user_id'];
-
+    $acad_id = $_SESSION['acad_id'];
+    $semester_id = $_SESSION['semester_id'];
 
 
     $data = mysqli_query($conn,"SELECT 
@@ -66,25 +67,57 @@ session_start();
     <?php include "../topbar/topbar_deans.php"; ?>
 
 <div class="container-fluid tabcontent" id="createfill-Up">
-                    <h1 class="h3 mb-1 text-gray-800">Create Documents | Faculty Loading</h1>
-
-                    <div class="card-body">
-                            <div class="table-responsive">
+    <center><h1 class="h3 mb-1 text-gray-800">FACULTY LOADING</h1></center>
+    
+    <div class="card-body">
+        <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Faculty Loading</b></h2>
+                    <div class="row  ">
+                        <div class="col d-flex justify-content-start">
+                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+                                <i class="material-icons">&#xE147;</i> 
+                                    <span>Add New Faculty Loading</span>
+                            </a>
+                            <a href="../php/automation_documents/generate_loading.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>" class="btn btn-success">
+                                <i class="material-icons">&#xE147;</i> 
+                                    <span>Create Document</span>
+                            </a> 
                         </div>
-                        <div class="col-xs-6">
-                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty Loading</span></a>
-                            <a href="../php/automation_documents/generate_loading.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
+                        <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
 
-                            
-                        </div>
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div>                                            
                                                    
                     </div>
+                    
+                            
+                    
                 </div>
+
                 <table class="table table-striped table-hover" id="table">
                     <thead>
                         <tr>
@@ -234,8 +267,8 @@ session_start();
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                                     WHERE pr.`department_id` = '$department_id' 
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND s.semester_id = '$semester_id'
+                                    AND ay.acad_year_id = '$acad_id'
                                      
                                     
 
@@ -270,8 +303,8 @@ session_start();
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                                     WHERE pr.`department_id` = '$department_id'  
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND s.semester_id = '$semester_id'
+                                    AND ay.acad_year_id = '$acad_id'
                                     OR fc.`faculty_id` = NULL  
                                     GROUP BY fl.`fac_load_id`
                                     ";

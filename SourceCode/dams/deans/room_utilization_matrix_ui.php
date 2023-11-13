@@ -257,7 +257,7 @@ session_start();
 
                                 FROM room_utilization_matrixes rum
                                 LEFT JOIN class_schedule cs ON rum.`class_sched_id` = cs.`class_sched_id`
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                                 LEFT JOIN faculties fc ON fc.`faculty_id` = fl.`faculty_id`
                                 LEFT JOIN sections s ON s.`section_id` = fl.`section_id`
                                 LEFT JOIN programs pr ON pr.`program_id` = s.`program_id`
@@ -301,7 +301,7 @@ session_start();
                                     
                                 FROM room_utilization_matrixes rum
                                 LEFT JOIN class_schedule cs ON rum.`class_sched_id` = cs.`class_sched_id`
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                                 LEFT JOIN faculties fc ON fc.`faculty_id` = fl.`faculty_id`
                                 LEFT JOIN sections s ON s.`section_id` = fl.`section_id`
                                 LEFT JOIN programs pr ON pr.`program_id` = s.`program_id`
