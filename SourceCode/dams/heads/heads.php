@@ -4,30 +4,40 @@ session_start();
 
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
-    $id = $_SESSION['user_id'];
+    $user_id = $_SESSION['user_id'];
 
 
 
-       $data = mysqli_query($conn,"SELECT 
-            u.user_id,
-            u.unique_id,
-            u.email,
-            u.password,
-            u.img,
-            u.status,
-            u.type,
-            d.department_id AS 'department_id',
-            d.department_name,
-            d.department_abbrv
-            FROM users u
-            LEFT JOIN departments d ON u.department_id = d.department_id
-WHERE user_id = '$id' 
+    $data = mysqli_query($conn,"SELECT 
+                                u.`email`,
+                                u.`password`,
+                                u.`type`,
+                                u.`img`,
+                                u.`unique_id`,
+                                u.`user_id`,
+                                f.`department_id`,
+                                
+                                f.`firstname`,
+                                f.`middlename`,
+                                f.`lastname`,
+                                f.`suffix`,
+                                d.`designation`,
+                                f.`position`,
+                                dp.`department_abbrv`,
+                                dp.`department_name`,
+                                dp.`department_id`
+
+                            FROM users u 
+                            LEFT JOIN faculties f ON f.`faculty_id` = u.faculty_id
+                            LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
+                            LEFT JOIN designation d ON d.designation_id = f.designation_id
+                            WHERE u.user_id = '$user_id'
     
             ");
     
 
    
-    
+
     if($data){
         $row = mysqli_fetch_assoc($data);
          $department_name = $row['department_name'];
@@ -35,6 +45,8 @@ WHERE user_id = '$id'
         $img = $row['img'];
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
+        $email = $row['email'];
+
 
 
 ?>
@@ -89,7 +101,7 @@ WHERE user_id = '$id'
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
                         WHERE tt.for_heads = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 1
-                        AND ts.user_id = '$id'");
+                        OR ts.user_id = '$user_id'");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -123,11 +135,12 @@ WHERE user_id = '$id'
                                                 <center>
                                                     <?php
                                                         $pending_count = mysqli_query($conn,"  SELECT
-                        COUNT(*)
-                        FROM tasks tt
+                                        COUNT(*)
+                                       FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_heads = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 0");
+                        WHERE tt.for_heads = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 0
+                        OR ts.user_id = '$user_id'");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];

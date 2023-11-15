@@ -4,26 +4,34 @@ session_start();
 
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
-    $id = $_SESSION['user_id'];
-    $department_name = $_SESSION['dept_name'];
-
+    $user_id = $_SESSION['user_id'];
 
 
 
     $data = mysqli_query($conn,"SELECT 
-            u.user_id,
-            u.unique_id,
-            u.email,
-            u.password,
-            u.img,
-            u.status,
-            u.type,
-            d.department_id AS 'department_id',
-            d.department_name,
-            d.department_abbrv
-            FROM users u
-            LEFT JOIN departments d ON u.department_id = d.department_id
-             WHERE user_id = '$id' 
+                                u.`email`,
+                                u.`password`,
+                                u.`type`,
+                                u.`img`,
+                                u.`unique_id`,
+                                u.`user_id`,
+                                f.`department_id`,
+                                
+                                f.`firstname`,
+                                f.`middlename`,
+                                f.`lastname`,
+                                f.`suffix`,
+                                d.`designation`,
+                                f.`position`,
+                                dp.`department_abbrv`,
+                                dp.`department_name`,
+                                dp.`department_id`
+
+                            FROM users u 
+                            LEFT JOIN faculties f ON f.`faculty_id` = u.faculty_id
+                            LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
+                            LEFT JOIN designation d ON d.designation_id = f.designation_id
+                            WHERE u.user_id = '$user_id'
     
             ");
     
@@ -33,10 +41,12 @@ session_start();
     if($data){
         $row = mysqli_fetch_assoc($data);
          $department_name = $row['department_name'];
+         $department_id = $row['department_id'];
         $img = $row['img'];
         $type =$row['type'];
-        $department_id = $row['department_id'];
         $department_abbrv = $row['department_abbrv'];
+        $email = $row['email'];
+
 
 
 ?>
@@ -182,9 +192,20 @@ session_start();
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
 
-                            $sql = "SELECT
-                                    faculty_id,firstname,lastname,middlename,suffix,is_permanent,is_guest,is_partTime
-                                    FROM faculties WHERE department_id = '$department_id'";
+                            $sql = "SELECT 
+                                        f.faculty_id,
+                                        f.`firstname`,
+                                        f.`middlename`,
+                                        f.`lastname`,
+                                        f.`suffix`,
+                                        f.`is_guest`,
+                                        f.`is_partTime`,
+                                        f.is_permanent,
+                                        t.title_description
+                                    FROM faculties f
+                                    LEFT JOIN faculty_titles ft ON ft.faculty_id = f.`faculty_id`      
+                                    LEFT JOIN titles t ON t.title_id = ft.title_id 
+                                    WHERE department_id = '$department_id'";
                             $results = $conn->query($sql);
                             if(!$results){
                                 die("Query failed: " . mysqli_error($conn));

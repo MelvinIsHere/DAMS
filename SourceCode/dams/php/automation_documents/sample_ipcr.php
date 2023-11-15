@@ -37,17 +37,14 @@ $dept_id = $_GET['dept_id'];
 $user_id = $_GET['user_id'];
 
 
-$query = "
-
-SELECT f.firstname,
+$query = "SELECT f.firstname,
                  f.lastname,
                  f.middlename,
                  f.suffix,
                  dp.department_name
           FROM faculties f
           LEFT JOIN departments dp ON dp.department_id = f.department_id
-          LEFT JOIN users u ON u.faculty_id = f.`faculty_id`
-          WHERE u.user_id = '$user_id' ";
+          WHERE user_id = '$user_id'";
 $user_text = mysqli_query($conn,$query);
 if(mysqli_num_rows($user_text)>0){
        $row = mysqli_fetch_assoc($user_text);
@@ -68,8 +65,7 @@ $query = "SELECT f.firstname,
                  dp.department_name
           FROM faculties f
           LEFT JOIN departments dp ON dp.department_id = f.department_id
-          LEFT JOIN users u ON u.faculty_id = f.`faculty_id`
-          WHERE u.user_id = '$user_id'";
+          WHERE user_id = '$user_id'";
 $user_text = mysqli_query($conn,$query);
 if(mysqli_num_rows($user_text)>0){
        $row = mysqli_fetch_assoc($user_text);
@@ -83,39 +79,7 @@ if(mysqli_num_rows($user_text)>0){
 }
 
 
-//imidiate superviser
-$query = "SELECT 
-    f.`firstname`,
-    f.`lastname`,
-    f.`middlename`,
-    f.`suffix`,
-    dp.department_name,
-    d.`designation`
-FROM faculties f
-LEFT JOIN users u ON u.faculty_id = f.`faculty_id`   
-LEFT JOIN departments dp ON dp.department_id = f.`department_id`
-LEFT JOIN faculty_designation fd ON fd.`faculty_id` = f.faculty_id
-LEFT JOIN designation d ON d.designation_id = fd.`designation_id`
-WHERE (d.`designation` = 'Head' OR d.`designation`='Dean') AND dp.department_id = '$dept_id'";
 
-$resultSet = mysqli_query($conn, $query);
-
-if ($resultSet) {
-    while ($row = mysqli_fetch_assoc($resultSet)) {
-        $firstname = $row['firstname'];
-        $lastname = $row['lastname'];
-        $middlename = $row['middlename'];
-        $suffix = $row['suffix'];
-
-        $fullname = $firstname . " " . $middlename . " " . $lastname . " " . $suffix;
-
-        $spreadsheet->getActiveSheet()
-            ->setCellValue('A19', $fullname)
-            ->setCellValue('H19', $fullname);
-    }
-} else {
-    // Handle the case where the query fails
-}
 
 
 
@@ -205,13 +169,18 @@ if(mysqli_num_rows($ipcr) > 0){
 
            $spreadsheet->getActiveSheet()->mergeCells('C' . $mergeStart . ':E' . $mergeStart);
            $spreadsheet->getActiveSheet()->getStyle('C' . $mergeStart)->getAlignment()->setWrapText(true);
-           $spreadsheet->getActiveSheet()->getCell('A'.$mergeStart)->getStyle()->getFont()->setSize(10);
-           $spreadsheet->getActiveSheet()->getCell('C'.$mergeStart)->getStyle()->getFont()->setSize(10);
 
            $mergeStart++;
        }
 
-          
+              //set average for instruction
+              $row_start++;
+              $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start+1, 1);
+              $spreadsheet->getActiveSheet()
+                     ->setCellValue('A'.$row_start, "AVERAGE FOR INSTRUCTION");
+              $spreadsheet->getActiveSheet()->getCell('A'.$row_start)->getStyle()->getAlignment()->setIndent(0);
+              $spreadsheet->getActiveSheet()->mergeCells('B' .$row_start . ':N' . $row_start);
+              $spreadsheet->getActiveSheet()->getCell('A'.$row_start)->getStyle()->getFont()->setSize(10);
     
 
 }else{
@@ -240,23 +209,11 @@ if(mysqli_num_rows($ipcr) > 0){
 $cellvalue = "";
 $row_start_strat_research = 33;
 $row_start_strat_research_content = 33;
-$highestRow = $spreadsheet->getActiveSheet()->getHighestRow();
-
-
-
-$cellvalue = "";
-
 if($instruction){
-       for ($row = 25; $row <= $highestRow; $row++) {
-              $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-              if($cellvalue == "STRATEGIC"){
-              $row_start_strat_research = $row+2;
-              $row_start_strat_research_content = $row+2;
-              break;      
-       }
- 
+       $row_start_strat_research = $row_start+2;
+       $row_start_strat_research_content= $row_start+2;
 }
-}
+
 
 
 ///strategic
@@ -333,8 +290,6 @@ if(mysqli_num_rows($ipcr_strat) > 0){
 
            $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start . ':E' . $formatting_start);
            $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start)->getAlignment()->setWrapText(true);
-           $spreadsheet->getActiveSheet()->getCell('A'.$formatting_start)->getStyle()->getFont()->setSize(10);
-           $spreadsheet->getActiveSheet()->getCell('C'.$formatting_start)->getStyle()->getFont()->setSize(10);
 
            $formatting_start++;
 
@@ -362,23 +317,34 @@ if(mysqli_num_rows($ipcr_strat) > 0){
 
 
 
-$row_start_strat_extension = $row_start_strat_research;
-$row_start_strat_extension_content = $row_start_strat_research;
+$row_start_strat_extension = 33;
+$row_start_strat_extension_content = 33;
+if($research){
+       $row_start_strat_extension = $row_start_strat_research+2;
+       $row_start_strat_extension_content= $row_start_strat_research+2;
+}
 
-$cellvalue = "";
-
+// $row_start_strat_extension = $row_start_strat_research;
+// $row_start_strat_extension_content = $row_start_strat_research;
 // if($research){
-//        for ($row = 25; $row <= $highestRow; $row++) {
-//               $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-//               if($cellvalue == "SUPPORT"){
-//               $row_start_strat_research = $row+1;
-//               $row_start_strat_research_content = $row+1;
-//               break;      
+//        $row_start_strat_extension = $row_start_strat_research;
+//        $row_start_strat_extension_content = $row_start_strat_research;
+// }else{
+//        $cellvalue = "";
+       
+//        while($cellvalue != "STRATEGIC"){
+//             $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_strat_extension)->getCalculatedValue();
+//               $spreadsheet->getActiveSheet()
+//                            ->setCellValue('P'.$row_start_strat_extension, $row_start_strat_extension);
+//             $row_start_strat_extension++;
+//             $row_start_strat_extension_content++;
 //        }
- 
-// }
-// }
 
+   
+
+
+
+// }
 $extension = false;
 $ipcr_query_strat_exten = "SELECT * FROM ipcr_table WHERE user_id = '$user_id' AND category = 'Strategic' AND description = 'Extension'";
 $data = [];
@@ -455,8 +421,6 @@ while ($formatting_start_ex <= $formattng_end_ex) {
 
     $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start_ex . ':E' . $formatting_start_ex);
     $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start_ex)->getAlignment()->setWrapText(true);
-    $spreadsheet->getActiveSheet()->getCell('A'.$formatting_start_ex)->getStyle()->getFont()->setSize(10);
-       $spreadsheet->getActiveSheet()->getCell('C'.$formatting_start_ex)->getStyle()->getFont()->setSize(10);
 
     $formatting_start_ex++;
 
@@ -581,8 +545,6 @@ if(mysqli_num_rows($ipcr_strat) > 0){
 
            $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start_supp . ':E' . $formatting_start_supp);
            $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start_supp)->getAlignment()->setWrapText(true);
-           $spreadsheet->getActiveSheet()->getCell('A'.$formatting_start_supp)->getStyle()->getFont()->setSize(10);
-           $spreadsheet->getActiveSheet()->getCell('C'.$formatting_start_supp)->getStyle()->getFont()->setSize(10);
 
            $formatting_start_supp++;
 
@@ -600,34 +562,24 @@ if(mysqli_num_rows($ipcr_strat) > 0){
 
 
 
+// //set average instruction
+// $cellvalue = "";
+// $row = $row_start_content;
+
+// while ($row != $row_start_strat_research_content) {
+//     $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+
+//     if (empty($cellvalue)) {
+//         // Remove the current row and then do not increment $row
+//         $spreadsheet->getActiveSheet()->removeRow($row, 1);
+//     } else {
+//         // Increment $row only when the row is not empty
+//         $row++;
+//     }
+   
+// }
 $highestRow = $spreadsheet->getActiveSheet()->getHighestRow();
 
-if($instruction){
-       // Loop through all rows
-for ($row = 25; $row <= $highestRow; $row++) {
-       $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-       if($cellvalue == "STRATEGIC"){
-              $spreadsheet->getActiveSheet()->insertNewRowBefore($row, 1);
-               $spreadsheet->getActiveSheet()
-                     ->setCellValue('A'.$row, "AVERAGE FOR INSTRUCTION");
-
-               $spreadsheet->getActiveSheet()->getCell('A'.$row)->getStyle()->getAlignment()->setIndent(0);
-              $spreadsheet->getActiveSheet()->mergeCells('A' .$row . ':N' . $row);
-              $spreadsheet->getActiveSheet()->getCell('A'.$row)->getStyle()->getFont()->setSize(10);
-
-              $cellValue = $spreadsheet->getActiveSheet()->getCell('A' . $row)->getValue();
-           $textLength = strlen($cellValue);
-           // Calculate approximate pixel height (adjust the multiplier as needed based on your font size and style)
-           $rowHeight = ceil($textLength / 10) * 8; // Assuming 10 characters per line and 15 pixels per line height
-
-           // Set the row height
-           $spreadsheet->getActiveSheet()->getRowDimension($row)->setRowHeight($rowHeight);
-
-              break;      
-       }
- 
-}
-}
 
 if($research){
        // Loop through all rows
@@ -719,21 +671,12 @@ if($support){
 
 
 
-for ($row = 25; $row <= $highestRow; $row++) {
-       $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-       
-           if (empty($cellvalue)) {
-               // Remove the current row and then do not increment $row
-               $spreadsheet->getActiveSheet()->removeRow($row, 1);
-           }
- 
-}
 
 
 
 function setResearchAsTitle($row_start_strat_research,$spreadsheet){
        $spreadsheet->getActiveSheet()
-                     ->setCellValue('A'.($row_start_strat_research-1), 'RESEARCH');
+                     ->setCellValue('A'.($row_start_strat_research-1), 'RESEARCH (10%)');
        // $spreadsheet->getActiveSheet()->unmergeCells('A' .($row_start_strat_research-1) . ':B' . ($row_start_strat_research-1));
        $spreadsheet->getActiveSheet()->getCell('A'.($row_start_strat_research-1))->getStyle()->getAlignment()->setIndent(0);
        $spreadsheet->getActiveSheet()->mergeCells('B' .($row_start_strat_research-1) . ':N' . ($row_start_strat_research-1));
@@ -786,7 +729,7 @@ header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetm
 header('Content-Disposition: attachment;filename="BatStateU-FO-COL-29_Class.xlsx"');
 
 //create IOFactory object
-$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+$writer = IOFactory::createWriter($spreadsheet, 'Xls');
 //save into php output
 $writer->save('php://output');
 

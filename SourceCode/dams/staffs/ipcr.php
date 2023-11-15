@@ -4,7 +4,7 @@ session_start();
 
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
-    $id = $_SESSION['user_id'];
+    $user_id = $_SESSION['user_id'];
 
 
 
@@ -16,12 +16,12 @@ session_start();
                                 u.`unique_id`,
                                 u.`user_id`,
                                 f.`department_id`,
-                                f.`designation`,
+                                
                                 f.`firstname`,
                                 f.`middlename`,
                                 f.`lastname`,
                                 f.`suffix`,
-                                f.`designation`,
+                                d.`designation`,
                                 f.`position`,
                                 dp.`department_abbrv`,
                                 dp.`department_name`,
@@ -30,7 +30,8 @@ session_start();
                             FROM users u 
                             LEFT JOIN faculties f ON f.`faculty_id` = u.faculty_id
                             LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
-                            WHERE u.user_id = '$id'
+                            LEFT JOIN designation d ON d.designation_id = f.designation_id
+                            WHERE u.user_id = '$user_id'
     
             ");
     
@@ -44,10 +45,9 @@ session_start();
         $img = $row['img'];
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
-        $email =$row['email'];
-        $user_id = $row['user_id'];
+        $email = $row['email'];
 
-        
+
 
 ?>
 <!DOCTYPE html>
@@ -63,7 +63,7 @@ session_start();
 
             <!-- Main Content -->
             <div id="content">
-    <?php include "../topbar/topbar.php"; ?>
+    <?php include "../topbar/topbar_staffs.php"; ?>
 
 <div class="container-fluid " id="createfill-Up">
     <center><b><h1 class="h3 mb-1 text-gray-800">Individual Performance Commitment and Review</h1></b></center>
@@ -500,6 +500,7 @@ session_start();
             console.log($category_input);
         }else{
             document.getElementById('description_group').style.display = "none";
+            document.getElementById('description_group').disabled = true;
         }   
 
     }

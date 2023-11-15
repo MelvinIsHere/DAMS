@@ -29,7 +29,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed tablinks"  href="pendingDocuments.php">
+                <a class="nav-link collapsed "  href="pendingDocuments.php">
                     <i class="fas fa-fw fa-tasks"></i>
                     <span>Pending</span>
                 </a>
@@ -38,6 +38,29 @@
                         <!-- <a class="collapse-item tablinks"  href="pendingDocuments.php">Pending Task</a> -->
                       
                  
+            </li>
+            <hr class="sidebar-divider">
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Task Manager
+            </div>
+              <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tasktables"
+                    aria-expanded="true" aria-controls="tasktables">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Manage Task</span>
+                </a>
+                <div id="tasktables" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Task tables:</h6>
+                      
+                        <a class="collapse-item tablinks"  href="ipcr.php">IPCR</a>
+                        <a class="collapse-item tablinks"  href="#">RCOT</a>
+                       
+                        
+                    </div>
+                </div>
             </li>
 
             <!-- Heading -->

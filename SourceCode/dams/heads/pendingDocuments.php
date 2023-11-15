@@ -4,24 +4,34 @@ session_start();
 
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
-    $id = $_SESSION['user_id'];
+    $user_id = $_SESSION['user_id'];
 
 
 
     $data = mysqli_query($conn,"SELECT 
-            u.user_id,
-            u.unique_id,
-            u.email,
-            u.password,
-            u.img,
-            u.status,
-            u.type,
-            d.department_name,
-            d.department_abbrv,
-            d.department_id
-            FROM users u
-            LEFT JOIN departments d ON u.department_id = d.department_id
- WHERE user_id = '$id' 
+                                u.`email`,
+                                u.`password`,
+                                u.`type`,
+                                u.`img`,
+                                u.`unique_id`,
+                                u.`user_id`,
+                                f.`department_id`,
+                                
+                                f.`firstname`,
+                                f.`middlename`,
+                                f.`lastname`,
+                                f.`suffix`,
+                                d.`designation`,
+                                f.`position`,
+                                dp.`department_abbrv`,
+                                dp.`department_name`,
+                                dp.`department_id`
+
+                            FROM users u 
+                            LEFT JOIN faculties f ON f.`faculty_id` = u.faculty_id
+                            LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
+                            LEFT JOIN designation d ON d.designation_id = f.designation_id
+                            WHERE u.user_id = '$user_id'
     
             ");
     
@@ -31,10 +41,13 @@ session_start();
     if($data){
         $row = mysqli_fetch_assoc($data);
          $department_name = $row['department_name'];
+         $department_id = $row['department_id'];
         $img = $row['img'];
         $type =$row['type'];
-        $department_id = $row['department_id'];
         $department_abbrv = $row['department_abbrv'];
+        $email = $row['email'];
+
+
 
 ?>
 <!DOCTYPE html>

@@ -1,4 +1,5 @@
 <?php
+
 //call the autoload
 require 'vendor/autoload.php';
 session_start();
@@ -10,10 +11,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
        use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-
-
-
-
+use \PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 
 
@@ -112,6 +110,7 @@ $permanent = false;
 
 $permanent_query = mysqli_query($conn, "
 SELECT 
+fc.faculty_id,
 CONCAT(fc.lastname,',',fc.firstname,' ',fc.middlename) AS 'Name of Faculty',
 fc.is_permanent AS 'permanent',
 cs.course_code AS 'Course Code',
@@ -152,6 +151,7 @@ if($permanent_query){
     if(mysqli_num_rows($permanent_query) > 0){
         $permanent = true;
         while ($row = mysqli_fetch_array($permanent_query)) {
+              $faculty_id = $row['faculty_id'];
               $facultyname = $row['Name of Faculty'];
               $course_code =  $row['Course Code'];
               $section =  $row['Section'];
@@ -163,8 +163,13 @@ if($permanent_query){
               $total_hrs_wk =  $row['Total hrs/wk'];
               $course_description =  $row['Course Description'];
               $title_description = $row['title_description'];
+                
+
+            
+              
               // Append the current row's data to the $data array
               $data_permanent[] = array(
+                    "faculty_id" => $faculty_id,
                       "facultyname" => $facultyname,
                      "course_code" => $course_code,
                      "section" => $section,
@@ -177,13 +182,16 @@ if($permanent_query){
                      "course_description" => $course_description,
                      "title_description" => $title_description
                      
+                     
               );
            
        }
 
 
+ 
         foreach($data_permanent as $row){
             //insert it all to the array
+            $faculty_id = $row['faculty_id'];
             $facultyname = $row['facultyname'];
             $course_code =  $row['course_code'];
             $section =  $row['section'];
@@ -195,13 +203,22 @@ if($permanent_query){
             $total_hrs_wk =  $row['total_hrs_wk'];
             $course_description =  $row['course_description'];
             $title_description = $row['title_description'];
+
+            ob_start();
+            $designations=  getdesignation($faculty_id);
+            $designationOutput = ob_get_clean();
+            $designations_all = str_replace(',',"\n",$designations);
+         
+            
+
             $cellValuenext = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_permanent+1)->getCalculatedValue();
             if($cellValuenext == " TEMPORARY FACULTY"){
                 $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start_permanent, 1);
                 
             }
+            
             $spreadsheet->getActiveSheet()
-                    ->setCellValue('A'.$row_start_permanent, $facultyname ."\n" . $title_description)
+                    ->setCellValue('A'.$row_start_permanent, $facultyname ."\n" . $title_description."\n".$designations_all)
                     ->setCellValue('D'.$row_start_permanent, $course_code)
                     ->setCellValue('E'.$row_start_permanent, $section)
                     ->setCellValue('F'.$row_start_permanent, $students)
@@ -211,6 +228,17 @@ if($permanent_query){
                     ->setCellValue('J'.$row_start_permanent, $lab_hrs)
                     ->setCellValue('K'.$row_start_permanent, $rle_hrs)
                     ->setCellValue('L'.$row_start_permanent, $course_description);
+
+                $cell = $spreadsheet->getActiveSheet()->getCell('A'.$row_start_permanent);
+                $richText = $cell->getRichText();
+
+                // Create a new text run
+                $textRun = $richText->createTextRun($designations_all);
+
+                // Set the italic property for the text run
+                $textRun->getFont()->setItalic(true);
+          
+               
                     
               
               $row_start_permanent++;
@@ -941,6 +969,42 @@ while($row <= $row_start_part_time){
 
 
 
+function getdesignation($faculty_id){
+    include "../config.php";
+
+    $sql = "
+            SELECT 
+                f.`firstname`,
+                f.`middlename`,
+                f.`lastname`,
+                f.`suffix`,
+             
+                GROUP_CONCAT(d.`designation` SEPARATOR ', ') AS `all_designations`
+                
+            FROM faculties f
+
+            LEFT JOIN faculty_designation fd ON f.`faculty_id` = fd.`faculty_id`
+            LEFT JOIN designation d ON d.designation_id = fd.`designation_id`
+            WHERE f.`faculty_id` = '$faculty_id'
+            GROUP BY f.`faculty_id`
+            ";
+    $result = mysqli_query($conn,$sql);
+    if($result){
+        if(mysqli_num_rows($result) >0){
+            $row = mysqli_fetch_assoc($result);
+            $designations = $row['all_designations'];
+            return $designations;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+
+}
+
+
+
 //set the header first, so the result will be treated as an xlsx file.
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
@@ -951,7 +1015,6 @@ header('Content-Disposition: attachment;filename="faculty loading.xlsx"');
 $writer = IOFactory::createWriter($spreadsheet, 'Xls');
 //save into php output
 $writer->save('php://output');
-
 
 
 ?>
