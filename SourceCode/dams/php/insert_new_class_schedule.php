@@ -25,6 +25,8 @@ $time_start = date("h:i A", strtotime($time_start));
 $amPm_start = substr($time_start, -2);
 $amPm_end = substr($time_end, -2);	
 $room_id = get_room_id_by_room_name($room_name);
+$task_id = get_task_id_by_active_term();
+$task_id_fac_sched = get_task_id_by_active_term_for_faculty_schedule();
 
 
 
@@ -159,8 +161,10 @@ LEFT JOIN sections s ON s.section_id = fs.section_id
 LEFT JOIN programs p ON p.program_id = s.program_id
 LEFT JOIN `time` t ON t.time_id = fs.time_start_id
 LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
+LEFT JOIN tasks tt ON tt.task_id = fs.task_id
 WHERE fs.day = '$day' AND d.department_id = '$department_id'
-AND f.faculty_id = '$faculty_id'";
+AND f.faculty_id = '$faculty_id'
+AND tt.task_id = '$task_id_fac_sched'";
 
 
 $conflictResult = mysqli_query($conn, $conflictQuery);
@@ -207,8 +211,10 @@ FROM class_schedule cs
 LEFT JOIN rooms r ON r.`room_id` = cs.`room_id`
 LEFT JOIN `time` t1 ON t1.`time_id` = cs.`time_start_id`
 LEFT JOIN `time` t2 ON t2.`time_id` = cs.`time_end_id`
+LEFT JOIN tasks tt ON tt.task_id = cs.task_id
 WHERE r.`room_name` = '$room_name'
-AND cs.day = '$day'";
+AND cs.day = '$day'
+AND tt.task_id = '$task_id'";
 
 
 
@@ -257,8 +263,10 @@ LEFT JOIN sections s ON s.section_id = fl.`section_id`
 LEFT JOIN `time` t1 ON t1.`time_id` = cs.`time_start_id`
 LEFT JOIN `time` t2 ON t2.`time_id` = cs.`time_end_id`
 LEFT JOIN programs pr ON pr.`program_id` = s.`program_id`
+LEFT JOIN tasks tt ON tt.task_id = cs.task_id
 WHERE fl.section_id = '$section_id'
-AND cs.day = '$day'";
+AND cs.day = '$day'
+AND tt.task_id = '$task_id'";
 
 
 
@@ -318,14 +326,14 @@ if ($conflictDetected) {
     	// header("Location: ../deans/class_schedule_individual.php?section_name=$section_name");
 }else {
    
- 	$insertFacultyScheduleSQL = mysqli_query($conn,"INSERT INTO class_schedule(faculty_loading_id,day,room_id,time_start_id,time_end_id) VALUES('$faculty_loading_id_to_be_inserted','$day','$room_id_to_be_inserted','$time_start_id_to_be_inserted','$time_end_id_to_be_inserted')"); 
+ 	$insertFacultyScheduleSQL = mysqli_query($conn,"INSERT INTO class_schedule(faculty_loading_id,day,room_id,time_start_id,time_end_id,task_id) VALUES('$faculty_loading_id_to_be_inserted','$day','$room_id_to_be_inserted','$time_start_id_to_be_inserted','$time_end_id_to_be_inserted','$task_id')"); 
     $class_sched_id = $conn->insert_id;   
     if($insertFacultyScheduleSQL){    		
         $_SESSION['alert'] = $success; 
     	$message = "Faculty Schedule inserted successfully!";	
     	$_SESSION['message'] =  $message;	//failed to insert
     	echo $message;
-    	$ai = insertFacultySched($faculty_id,$department_id,$semester_id,$acad_year_id,$course_id,$section_id,$room_id,$time_start_id,$time_end_id,$day,$class_sched_id);
+    	$ai = insertFacultySched($faculty_id,$department_id,$semester_id,$acad_year_id,$course_id,$section_id,$room_id,$time_start_id,$time_end_id,$day,$class_sched_id,$task_id_fac_sched);
         if($ai){
             // header("Location: ../deans/class_schedule_individual.php?section_name=$section_name");
         }else{
@@ -350,10 +358,10 @@ if ($conflictDetected) {
 
 
 
-function insertFacultySched($faculty_id,$department_id,$semester_id,$acad_year_id,$course_id,$section_id,$room_id,$time_start_id,$time_end_id,$day,$class_sched_id){
+function insertFacultySched($faculty_id,$department_id,$semester_id,$acad_year_id,$course_id,$section_id,$room_id,$time_start_id,$time_end_id,$day,$class_sched_id,$task_id_fac_sched){
 	include "config.php";
 
-	$sql = "INSERT INTO faculty_schedule (faculty_id,department_id,semester_id,acad_year_id,course_id,section_id,room_id,time_start_id,time_end_id,day,description,class_sched_id) VALUES('$faculty_id','$department_id','$semester_id','$acad_year_id','$course_id','$section_id','$room_id','$time_start_id','$time_end_id','$day','Class Schedule','$class_sched_id')";
+	$sql = "INSERT INTO faculty_schedule (faculty_id,department_id,semester_id,acad_year_id,course_id,section_id,room_id,time_start_id,time_end_id,day,description,class_sched_id,task_id) VALUES('$faculty_id','$department_id','$semester_id','$acad_year_id','$course_id','$section_id','$room_id','$time_start_id','$time_end_id','$day','Class Schedule','$class_sched_id','$task_id_fac_sched')";
 	$result = mysqli_query($conn,$sql);
 	if($sql){
 		return true;
@@ -449,6 +457,56 @@ function getActiveAcadyear(){
         return false;
     }
 }
+function get_task_id_by_active_term(){
+    include 'config.php';
+    $query = mysqli_query($conn,"SELECT 
+                                    t.term_id,
+                                    t.status,
+                                    tt.task_name,
+                                    tt.`task_id` AS task_id
 
+                                FROM tasks tt 
+                                LEFT JOIN terms t ON t.term_id = tt.`term_id`  
+                                WHERE t.status = 'ACTIVE'  AND tt.`task_name` = 'Class Schedule'");
+    if($query){
+        if(mysqli_num_rows($query) > 0){
+            $row = mysqli_fetch_assoc($query);
+            $task_id = $row['task_id'];
+
+            return $task_id;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
+
+
+function get_task_id_by_active_term_for_faculty_schedule(){
+    include 'config.php';
+    $query = mysqli_query($conn,"SELECT 
+                                    t.term_id,
+                                    t.status,
+                                    tt.task_name,
+                                    tt.`task_id` AS task_id
+
+                                FROM tasks tt 
+                                LEFT JOIN terms t ON t.term_id = tt.`term_id`  
+                                WHERE t.status = 'ACTIVE'  AND tt.`task_name` = 'Faculty Schedule'");
+    if($query){
+        if(mysqli_num_rows($query) > 0){
+            $row = mysqli_fetch_assoc($query);
+            $task_id = $row['task_id'];
+
+            return $task_id;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
 
 ?>

@@ -1,6 +1,7 @@
 <?php
 //call the autoload
 session_start();
+
 $dept_name = $_SESSION['dept_name'];
 require 'vendor/autoload.php';
 include "../class_schedule_functions.php";
@@ -36,7 +37,7 @@ if(!$conn){
     exit("database connection error");
 }
 // ...
-
+$term_id = $_SESSION['term_id'];
 $department_id = $_GET['dept_id'];
 $department_name = $_GET['department_name'];
 $room_names = []; //this is the array for the room names
@@ -44,7 +45,7 @@ $room_names = []; //this is the array for the room names
                     r.room_name
                                
                     FROM class_schedule cs
-                    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                     LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -55,9 +56,9 @@ $room_names = []; //this is the array for the room names
                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                     WHERE pr.`department_id` = '$department_id'
-                    AND s.status = 'ACTIVE'
-                    AND ay.status = 'ACTIVE'
+                    
                                       
                                     
                                     
@@ -147,7 +148,7 @@ function plot_double_col($day,$dept_id,$conn,$spreadsheet,$room_name,$col_sched_
                                 ay.`acad_year`,
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -247,9 +248,9 @@ while($currentContentRow != 40){
                 $arr_ampm_start = $row['ampm_start'];
                 $arr_ampm_end = $row['ampm_end'];
                 $inserted =$row['inserted'];
-                $facultyname = "\n". $row['faculty_name'];
+                $facultyname = $row['faculty_name'];
                 $room_name = $row['room_name'];
-                $needed = "\n"."Needed Lecturer";
+                $needed = "Need Lecturer";
                 $section_name = $row['section_name'];
 
                 
@@ -300,7 +301,7 @@ while($currentContentRow != 40){
                                                       ->setCellValue($col_section.$new_content_row, $section_name);
                                                     }else{
                                                           $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched_1 .$new_content_row, $search_course_code.$facultyname)
+                                                      ->setCellValue($col_sched_1 .$new_content_row, $search_course_code.$needed)
                                                       ->setCellValue($col_section.$new_content_row, $section_name);
                                                     }
                                                     
@@ -310,13 +311,13 @@ while($currentContentRow != 40){
                                                
                                                 $b = $data[$index]['col_start'];
 
-                                                    if(!empty($needed)){
+                                                    if(!empty($facultyname)){
                                                           $spreadsheet->getActiveSheet()
                                                       ->setCellValue($col_sched_1 .$currentContentRow, $search_course_code.$facultyname)
                                                       ->setCellValue($col_section.$currentContentRow, $section_name);
                                                     }else{
                                                           $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched_1 .$currentContentRow, $search_course_code.$facultyname)
+                                                      ->setCellValue($col_sched_1 .$currentContentRow, $search_course_code.$needed)
                                                       ->setCellValue($col_section.$currentContentRow, $section_name);
                                                     }
 
@@ -548,7 +549,7 @@ $plot_query = "SELECT
                                 ay.`acad_year`,
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -648,79 +649,65 @@ while($currentContentRow != 40){
                 $arr_ampm_start = $row['ampm_start'];
                 $arr_ampm_end = $row['ampm_end'];
                 $inserted =$row['inserted'];
-                $facultyname = "\n". $row['faculty_name'];
+                $facultyname = $row['faculty_name'];
                 $room_name = $row['room_name'];
-                $needed = "\n"."Needed Lecturer";
+                $needed = "NeedLecturer";
                 $section_name = $row['section_name'];
-                
-                         
-                                
 
-                                if ($cellValueCurrent == $text_output_data && !in_array($text_output_data, $start) && !in_array($search_course_code, $course)) {
-                                     $start[] = $text_output_data; // Add the inserted value to the tracking array
-                                    $course[] = $search_course_code;
-                                            $index = -1; // Initialize with -1 to indicate not found
-
-                                            // Loop through the array to search for the course code
-                                            foreach ($data as $keyrow => $rowData) {
-                                                if ($rowData["course_code"] == $search_course_code) {
-                                                    $index = $keyrow; // Set the index when found
-                                                    
-                                                    break; // Stop searching once found
-                                                }
-                                            }
-
-                                            if ($index != -1) {
-                                             
-
-                                               $time_string  = $row['time_s'];
-
-                                                $time_parts = explode(" ", $time_string); //when the start is like half an hour
-                                                // Extract the time part
-                                                $time = $time_parts[0];
-                                                // Split the time by ":" to get hours and minutes
-                                                $time_parts = explode(":", $time);
-                                                // Extract the minutes portion
-                                                $minutes = $time_parts[1];
-                                                // Convert the minutes to an integer if needed
-                                                $minutes = intval($minutes);
+                if ($cellValueCurrent == $text_output_data && !in_array($text_output_data, $start) && !in_array($search_course_code, $course)) {
+                    $start[] = $text_output_data; // Add the inserted value to the tracking array
+                    $course[] = $search_course_code;
+                    $index = -1; // Initialize with -1 to indicate not found
+                    foreach ($data as $keyrow => $rowData) {
+                        if ($rowData["course_code"] == $search_course_code) {
+                            $index = $keyrow; // Set the index when found
+                            
+                            break; // Stop searching once found
+                        }
+                    }
+                if ($index != -1) {                                             
+                    $time_string  = $row['time_s'];
+                    $time_parts = explode(" ", $time_string); //when the start is like half an hour
+                    // Extract the time part
+                    $time = $time_parts[0];
+                    // Split the time by ":" to get hours and minutes
+                    $time_parts = explode(":", $time);
+                    // Extract the minutes portion
+                    $minutes = $time_parts[1];
+                    // Convert the minutes to an integer if needed
+                    $minutes = intval($minutes);
                                                     
                                                    
-                                                if($minutes == 30){
-                                                    //if start half way decrement the contentrow
-                                                    $new_content_row = $currentContentRow + 1;
-                                                    $data[$index]['col_start'] = $new_content_row;
-                                                    $course_codes[] = $search_course_code;
+                    if($minutes == 30){
+                        //if start half way decrement the contentrow
+                        $new_content_row = $currentContentRow + 1;
+                        $data[$index]['col_start'] = $new_content_row;
+                        $course_codes[] = $search_course_code;                                                                       
+                        $b = $data[$index]['col_start'];
+                        if(!empty($facultyname)){
+                            $spreadsheet->getActiveSheet()
+                                ->setCellValue($col_sched .$new_content_row, $search_course_code.$facultyname)
+                                ->setCellValue($col_room.$new_content_row, $section_name);
+                        }else{
+                            $spreadsheet->getActiveSheet()
+                                ->setCellValue($col_sched .$new_content_row, $search_course_code.$needed)
+                                ->setCellValue($col_room.$new_content_row, $section_name);
+                        }
                                                     
-                                               
-                                                    $b = $data[$index]['col_start'];
-                                                    if(!empty($facultyname)){
-                                                          $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched .$new_content_row, $search_course_code.$facultyname)
-                                                      ->setCellValue($col_room.$new_content_row, $section_name);
-                                                    }else{
-                                                          $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched .$new_content_row, $search_course_code.$needed)
-                                                      ->setCellValue($col_room.$new_content_row, $section_name);
-                                                    }
-                                                    
-                                                    
-                                                }
-                                                else{
-                                                     $data[$index]['col_start'] = $currentContentRow;
-                                               
-                                                $b = $data[$index]['col_start'];
-                                                 if(!empty($needed)){
-                                                          $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched .$currentContentRow, $search_course_code.$needed)
-                                                      ->setCellValue($col_room.$currentContentRow, $section_name);
-                                                    }else{
-                                                          $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched .$currentContentRow, $search_course_code.$facultyname)
-                                                      ->setCellValue($col_room.$currentContentRow, $section_name);
-                                                    }
+                    }else{
+                        $data[$index]['col_start'] = $currentContentRow;
+                        $b = $data[$index]['col_start'];
+                        if(!empty($needed)){
+                            $spreadsheet->getActiveSheet()
+                                ->setCellValue($col_sched .$currentContentRow, $search_course_code.$needed)
+                                ->setCellValue($col_room.$currentContentRow, $section_name);
+                        }else{
+                            $spreadsheet->getActiveSheet()
+                                ->setCellValue($col_sched .$currentContentRow, $search_course_code.$facultyname)
+                                ->setCellValue($col_room.$currentContentRow, $section_name);
+                        }
                                               
-                                                }
+                }
 
 
                                                 // Update the 'col_end' field here with the correct value (e.g., $currentContentRow)
@@ -980,7 +967,7 @@ function plot_subject_info($dept_id,$conn,$spreadsheet,$room_name){
                                 ay.`acad_year`,
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`

@@ -48,6 +48,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -166,9 +167,11 @@ session_start();
                             LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
                             LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                             LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                            LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                             WHERE fl.`dept_id` = '$department_id'  AND CONCAT(fc.firstname,fc.middlename,fc.lastname) LIKE '%$search%'
                             AND s.status = 'ACTIVE'
                             AND ay.status = 'ACTIVE'
+                            AND tt.term_id = '$term_id'
                             
                             ");
                             $total_records = mysqli_fetch_array($result_count);
@@ -196,9 +199,11 @@ session_start();
                                     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                                     WHERE fc.`department_id` = '$department_id'   AND CONCAT(fc.firstname,fc.middlename,fc.lastname) LIKE '%$search%'
                                     AND s.status = 'ACTIVE'
                                     AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
                                     GROUP BY fl.`fac_load_id`
                                     ";
                             $results = $conn->query($sql);
@@ -267,9 +272,11 @@ session_start();
                                     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                                     WHERE pr.`department_id` = '$department_id' 
                                     AND s.semester_id = '$semester_id'
                                     AND ay.acad_year_id = '$acad_id'
+                                    AND tt.term_id = '$term_id'
                                      
                                     
 
@@ -303,9 +310,11 @@ session_start();
                                     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                                     WHERE pr.`department_id` = '$department_id'  
                                     AND s.semester_id = '$semester_id'
                                     AND ay.acad_year_id = '$acad_id'
+                                    AND tt.term_id = '$term_id'
                                     OR fc.`faculty_id` = NULL  
                                     GROUP BY fl.`fac_load_id`
                                     ";

@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -78,7 +79,7 @@ session_start();
                         </div>
                         <div class="col-xs-6">
                             <a href="../php/load_room_utilization_matrix.php?department_id=<?php echo $department_id;?>" class="btn btn-success" ><i class="material-icons">&#xE147;</i> <span>Load Rooms</span></a>
-                            <a href="../php/automation_documents/sample_gen.php?dept_id=<?php echo $department_id?>&department_name=<?php echo $department_name?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
+                            <a href="../php/automation_documents/generate_room_utilization.php?dept_id=<?php echo $department_id?>&department_name=<?php echo $department_name?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
 
                             
                         </div>
@@ -128,22 +129,24 @@ session_start();
 
                                         
 
-                                      FROM class_schedule cs
-                                LEFT JOIN faculty_schedule fs ON fs.faculty_sched_id = cs.faculty_schedule_id
-                                LEFT JOIN faculties f ON f.faculty_id = fs.faculty_id
-                                LEFT JOIN courses c ON c.course_id = fs.course_id
-                                LEFT JOIN sections s ON s.section_id = fs.section_id
-                                LEFT JOIN rooms r ON r.room_id = fs.room_id
-                                LEFT JOIN `time` t1 ON t1.time_id = fs.time_start_id
-                                LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
-                                LEFT JOIN departments d ON d.department_id = fs.department_id
-                                LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                LEFT JOIN semesters sm ON sm.`semester_id` = fs.`semester_id`
-                                LEFT JOIN academic_year ay ON ay.`acad_year_id` = fs.`acad_year_id`
-
-                                    
-
-                                    WHERE fs.department_id = '$department_id'
+                                      FROM room_utilization_matrixes rum
+                                LEFT JOIN class_schedule cs ON rum.`class_sched_id` = cs.`class_sched_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
+                                LEFT JOIN faculties fc ON fc.`faculty_id` = fl.`faculty_id`
+                                LEFT JOIN sections s ON s.`section_id` = fl.`section_id`
+                                LEFT JOIN programs pr ON pr.`program_id` = s.`program_id`
+                                LEFT JOIN departments dp ON dp.`department_id` = fl.`dept_id`
+                                LEFT JOIN rooms rm ON rm.`room_id` = cs.`room_id`
+                                LEFT JOIN `time` t1 ON t1.`time_id` = cs.`time_start_id`
+                                LEFT JOIN `time` t2 ON t2.`time_id` = cs.`time_end_id`
+                                LEFT JOIN courses c ON c.`course_id` = fl.`course_id`
+                                LEFT JOIN academic_year ay ON fl.acad_year_id = ay.acad_year_id
+                                LEFT JOIN semesters sm ON fl.sem_id = sm.semester_id
+                                LEFT JOIN tasks tt ON tt.task_id = rum.task_id
+                                
+                                WHERE dp.department_id = '$department_id'
+                                AND tt.term_id = '$term_id'
+                                AND CONCAT('BS',p.program_abbrv,' ',s.section_name) = '{$_GET['section_name']}'
                                 AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
                             
                             
@@ -154,40 +157,48 @@ session_start();
                             $second_last = $total_no_of_page - 1;
 
                             $sql = " SELECT 
-                                cs.class_sched_id,
-                                fs.faculty_id,
-                                fs.day,
-                                f.firstname,
-                                f.lastname,
-                                f.middlename,
-                                f.suffix,
-                                c.course_code,
-                                p.`program_abbrv`,
-                                s.section_name,
+                                rum.`rum_id`,
+                                c.`course_code`,
+                                fc.`firstname`,
+                                fc.`middlename`,
+                                fc.`lastname`,
+                                fc.`suffix`,
+                                s.`section_name`,
+                                pr.`program_abbrv`,
                                 s.`no_of_students`,
-                                r.room_name,
-                                t1.time_s,
-                                t2.time_e,
-                                d.department_name,
-                                sm.`sem_description`,
-                                ay.`acad_year`
-                                FROM class_schedule cs
-                                LEFT JOIN faculty_schedule fs ON fs.faculty_sched_id = cs.faculty_schedule_id
-                                LEFT JOIN faculties f ON f.faculty_id = fs.faculty_id
-                                LEFT JOIN courses c ON c.course_id = fs.course_id
-                                LEFT JOIN sections s ON s.section_id = fs.section_id
-                                LEFT JOIN rooms r ON r.room_id = fs.room_id
-                                LEFT JOIN `time` t1 ON t1.time_id = fs.time_start_id
-                                LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
-                                LEFT JOIN departments d ON d.department_id = fs.department_id
-                                LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                LEFT JOIN semesters sm ON sm.`semester_id` = fs.`semester_id`
-                                LEFT JOIN academic_year ay ON ay.`acad_year_id` = fs.`acad_year_id`
+                                rm.`room_name`,
+                                t1.`text_output` AS 'Class start',
+                                t1.`time_s` AS 'time start',
+                                t1.`ampm_start` AS 'AM/PM for start',
+                                t2.`text_output` AS 'Class end',
+                                t2.`ampm_end` AS 'AM/PM for end',
+                                t2.`time_e` AS 'time end',
+                                dp.`department_name`,
+                                fl.needed,
+                                cs.day
+
+
 
                                     
-
-                                    WHERE fs.department_id = '$department_id' AND CONCAT('BS',p.program_abbrv,' ',s.section_name) = '{$_GET['section_name']}'
-                                    AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
+                                FROM room_utilization_matrixes rum
+                                LEFT JOIN class_schedule cs ON rum.`class_sched_id` = cs.`class_sched_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
+                                LEFT JOIN faculties fc ON fc.`faculty_id` = fl.`faculty_id`
+                                LEFT JOIN sections s ON s.`section_id` = fl.`section_id`
+                                LEFT JOIN programs pr ON pr.`program_id` = s.`program_id`
+                                LEFT JOIN departments dp ON dp.`department_id` = fl.`dept_id`
+                                LEFT JOIN rooms rm ON rm.`room_id` = cs.`room_id`
+                                LEFT JOIN `time` t1 ON t1.`time_id` = cs.`time_start_id`
+                                LEFT JOIN `time` t2 ON t2.`time_id` = cs.`time_end_id`
+                                LEFT JOIN courses c ON c.`course_id` = fl.`course_id`
+                                LEFT JOIN academic_year ay ON fl.acad_year_id = ay.acad_year_id
+                                LEFT JOIN semesters sm ON fl.sem_id = sm.semester_id
+                                LEFT JOIN tasks tt ON tt.task_id = rum.task_id
+                                
+                                WHERE dp.department_id = '$department_id'
+                                AND tt.term_id = '$term_id'
+                                AND CONCAT('BS',p.program_abbrv,' ',s.section_name) = '{$_GET['section_name']}'
+                                AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
                                     ";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -266,7 +277,9 @@ session_start();
                                 LEFT JOIN `time` t1 ON t1.`time_id` = cs.`time_start_id`
                                 LEFT JOIN `time` t2 ON t2.`time_id` = cs.`time_end_id`
                                 LEFT JOIN courses c ON c.`course_id` = fl.`course_id`
+                                LEFT JOIN tasks tt ON tt.task_id = rum.task_id
                                 WHERE dp.department_id = '$department_id'
+                                AND tt.term_id = '$term_id'
                             
                             ");
                             $total_records = mysqli_fetch_array($result_count);
@@ -312,8 +325,10 @@ session_start();
                                 LEFT JOIN courses c ON c.`course_id` = fl.`course_id`
                                 LEFT JOIN academic_year ay ON fl.acad_year_id = ay.acad_year_id
                                 LEFT JOIN semesters sm ON fl.sem_id = sm.semester_id
+                                LEFT JOIN tasks tt ON tt.task_id = rum.task_id
                                 
-                                WHERE dp.department_id = '$department_id' AND sm.status = 'ACTIVE' AND ay.status = 'ACTIVE'
+                                WHERE dp.department_id = '$department_id'
+                                AND tt.term_id = '$term_id'
                                     
 
                                     

@@ -11,6 +11,7 @@ $semester_id_to_be_inserted = '';
 $acad_id_to_be_inserted = '';
 $time_start_id_to_be_inserted = '';
 $time_end_id_to_be_inserted = '';
+$task_id = get_task_id_by_active_term();
 if($_POST['description'] == "Class Schedule"){
 	$faculty_name = $_POST['faculty'];
 	$dept_id = $_POST['department_id']; 
@@ -138,7 +139,9 @@ LEFT JOIN sections s ON s.section_id = fs.section_id
 LEFT JOIN programs p ON p.program_id = s.program_id
 LEFT JOIN `time` t ON t.time_id = fs.time_start_id
 LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
+LEFT JOIN tasks tt ON tt.task_id = fs.task_id
 WHERE fs.day = '$day' AND d.department_id = '$dept_id'
+AND tt.task_id = '$task_id'
 AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name'";
 
 
@@ -181,7 +184,7 @@ if ($conflictDetected) {
 	
 } else {
    
- 	  $insertFacultyScheduleSQL = mysqli_query($conn,"INSERT INTO faculty_schedule(faculty_id,department_id,semester_id,acad_year_id,course_id,section_id,room_id,time_start_id,time_end_id,day,description) VALUES('$faculty_id_to_be_inserted','$dept_id','$semester_id_to_be_inserted','$acad_id_to_be_inserted','$course_id_to_be_inserted','$section_id_to_be_inserted','$room_id_to_be_inserted','$time_start_id_to_be_inserted','$time_end_id_to_be_inserted','$day','$description')");    
+ 	  $insertFacultyScheduleSQL = mysqli_query($conn,"INSERT INTO faculty_schedule(faculty_id,department_id,semester_id,acad_year_id,course_id,section_id,room_id,time_start_id,time_end_id,day,description,task_id) VALUES('$faculty_id_to_be_inserted','$dept_id','$semester_id_to_be_inserted','$acad_id_to_be_inserted','$course_id_to_be_inserted','$section_id_to_be_inserted','$room_id_to_be_inserted','$time_start_id_to_be_inserted','$time_end_id_to_be_inserted','$day','$description','$task_id')");    
  if($insertFacultyScheduleSQL){    		
  				  $_SESSION['alert'] = $success; 
     			$message = "Faculty Schedule inserted successfully!";	
@@ -327,7 +330,9 @@ LEFT JOIN sections s ON s.section_id = fs.section_id
 LEFT JOIN programs p ON p.program_id = s.program_id
 LEFT JOIN `time` t ON t.time_id = fs.time_start_id
 LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
+LEFT JOIN tasks tt ON tt.task_id = fs.task_id
 WHERE fs.day = '$day' AND d.department_id = '$dept_id'
+AND tt.task_id = '$task_id'
 AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name'
 
 ";
@@ -419,7 +424,7 @@ if ($conflictDetected) {
 	
 } else {
    
- 	 $insertFacultyScheduleSQL = mysqli_query($conn,"INSERT INTO faculty_schedule(faculty_id,department_id,semester_id,acad_year_id,room_id,time_start_id,time_end_id,day,description) VALUES('$faculty_id_to_be_inserted','$dept_id','$semester_id_to_be_inserted','$acad_id_to_be_inserted','$room_id_to_be_inserted','$time_start_id_to_be_inserted','$time_end_id_to_be_inserted','$day','$description')");    
+ 	 $insertFacultyScheduleSQL = mysqli_query($conn,"INSERT INTO faculty_schedule(faculty_id,department_id,semester_id,acad_year_id,room_id,time_start_id,time_end_id,day,description,task_id) VALUES('$faculty_id_to_be_inserted','$dept_id','$semester_id_to_be_inserted','$acad_id_to_be_inserted','$room_id_to_be_inserted','$time_start_id_to_be_inserted','$time_end_id_to_be_inserted','$day','$description','$task_id')");    
  if($insertFacultyScheduleSQL){    		
  				  $_SESSION['alert'] = $success; 
     			$message = "Faculty Schedule inserted successfully!";	
@@ -440,7 +445,32 @@ if ($conflictDetected) {
 
 
 }//end of else
-echo $_SESSION['message'];
+
+
+function get_task_id_by_active_term(){
+	include "config.php";
+	$query = mysqli_query($conn,"SELECT 
+									t.term_id,
+									t.status,
+									tt.task_name,
+									tt.`task_id` AS task_id
+
+								FROM tasks tt 
+								LEFT JOIN terms t ON t.term_id = tt.`term_id`  
+								WHERE t.status = 'ACTIVE'  AND tt.`task_name` = 'Faculty Schedule'");
+	if($query){
+		if(mysqli_num_rows($query) > 0){
+			$row = mysqli_fetch_assoc($query);
+			$taskid = $row['task_id'];
+
+			return $taskid;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+}
 ?>
 
 	

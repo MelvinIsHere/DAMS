@@ -8,7 +8,7 @@ $primary_id = $_SESSION['user_id'];
 $faculty = $_POST['faculty'];
 $error = "error";
 $success = "success";
-
+$task_id = get_task_id_by_active_term();
 if(isset($_POST['submit']) && !empty($faculty)){
 	$course_code = $_POST['course_code'];
     $section = $_POST['section'];
@@ -18,7 +18,8 @@ if(isset($_POST['submit']) && !empty($faculty)){
                               
 	//get the id of the faculty member
     $faculty_id = getFacultyId($faculty); 
-	$verify = verify_faculty_loading_data($faculty_id);  //just remove this tommorow
+	// $verify = verify_faculty_loading_data($faculty_id);  //just remove this tommorow
+	$verify = false;
 	if($verify){
 		//reach max limit
 		$message = "Faculty reach max units!";
@@ -29,7 +30,7 @@ if(isset($_POST['submit']) && !empty($faculty)){
 
 	}else{
 		if($faculty_id != ""){
-			$insert_with_faculty = withFacultyinsert($faculty_id,$course_code,$section,$semester,$primary_id,$department_name,$acad_year,$conn);
+			$insert_with_faculty = withFacultyinsert($faculty_id,$course_code,$section,$semester,$primary_id,$department_name,$acad_year,$conn,$task_id);
 			if($insert_with_faculty){
 				$message = "Faculty has been successfully loaded!";
 				$_SESSION['alert'] = $success; 
@@ -42,7 +43,7 @@ if(isset($_POST['submit']) && !empty($faculty)){
 				header("Location: ../deans/faculty_loading_ui.php");
 			}
 		}else{
-			$insert = insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primary_id,$department_name,$conn);
+			$insert = insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primary_id,$department_name,$conn,$task_id);
 			if($insert){
 				$message = "Faculty has been successfully loaded!";
 				$_SESSION['alert'] = $success; 
@@ -65,7 +66,7 @@ if(isset($_POST['submit']) && !empty($faculty)){
     $acad_year = $_POST['acad'];
     $needed = 'Needed for lecturer';
 	//get the id of the courses
-	$insert = insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primary_id,$department_name,$conn);
+	$insert = insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primary_id,$department_name,$conn,$task_id);
 	if($insert == "success"){
 		$message = "Faculty has been successfully loaded!";
 		$_SESSION['alert'] = $success; 
@@ -87,7 +88,7 @@ if(isset($_POST['submit']) && !empty($faculty)){
 }
              
 
-function insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primary_id,$department_name,$conn){
+function insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primary_id,$department_name,$conn,$task_id){
 
 	$course_data = getCourseData($course_code);						    		
 	if($course_data != ""){
@@ -103,7 +104,7 @@ function insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primar
 					if($department_name != ""){
 						$dept_id = getDeptId($department_name);
 						if($dept_id != ""){
-							$insert = mysqli_query($conn,"INSERT INTO faculty_loadings(faculty_id,course_id,section_id,acad_year_id,sem_id,dept_id,needed) VALUES(NULL,'$course_data','$section_data','$acad_year','$semester_data','$dept_id','$needed')");
+							$insert = mysqli_query($conn,"INSERT INTO faculty_loadings(faculty_id,course_id,section_id,acad_year_id,sem_id,dept_id,needed,task_id) VALUES(NULL,'$course_data','$section_data','$acad_year','$semester_data','$dept_id','$needed','$task_id')");
 							if($insert){							    									
 						    	$message = "Faculty has been successfully loaded!";
     							$_SESSION['alert'] = $success; 
@@ -159,7 +160,7 @@ function insertwithoutfaculty($course_code,$section,$acad_year,$semester,$primar
 
 
 
-function withFacultyinsert($faculty_id,$course_code,$section,$semester,$primary_id,$department_name,$acad_year,$conn){
+function withFacultyinsert($faculty_id,$course_code,$section,$semester,$primary_id,$department_name,$acad_year,$conn,$task_id){
 	if($faculty_id != ""){
 		//get the id of the courses
 		$course_data = getCourseData($course_code);						    		
@@ -176,7 +177,7 @@ function withFacultyinsert($faculty_id,$course_code,$section,$semester,$primary_
 							if($department_name != ""){
 								$dept_id = getDeptId($department_name);
 							    if($dept_id != ""){
-						    		$insert = mysqli_query($conn,"INSERT INTO faculty_loadings(faculty_id,course_id,section_id,acad_year_id,sem_id,dept_id,needed) VALUES('$faculty_id','$course_data','$section_data','$acad_year','$semester_data','$dept_id',NULL)");
+						    		$insert = mysqli_query($conn,"INSERT INTO faculty_loadings(faculty_id,course_id,section_id,acad_year_id,sem_id,dept_id,needed,task_id) VALUES('$faculty_id','$course_data','$section_data','$acad_year','$semester_data','$dept_id',NULL,'$task_id')");
 						    		if($insert){	
 						    			
 										return true;
@@ -231,4 +232,35 @@ function withFacultyinsert($faculty_id,$course_code,$section,$semester,$primary_
 				header("Location: ../deans/faculty_loading_ui.php");
 }
 }                            
+                        
+
+
+
+function get_task_id_by_active_term(){
+	include "config.php";
+	$query = mysqli_query($conn,"SELECT 
+								
+							
+								tt.`task_id` AS task_id
+
+							FROM tasks tt 
+							LEFT JOIN terms t ON t.term_id = tt.`term_id`
+							WHERE t.status = 'ACTIVE'  AND tt.`task_name` = 'Faculty Loading'");
+	if($query){
+		if(mysqli_num_rows($query) > 0){
+			$row = mysqli_fetch_assoc($query);
+			$task_id = $row['task_id'];
+
+			return $task_id;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+
+}
+
+
+
                         ?>

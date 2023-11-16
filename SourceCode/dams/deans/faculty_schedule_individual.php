@@ -47,6 +47,7 @@ session_start();
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
         $faculty_name = $_GET['faculty_name'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -304,9 +305,10 @@ session_start();
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fs.acad_year_id
                                     LEFT JOIN sections s ON s.section_id = fs.section_id
                                     LEFT JOIN programs p ON p.program_id = s.program_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fs.task_id
                                     WHERE fs.department_id = '$department_id'
                                     AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name'
-                            
+                                    AND tt.term_id = '$term_id'
                             ");
                             $total_records = mysqli_fetch_array($result_count);
                             $total_records = $total_records['total_records'];
@@ -344,12 +346,14 @@ session_start();
                                     LEFT JOIN programs p ON p.program_id = s.program_id
                                     LEFT JOIN `time` t ON t.time_id = fs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fs.task_id
 
 
                                     
 
                                     WHERE fs.department_id = '$department_id'
                                     AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name'
+                                    AND tt.term_id = '$term_id'
                                     ";
                             $results = $conn->query($sql);
                             if(!$results){

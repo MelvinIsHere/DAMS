@@ -596,9 +596,10 @@ session_start();
                                     <input class="form-control"  list="types" name="type" id="type" placeholder="Enter account type" required>
                                       <datalist id="types">                                            
                                               <option value="Dean">
-                                              <option value="Heads">
+                                              <option value="Head">
                                               <option value="Admin">     
-                                              <option value="Staff">                                              
+                                              <option value="Staff"> 
+                                              <option value="Faculty">                                              
                                     </datalist>
 
 

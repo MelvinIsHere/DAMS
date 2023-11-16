@@ -1,6 +1,7 @@
 <?php 
  session_start();
-error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
  $users_id = $_SESSION['user_id'];
  include "config.php";
@@ -10,11 +11,13 @@ $due_date = $_POST['due_date'];
 $task_name = $_POST['task_name'];
 $description = $_POST['description'];
 $category = $_POST['category'];
+$term = $_POST['term'];
 
 $staff = 0;
 $deans = 0;
 $ovcaa = 0;
 $heads = 0;
+$faculty = 0;
 if($category == "Staff"){
 	$staff = 1;
 }elseif($category == "Dean"){
@@ -23,17 +26,20 @@ if($category == "Staff"){
 	$ovcaa = 1;
 }elseif ($category == "Heads") {
 	$heads = 1;
+}elseif($category == "Faculty"){
+	$faculty = 1;
 }
 
-echo $category;
+$term_id = gettermid($term);
 
  $doc_temp_id = getTemplateId($task_name);
  if($doc_temp_id == ""){
  	echo "none";
  	header("Location: ../admin/admin.php");
  }else{
- 	$id = insert_task($task_name,$description,$doc_temp_id,$due_date,$ovcaa,$deans,$heads,$staff);//task_id
+ 	$id = insert_task($task_name,$description,$doc_temp_id,$due_date,$ovcaa,$deans,$heads,$staff,$faculty,$term_id);//task_id
  	if($id){
+
  		$sql = "SELECT 					
             		u.user_id,
             		d.department_id
@@ -43,6 +49,7 @@ echo $category;
         		WHERE u.type = '$category'";
 		$result = mysqli_query($conn,$sql);
 		if ($result) {
+
 			while($row = mysqli_fetch_array($result)){
 				$dept_id = $row['department_id'];
         		$user_id = $row['user_id'];
@@ -50,16 +57,21 @@ echo $category;
     		}
 	    	$notif_id = insertTaskNotification($task_name); //insert task notifications to others
 	    	if($notif_id == ""){
+
 	    		echo "none1";
 	    	}else{
+
 	    		$user_notif = user_notif($users_id,$notif_id,$category); // insert thee status
 	    		if($user_notif != ""){
-	    				$_SESSION['alert'] = $success; 
-	    				$message = "Task has been successfully generated!";  
+
+	    				$_SESSION['alert'] = "success"; 
+	    				$message = "Task has been successfully ditributed!";  
 						$_SESSION['message'] =  $message;   //failed to insert
-	    	// header("Location: ../admin/admin.php?Success");
+	    	header("Location: ../admin/admin.php?Success");
 	    		}else{
-	    			echo "none2";
+	    				$_SESSION['alert'] = "error"; 
+	    				$message = "Task failed!";  
+						$_SESSION['message'] =  $message; 
 	    		}
 	    	
 	    
@@ -70,7 +82,7 @@ echo $category;
 		}
 
  	}else{
- 		echo "None3";
+ 		echo "error";
  	}
  }
 //  $id = adminInsertTask($task_name,$description,$doc_temp_id,$dateStart,$dateEnd,$ovcaa,$deans,$heads,$staffs); //insert task into the deans
@@ -103,13 +115,13 @@ function user_notif($users_id,$notif_id,$type){
 
 }
 
-function insert_task($task_name,$description,$doc_temp_id,$dateEnd,$ovcaa,$deans,$heads,$staffs){
+function insert_task($task_name,$description,$doc_temp_id,$dateEnd,$ovcaa,$deans,$heads,$staffs,$faculty,$term_id){
 	include "config.php";
 	$acad_id = getActiveAcadyear();
 	if($acad_id){
 		$sem_id = getactivesem();
 		if($sem_id){
-			$query = mysqli_query($conn,"INSERT INTO tasks (task_name, task_desc,document_id, due_date, for_ovcaa,for_deans,for_heads,for_staffs,acad_year_id,sem_id) VALUES ('$task_name','$description','$doc_temp_id', '$dateEnd','$ovcaa', '$deans','$heads','$staffs','$acad_id','$sem_id')");
+			$query = mysqli_query($conn,"INSERT INTO tasks (task_name, task_desc,document_id, due_date, for_ovcaa,for_deans,for_heads,for_staffs,for_faculty,acad_year_id,sem_id,term_id) VALUES ('$task_name','$description','$doc_temp_id', '$dateEnd','$ovcaa', '$deans','$heads','$staffs','$faculty','$acad_id','$sem_id','$term_id')");
 			 if($query){
 	 		// Print auto-generated id
          		$id = $conn -> insert_id;
@@ -121,12 +133,12 @@ function insert_task($task_name,$description,$doc_temp_id,$dateEnd,$ovcaa,$deans
 	 		}
 		}else{
 			
-			return  $sem_id;
+			return  false;
 		}
 
 	}else{
 		 
-		return $acad_id;
+		return false;
 	}
 	
               
@@ -162,6 +174,22 @@ function getActiveAcadyear(){
 		}
 	}else{
 	return false;
+	}
+}
+function gettermid($term){
+	include "config.php";
+	$query = mysqli_query($conn,"SELECT term_id FROM terms WHERE term = '$term'");
+	if($query){
+		if(mysqli_num_rows($query) >0){
+			$row = mysqli_fetch_assoc($query);
+			$term_id = $row['term_id'];
+
+			return $term_id;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
 	}
 }
 ?>

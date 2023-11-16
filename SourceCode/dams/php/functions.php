@@ -612,52 +612,52 @@ function getTitleId($title){
 
 //for faculty loading verifications
 
-function verify_faculty_loading_data($faculty_id){
-	include "config.php";
-	$verify = mysqli_query($conn,"SELECT
-                                    getFullName_surnameFirst(fc.firstname,fc.middlename,fc.lastname,fc.`suffix`) 'Name of Faculty',
-                                    cs.course_code 'Course Code',
-                                    getProg_sec(pr.`program_abbrv`,sc.`section_name`) 'Section',
-                                    sc.no_of_students 'No. of Students',
-                                    cs.`units` 'Total Units',
-                                    cs.`lec_hrs_wk` 'Lec. hrs/wk',
-                                    cs.`lab_hrs_wk` 'Lab. hrs/wk',
-                                    SUM(cs.`lec_hrs_wk`+cs.`lab_hrs_wk`) 'Total hrs/wk',
-                                    cs.`course_description` 'Course Description',
-                                    fl.fac_load_id AS 'Loading Id'
-                                    FROM
-                                    faculty_loadings fl
-                                    LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
-                                    LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
-                                    LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
-                                    LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
-                                    LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
-                                    LEFT JOIN semesters s ON s.`semester_id` ON fl.`sem_id`
-                                    LEFT JOIN academic_year ay ON ay.`acad_year_id` = fl.`acad_year_id`
-                                    WHERE fc.faculty_id = '$faculty_id' 	
-                                    GROUP BY fl.`fac_load_id`
-");
-	if(mysqli_num_rows($verify) > 1){
-		$total_units = 0;
-		$row = mysqli_fetch_array($verify);
+// function verify_faculty_loading_data($faculty_id){
+// 	include "config.php";
+// 	$verify = mysqli_query($conn,"SELECT
+//                                     getFullName_surnameFirst(fc.firstname,fc.middlename,fc.lastname,fc.`suffix`) 'Name of Faculty',
+//                                     cs.course_code 'Course Code',
+//                                     getProg_sec(pr.`program_abbrv`,sc.`section_name`) 'Section',
+//                                     sc.no_of_students 'No. of Students',
+//                                     cs.`units` 'Total Units',
+//                                     cs.`lec_hrs_wk` 'Lec. hrs/wk',
+//                                     cs.`lab_hrs_wk` 'Lab. hrs/wk',
+//                                     SUM(cs.`lec_hrs_wk`+cs.`lab_hrs_wk`) 'Total hrs/wk',
+//                                     cs.`course_description` 'Course Description',
+//                                     fl.fac_load_id AS 'Loading Id'
+//                                     FROM
+//                                     faculty_loadings fl
+//                                     LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+//                                     LEFT JOIN courses cs ON fl.`course_id`=cs.`course_id`
+//                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+//                                     LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+//                                     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+//                                     LEFT JOIN semesters s ON s.`semester_id` ON fl.`sem_id`
+//                                     LEFT JOIN academic_year ay ON ay.`acad_year_id` = fl.`acad_year_id`
+//                                     WHERE fc.faculty_id = '$faculty_id' 	
+//                                     GROUP BY fl.`fac_load_id`
+// ");
+// 	if(mysqli_num_rows($verify) > 1){
+// 		$total_units = 0;
+// 		$row = mysqli_fetch_array($verify);
 		
-		while($total_units <= 18){
-			$units = $row['Total Units'];
-			$total_units = $units + $total_units;
-		}
-		if($total_units <= 18){
-			return false; // good to go
-		}else{
+// 		while($total_units <= 18){
+// 			$units = $row['Total Units'];
+// 			$total_units = $units + $total_units;
+// 		}
+// 		if($total_units <= 18){
+// 			return false; // good to go
+// 		}else{
 			
-			return true;//reach max units
-		}
+// 			return true;//reach max units
+// 		}
 
-	}
-	else{
-	    return false;
-	}
+// 	}
+// 	else{
+// 	    return false;
+// 	}
 
-}
+// }
 function verify_academic_year($academic_year){
 include "config.php";
 

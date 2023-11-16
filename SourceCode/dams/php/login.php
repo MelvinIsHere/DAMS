@@ -22,6 +22,7 @@
 
                 $sem_id = getSemId();
                 $acad_id = getAcadId();
+                $term_id = getactiveTerm();
 
                 if(!$acad_id && !$sem_id){
                      header("Location: ../index.php?error=Something went wrong please try again!");
@@ -39,6 +40,7 @@
                     $_SESSION['type'] = $row['type'];
                       $_SESSION['semester_id'] = $sem_id;
                     $_SESSION['acad_id'] = $acad_id;
+                    $_SESSION['term_id'] = $term_id;
                     
                     }
                     else if($type === "Heads"){
@@ -50,6 +52,7 @@
                     $_SESSION['dept_name'] = $row['department_name'];
                       $_SESSION['semester_id'] = $sem_id;
                     $_SESSION['acad_id'] = $acad_id;
+                    $_SESSION['term_id'] = $term_id;
                         header("Location: ../heads/heads.php");
                     }
                      else if($type === "Dean"){
@@ -61,9 +64,11 @@
                     $_SESSION['dept_name'] = $row['department_name'];
                       $_SESSION['semester_id'] = $sem_id;
                     $_SESSION['acad_id'] = $acad_id;
+                    $_SESSION['term_id'] = $term_id;
                         header("Location: ../deans/deans.php");
                     }
-                    else if($type === "Staff"){
+                    else if($type === "Staff" || $type === "Faculty"){
+                        $_SESSION['term_id'] = $term_id;
                     $_SESSION['unique_id'] = $row['unique_id'];
                     $_SESSION['user_id'] = $row['user_id'];
                    
@@ -129,6 +134,22 @@ function getAcadId(){
     }else{
         return false;
     }
+}
+function getactiveTerm(){
+    include "config.php";
+    $query = mysqli_query($conn,"SELECT term_id FROM terms WHERE status = 'ACTIVE'");
+    if($query){
+        if(mysqli_num_rows($query)>0){
+            $row = mysqli_fetch_assoc($query);
+            $term_id = $row['term_id'];
+
+            return $term_id;
+        }else{
+            return "false";
+        }
+    }else{
+        return "false";
+    }   
 }
 
 ?>

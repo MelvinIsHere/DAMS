@@ -84,38 +84,40 @@ if(mysqli_num_rows($user_text)>0){
 
 
 //imidiate superviser
-$query = "SELECT 
-    f.`firstname`,
-    f.`lastname`,
-    f.`middlename`,
-    f.`suffix`,
-    dp.department_name,
-    d.`designation`
-FROM faculties f
-LEFT JOIN users u ON u.faculty_id = f.`faculty_id`   
-LEFT JOIN departments dp ON dp.department_id = f.`department_id`
-LEFT JOIN faculty_designation fd ON fd.`faculty_id` = f.faculty_id
-LEFT JOIN designation d ON d.designation_id = fd.`designation_id`
-WHERE (d.`designation` = 'Head' OR d.`designation`='Dean') AND dp.department_id = '$dept_id'";
 
-$resultSet = mysqli_query($conn, $query);
+$query = " SELECT 
+       f.`firstname`,
+       dp.department_name,
+       d.`designation`
+ FROM faculties f
+ LEFT JOIN users u ON u.faculty_id = f.`faculty_id`   
+ LEFT JOIN departments dp ON dp.department_id = f.`department_id`
+ LEFT JOIN faculty_designation fd ON fd.`faculty_id` = f.faculty_id
+ LEFT JOIN designation d ON d.designation_id = fd.`designation_id`
+ WHERE d.`designation` = 'Head' OR d.`designation`='Dean'
+ AND dp.department_id = '$dept_id'";
+ $result = mysqli_query($conn,$query);
+ if($result){
+       if(mysqli_num_rows($result)>0){
+              $row = mysqli_fetch_assoc($result);
+              $firstname = $row['firstname'];
+              $last_name = $row['lastname'];
+              $middle_name = $row['middlename'];
+              $suffix = $row['suffix'];
+              $fullname = $firstname." ".$middle_name." ".$last_name." ".$suffix;
 
-if ($resultSet) {
-    while ($row = mysqli_fetch_assoc($resultSet)) {
-        $firstname = $row['firstname'];
-        $lastname = $row['lastname'];
-        $middlename = $row['middlename'];
-        $suffix = $row['suffix'];
 
-        $fullname = $firstname . " " . $middlename . " " . $lastname . " " . $suffix;
 
-        $spreadsheet->getActiveSheet()
-            ->setCellValue('A19', $fullname)
-            ->setCellValue('H19', $fullname);
-    }
-} else {
-    // Handle the case where the query fails
-}
+              $spreadsheet->getActiveSheet()
+                     ->setCellValue('A19',$fullname)
+                     ->setCellValue('H19',$fullname);
+
+       }else{
+
+       }
+ }else{
+
+ }
 
 
 

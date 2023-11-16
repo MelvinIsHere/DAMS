@@ -178,6 +178,31 @@
                                 <textarea class="form-control" id="description" name="description" placeholder="Insert Description" required></textarea>
                             </div>
                             <div class="form-group">
+                                <label class="form-label">Term</label>
+                                <select class="form-control" name="term">
+                                    <?php
+                                        include "../php/config";
+                                        $query = mysqli_query($conn,"SELECT term FROM terms");
+                                        if($query){
+                                            if(mysqli_num_rows($query) >0){
+                                                $row = mysqli_fetch_assoc($query);
+                                                $term = $row['term'];
+                                    ?>
+
+                                                <option><?php echo $term;?></option>
+
+                                    <?php
+                                            }else{
+
+                                            }
+                                        }else{
+
+                                        }
+                                     ?>
+                                    
+                                </select>
+                            </div>
+                            <div class="form-group">
                                  <label class="form-label">Due date</label>
                                  <input type="date" name="due_date" class="form-control" required>
                             </div>
@@ -185,9 +210,10 @@
                                 <label class="form-label">Category</label>
                                 <select class="form-control" name="category" required>
                                     <option value="Dean">Deans</option>
-                                    <option value="Heads">Heads</option>
+                                    <option value="Head">Heads</option>
                                     <option value="Admin">OVCAA</option>
-                                    <option value="Staff">Faculty</option>
+                                    <option value="Faculty">Faculty</option>
+                                    <option value="Staff">Staff</option>
                                 </select>
                             </div>
                            

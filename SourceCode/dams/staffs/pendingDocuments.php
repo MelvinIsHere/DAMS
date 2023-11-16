@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -87,10 +88,10 @@ session_start();
             // echo $dept_name;
 
 
-
+                $currentDate = date('Y-m-d');
 
                 $sql = "SELECT
-                         tt.task_name AS task_name,
+                        tt.task_name AS task_name,
                         tt.date_posted AS date_posted,
                         tt.due_date AS due_date,
                         ts.`is_completed`,
@@ -99,8 +100,11 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN users u ON u.`user_id`=ts.`user_id`
-                        WHERE tt.for_staffs = 1 AND  u.`user_id` = '$id' AND ts.`is_completed` = 1;";
+                        WHERE u.`user_id` = '$id' AND ts.`is_completed` = 1
+                        AND tt.due_date <= '$currentDate'
+                        AND tt.term_id = '$term_id'";
                 $result = $conn->query($sql);
+
                 while($row = mysqli_fetch_array($result)){
                     $taskid = $row['task_id'];
                     $taskName = $row['task_name'];

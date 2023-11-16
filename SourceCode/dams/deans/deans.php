@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -137,7 +138,8 @@ session_start();
                                                             FROM tasks tt
                                                             LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                                                             LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                                                            WHERE tt.for_deans = 1 AND ts.user_id = '$id' AND ts.`is_completed` = '1' AND sem_id = '$sem_id' ANd acad_year_id = '$acad_id'");
+                                                            WHERE tt.for_deans = 1 AND ts.user_id = '$id' AND ts.`is_completed` = '1'
+                                                            AND tt.term_id = '$term_id'");
                                                             $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -178,7 +180,8 @@ session_start();
                                                         FROM tasks tt
                                                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                                                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                                                        WHERE tt.for_deans = 1 AND ts.user_id = '$id' AND ts.`is_completed` = '0' AND tt.sem_id = '$sem_id' AND acad_year_id = '$acad_id'");
+                                                        WHERE tt.for_deans = 1 AND ts.user_id = '$id' AND ts.`is_completed` = '0' 
+                                                        AND tt.term_id = '$term_id'");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -236,7 +239,7 @@ session_start();
                                 FROM tasks t
                                 LEFT JOIN task_status_deans tsd ON tsd.task_id = t.task_id
                                 WHERE tsd.office_id = '$department_id'
-                                AND t.sem_id = '$sem_id' AND t.acad_year_id = '$acad_id'";
+                               AND t.term_id = '$term_id'";
 
                         $result = $conn->query($query);
                         if ($result->num_rows > 0) {

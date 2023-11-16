@@ -139,7 +139,7 @@ AND s.semester_id = '$semester_id'
 AND ay.acad_year_id = '$acad_id'
 
 GROUP BY fl.`fac_load_id`
-ORDER BY  fc.firstname");
+ORDER BY  fc.lastname");
 
 
 $row_start_permanent = 7;
@@ -207,7 +207,7 @@ if($permanent_query){
             ob_start();
             $designations=  getdesignation($faculty_id);
             $designationOutput = ob_get_clean();
-            $designations_all = str_replace(',',"\n",$designations);
+            $designations_all = str_replace(','," / ",$designations);
          
             
 
@@ -227,16 +227,10 @@ if($permanent_query){
                     ->setCellValue('I'.$row_start_permanent, $rle_hrs)
                     ->setCellValue('J'.$row_start_permanent, $lab_hrs)
                     ->setCellValue('K'.$row_start_permanent, $rle_hrs)
-                    ->setCellValue('L'.$row_start_permanent, $course_description);
+                    ->setCellValue('L'.$row_start_permanent, $course_description)
+                    ->setCellValue('Q'.$row_start_permanent, $faculty_id);
 
-                $cell = $spreadsheet->getActiveSheet()->getCell('A'.$row_start_permanent);
-                $richText = $cell->getRichText();
-
-                // Create a new text run
-                $textRun = $richText->createTextRun($designations_all);
-
-                // Set the italic property for the text run
-                $textRun->getFont()->setItalic(true);
+               
           
                
                     
@@ -269,9 +263,10 @@ $total_lec_hrs = 0;
 $total_rle_hrs = 0;
 $total_lab_hrs = 0;
 $total_hrs_wk = 0;
+$no_prep = 0;
 //looping
 while($row_start_permanent >= $rowStart){
-
+    
     //get the current value or the faculty name
     $cellValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $rowStart)->getCalculatedValue();
     //get the next row index
@@ -288,19 +283,27 @@ while($row_start_permanent >= $rowStart){
     $lab_hrs = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, $rowStart)->getCalculatedValue();
     //get the cell value of the current loop for the hrs per week
     $hrs_wk = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $rowStart)->getCalculatedValue();
+    $faculty_id = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(17, $rowStart)->getCalculatedValue();
+    
     //just add it all
     $totalUnits = $totalUnits + $units;
     $total_lec_hrs = $total_lec_hrs + $lecture_hrs;
     $total_rle_hrs = $total_rle_hrs + $rle_hrs;
     $total_lab_hrs = $total_lab_hrs + $lab_hrs;
     $total_hrs_wk = $total_hrs_wk + $hrs_wk;
+    $no_prep++;;
     //if same value for next and current just increment the rowstart so it can still continue to count or add
     if ($cellValue ==  $nextvalue) {                    
         $rowStart++;                                        
     }elseif($cellValue == " TEMPORARY FACULTY"){
         break;
     }else{
-
+         ob_start();
+        $no_deloading = get_no_of_deloading($faculty_id);    
+        $no_deloading_output = ob_get_clean();
+        $regular_load = 18 - $no_deloading;
+        $overload = $totalUnits - $regular_load;
+        
         //else add new row
         $spreadsheet->getActiveSheet()->insertNewRowBefore($rowStart + 1, 1);
         //increment row
@@ -313,7 +316,10 @@ while($row_start_permanent >= $rowStart){
             ->setCellValue('H' . $rowStart, $total_lec_hrs)
             ->setCellValue('I' . $rowStart, $total_rle_hrs)
             ->setCellValue('J' . $rowStart, $total_lab_hrs)
-            ->setCellValue('K' . $rowStart, $total_hrs_wk);
+            ->setCellValue('K' . $rowStart, $total_hrs_wk)
+            ->setCellValue('N' . $rowStart, $regular_load)
+            ->setCellValue('O' . $rowStart, $overload)
+            ->setCellValue('P' . $rowStart, $no_prep);
         //merge the cells
         $spreadsheet->getActiveSheet()->mergeCells('D'.$rowStart.':F'.$rowStart);
         //re assign it or reset the values                                    
@@ -326,7 +332,8 @@ while($row_start_permanent >= $rowStart){
         $total_lec_hrs = 0;
         $total_rle_hrs = 0;
         $total_lab_hrs = 0;
-        $total_hrs_wk = 0;              
+        $total_hrs_wk = 0;
+        $no_prep = 0;              
     }
       
 }
@@ -341,6 +348,7 @@ $cRow = 7;
 while($row <= $row_start_permanent){
     //get the current cell value
     $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getCalculatedValue();
+
     //the next row index
     $nextRow = $row + 1;
     //get the next cell value
@@ -427,6 +435,7 @@ $guest = false;
 
 $guest_query = mysqli_query($conn, "
 SELECT 
+fc.faculty_id,
 CONCAT(fc.lastname,',',fc.firstname,' ',fc.middlename) AS 'Name of Faculty',
 fc.is_permanent AS 'permanent',
 cs.course_code AS 'Course Code',
@@ -468,6 +477,7 @@ if($guest_query){
         $guest = true;
    
         while ($row = mysqli_fetch_array($guest_query)) {
+            $faculty_id = $row['faculty_id'];
               $facultyname = $row['Name of Faculty'];
               $course_code =  $row['Course Code'];
               $section =  $row['Section'];
@@ -481,6 +491,7 @@ if($guest_query){
               $title_description = $row['title_description'];
               // Append the current row's data to the $data array
               $data_guest[] = array(
+                    "faculty_id" => $faculty_id,
                       "facultyname" => $facultyname,
                      "course_code" => $course_code,
                      "section" => $section,
@@ -500,6 +511,7 @@ if($guest_query){
 
         foreach($data_guest as $row){
             //insert it all to the array
+            $faculty_id = $row['faculty_id'];
             $facultyname = $row['facultyname'];
             $course_code =  $row['course_code'];
             $section =  $row['section'];
@@ -526,7 +538,8 @@ if($guest_query){
                     ->setCellValue('I'.$row_start_guest, $rle_hrs)
                     ->setCellValue('J'.$row_start_guest, $lab_hrs)
                     ->setCellValue('K'.$row_start_guest, $rle_hrs)
-                    ->setCellValue('L'.$row_start_guest, $course_description);
+                    ->setCellValue('L'.$row_start_guest, $course_description)
+                    ->setCellValue('Q'.$row_start_guest, $faculty_id);
                     
               
               $row_start_guest++;
@@ -549,6 +562,7 @@ $total_lec_hrs = 0;
 $total_rle_hrs = 0;
 $total_lab_hrs = 0;
 $total_hrs_wk = 0;
+$no_prep = 0;
 //looping
 while($row_start_guest >= $rowStart){
 
@@ -574,13 +588,18 @@ while($row_start_guest >= $rowStart){
     $total_rle_hrs = $total_rle_hrs + $rle_hrs;
     $total_lab_hrs = $total_lab_hrs + $lab_hrs;
     $total_hrs_wk = $total_hrs_wk + $hrs_wk;
+    $no_prep++;
     //if same value for next and current just increment the rowstart so it can still continue to count or add
     if ($cellValue ==  $nextvalue) {                    
         $rowStart++;                                        
     }elseif($cellValue == " PART-TIME FACULTY"){
         break;
     }else{
-
+        ob_start();
+        $no_deloading = get_no_of_deloading($faculty_id);    
+        $no_deloading_output = ob_get_clean();
+        $regular_load = 18 - $no_deloading;
+        $overload = $totalUnits - $regular_load;
         //else add new row
         $spreadsheet->getActiveSheet()->insertNewRowBefore($rowStart + 1, 1);
         //increment row
@@ -593,7 +612,10 @@ while($row_start_guest >= $rowStart){
             ->setCellValue('H' . $rowStart, $total_lec_hrs)
             ->setCellValue('I' . $rowStart, $total_rle_hrs)
             ->setCellValue('J' . $rowStart, $total_lab_hrs)
-            ->setCellValue('K' . $rowStart, $total_hrs_wk);
+            ->setCellValue('K' . $rowStart, $total_hrs_wk)
+            ->setCellValue('N' . $rowStart, $regular_load)
+            ->setCellValue('O' . $rowStart, $overload)
+            ->setCellValue('P' . $rowStart, $no_prep);
         //merge the cells
         $spreadsheet->getActiveSheet()->mergeCells('D'.$rowStart.':F'.$rowStart);
         //re assign it or reset the values                                    
@@ -606,7 +628,8 @@ while($row_start_guest >= $rowStart){
         $total_lec_hrs = 0;
         $total_rle_hrs = 0;
         $total_lab_hrs = 0;
-        $total_hrs_wk = 0;              
+        $total_hrs_wk = 0;    
+        $no_prep = 0;          
     }
 }
 
@@ -735,6 +758,7 @@ while($cellvalue != " PART-TIME FACULTY"){
 
 $part_time_query = mysqli_query($conn, "
 SELECT 
+fc.faculty_id,
 CONCAT(fc.lastname,',',fc.firstname,' ',fc.middlename) AS 'Name of Faculty',
 fc.is_permanent AS 'permanent',
 cs.course_code AS 'Course Code',
@@ -786,6 +810,7 @@ if($part_time_query){
               $total_hrs_wk =  $row['Total hrs/wk'];
               $course_description =  $row['Course Description'];
               $title_description = $row['title_description'];
+              $faculty_id = $row['faculty_id'];
               // Append the current row's data to the $data array
               $data_partTime[] = array(
                       "facultyname" => $facultyname,
@@ -798,7 +823,8 @@ if($part_time_query){
                      "rle_hrs" =>$rle_hrs,
                      "total_hrs_wk" => $total_hrs_wk,
                      "course_description" => $course_description,
-                     "title_description" => $title_description
+                     "title_description" => $title_description,
+                     "faculty_id" => $faculty_id
                      
               );
            
@@ -807,6 +833,7 @@ if($part_time_query){
 
         foreach($data_partTime as $row){
             //insert it all to the array
+            $faculty_id = $row['faculty_id'];
             $facultyname = $row['facultyname'];
             $course_code =  $row['course_code'];
             $section =  $row['section'];
@@ -833,7 +860,8 @@ if($part_time_query){
                     ->setCellValue('I'.$row_start_part_time, $rle_hrs)
                     ->setCellValue('J'.$row_start_part_time, $lab_hrs)
                     ->setCellValue('K'.$row_start_part_time, $rle_hrs)
-                    ->setCellValue('L'.$row_start_part_time, $course_description);
+                    ->setCellValue('L'.$row_start_part_time, $course_description)
+                    ->setCellValue('Q'.$row_start_part_time, $faculty_id);
                     
               
               $row_start_part_time++;
@@ -868,6 +896,7 @@ $total_lec_hrs = 0;
 $total_rle_hrs = 0;
 $total_lab_hrs = 0;
 $total_hrs_wk = 0;
+$no_prep = 0;
 //looping
 while($row_start_part_time >= $rowStart){
 
@@ -893,12 +922,18 @@ while($row_start_part_time >= $rowStart){
     $total_rle_hrs = $total_rle_hrs + $rle_hrs;
     $total_lab_hrs = $total_lab_hrs + $lab_hrs;
     $total_hrs_wk = $total_hrs_wk + $hrs_wk;
+    $no_prep++;
     //if same value for next and current just increment the rowstart so it can still continue to count or add
     if ($cellValue ==  $nextvalue) {                    
         $rowStart++;                                        
     }elseif(empty($cellValue)){
         break;
     }else{
+        ob_start();
+        $no_deloading = get_no_of_deloading($faculty_id);    
+        $no_deloading_output = ob_get_clean();
+        $regular_load = 18 - $no_deloading;
+        $overload = $totalUnits - $regular_load;
 
         //else add new row
         $spreadsheet->getActiveSheet()->insertNewRowBefore($rowStart + 1, 1);
@@ -912,7 +947,10 @@ while($row_start_part_time >= $rowStart){
             ->setCellValue('H' . $rowStart, $total_lec_hrs)
             ->setCellValue('I' . $rowStart, $total_rle_hrs)
             ->setCellValue('J' . $rowStart, $total_lab_hrs)
-            ->setCellValue('K' . $rowStart, $total_hrs_wk);
+            ->setCellValue('K' . $rowStart, $total_hrs_wk)
+            ->setCellValue('N' . $rowStart, $regular_load)
+            ->setCellValue('O' . $rowStart, $overload)
+            ->setCellValue('P' . $rowStart, $no_prep);
         //merge the cells
         $spreadsheet->getActiveSheet()->mergeCells('D'.$rowStart.':F'.$rowStart);
         //re assign it or reset the values                                    
@@ -925,7 +963,8 @@ while($row_start_part_time >= $rowStart){
         $total_lec_hrs = 0;
         $total_rle_hrs = 0;
         $total_lab_hrs = 0;
-        $total_hrs_wk = 0;              
+        $total_hrs_wk = 0; 
+        $no_prep = 0;             
     }
 }
 
@@ -974,18 +1013,17 @@ function getdesignation($faculty_id){
 
     $sql = "
             SELECT 
-                f.`firstname`,
-                f.`middlename`,
-                f.`lastname`,
-                f.`suffix`,
-             
-                GROUP_CONCAT(d.`designation` SEPARATOR ', ') AS `all_designations`
-                
-            FROM faculties f
+            GROUP_CONCAT(CASE d.`designation` 
+                WHEN 'Dean' THEN CONCAT(d.`designation`,' ',dp.`department_abbrv`)
+                WHEN 'Assoc. Dean' THEN CONCAT(d.`designation`,' ',dp.`department_abbrv`)
+                ELSE d.`designation`
+            END ) AS 'all_designations'
 
-            LEFT JOIN faculty_designation fd ON f.`faculty_id` = fd.`faculty_id`
-            LEFT JOIN designation d ON d.designation_id = fd.`designation_id`
-            WHERE f.`faculty_id` = '$faculty_id'
+            FROM faculty_designation fd
+            LEFT JOIN faculties f ON f.`faculty_id` = fd.`faculty_id`
+            LEFT JOIN designation d ON d.`designation_id` = fd.`designation_id`
+            LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
+            WHERE f.faculty_id = '$faculty_id'
             GROUP BY f.`faculty_id`
             ";
     $result = mysqli_query($conn,$sql);
@@ -1002,7 +1040,21 @@ function getdesignation($faculty_id){
     }
 
 }
-
+function get_no_of_deloading($faculty_id){
+    include "../config.php";
+    $query = mysqli_query($conn,"SELECT no_deloading FROM faculties WHERE faculty_id = '$faculty_id'");
+    if($query){
+        if(mysqli_num_rows($query) > 0){
+            $row = mysqli_fetch_assoc($query);
+            $deloading  = $row['no_deloading'];
+            return $deloading;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
 
 
 //set the header first, so the result will be treated as an xlsx file.
