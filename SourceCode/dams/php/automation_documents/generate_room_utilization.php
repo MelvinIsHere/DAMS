@@ -94,7 +94,98 @@ foreach ($room_names as $tabName) {
     $plot_header = plot_room_name($tabName,$spreadsheet,$department_name,$conn);
     $plot_room_info =plot_subject_info($department_id,$conn,$spreadsheet,$tabName);
 
-    $plot =  getprogramchair($spreadsheet,$department_id);
+    
+
+
+
+    //set program chair
+
+
+       $query = mysqli_query($conn, "SELECT 
+                                  d.designation,
+                                  CONCAT(f.firstname,' ', f.middlename,' ', f.lastname,' ', f.suffix) AS 'facultyname'
+                              FROM faculties f
+                              LEFT JOIN departments dp ON dp.`department_id` = f.department_id
+                              LEFT JOIN faculty_designation fd ON fd.faculty_id = f.faculty_id    
+                              LEFT JOIN designation d ON d.designation_id = fd.designation_id   
+                              WHERE d.designation = 'Program Chair' AND dp.department_id = '$department_id'");
+
+       if ($query) {
+           if (mysqli_num_rows($query) > 0) {
+               $row = mysqli_fetch_assoc($query);
+               $designations = $row['designation'];
+               $facultyname = $row['facultyname'];
+
+               // Use $facultyname as needed, e.g., set it in the spreadsheet
+               $spreadsheet->getActiveSheet()->setCellValue("S21", $facultyname);
+           } else {
+               // Handle the case when there are no results
+           }
+       } else {
+           // Handle the case when the query fails
+       }
+
+       //set vice chancellor
+       $query = mysqli_query($conn, "SELECT 
+                                   d.designation,
+                                  CONCAT(f.firstname,
+                                   f.middlename,
+                                   f.lastname,
+                                   f.suffix) AS 'facultyname'
+                            FROM faculties f
+                            LEFT JOIN departments dp ON dp.`department_id` = f.department_id
+                            LEFT JOIN faculty_designation fd ON fd.faculty_id = f.faculty_id    
+                            LEFT JOIN designation d ON d.designation_id = fd.designation_id   
+                            WHERE d.designation = 'Vice Chancellor for Academic Affairs'");
+
+       if ($query) {
+           if (mysqli_num_rows($query) > 0) {
+               $row = mysqli_fetch_assoc($query);
+               $designations = $row['designation'];
+               $facultyname = $row['facultyname'];
+
+               // Use $facultyname as needed, e.g., set it in the spreadsheet
+               $spreadsheet->getActiveSheet()->setCellValue("S31", $facultyname);
+           } else {
+               // Handle the case when there are no results
+           }
+       } else {
+           // Handle the case when the query fails
+       }
+
+
+       //set dean or head
+       $query = mysqli_query($conn, "SELECT 
+                                   d.designation,
+                                  CONCAT(f.firstname,
+                                   f.middlename,
+                                   f.lastname,
+                                   f.suffix) AS 'facultyname'
+                            FROM faculties f
+                            LEFT JOIN departments dp ON dp.`department_id` = f.department_id
+                            LEFT JOIN faculty_designation fd ON fd.faculty_id = f.faculty_id    
+                            LEFT JOIN designation d ON d.designation_id = fd.designation_id   
+                            WHERE d.designation = 'Dean' OR d.designation ='Head' AND dp.department_id = '$department_id'");
+
+       if ($query) {
+           if (mysqli_num_rows($query) > 0) {
+               $row = mysqli_fetch_assoc($query);
+               $designations = $row['designation'];
+               $facultyname = $row['facultyname'];
+
+               // Use $facultyname as needed, e.g., set it in the spreadsheet
+               $spreadsheet->getActiveSheet()->setCellValue("S26", $facultyname);
+           } else {
+               // Handle the case when there are no results
+           }
+       } else {
+           // Handle the case when the query fails
+       }
+
+
+       //set ovcaa or deans
+
+
     
     echo clear_redundant($spreadsheet);
     // // if($tabName === "HEB LAB 2"){
@@ -329,7 +420,13 @@ $sample = [];
                      $spreadsheet->getActiveSheet()->getStyle("$col_sched$col_start")->getAlignment()->setHorizontal('center');
                      $spreadsheet->getActiveSheet()->getStyle("$col_room$col_start")->getAlignment()->setHorizontal('center');
                      $spreadsheet->getActiveSheet()->getStyle($col_sched.$col_start)->getAlignment()->setWrapText(true); 
-                     $spreadsheet->getActiveSheet()->getStyle($col_room.$col_start)->getAlignment()->setWrapText(true); 
+                     $spreadsheet->getActiveSheet()->getStyle($col_room.$col_start)->getAlignment()->setWrapText(true);
+                     //set border to the sched - fac name course
+                     $spreadsheet->getActiveSheet()->getStyle($col_sched.$col_start)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                     $spreadsheet->getActiveSheet()->getStyle($col_sched.$col_end)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                     //set border to section cell
+                     $spreadsheet->getActiveSheet()->getStyle($col_room.$col_start)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                     $spreadsheet->getActiveSheet()->getStyle($col_room.$col_end)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
                   
                            
                    
@@ -538,7 +635,7 @@ $sample = [];
                          $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row_index)->getCalculatedValue();
                          
                          if ($cellValueCurrent == $text_output_end) {
-                            if($ampm_cell == $arr_ampm_start){
+                            if($ampm_cell == $arr_ampm_end){
                                         
                              $col_end = $row_index;
                              break; // Exit the loop once the condition is met
@@ -565,6 +662,12 @@ $sample = [];
                      $spreadsheet->getActiveSheet()->mergeCells("$col_section$col_start:$col_section$col_end");
                      $spreadsheet->getActiveSheet()->getStyle("$col_sched_1$col_start")->getAlignment()->setHorizontal('center');
                      $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_start)->getAlignment()->setWrapText(true); 
+                     //set border to the sched - fac name course
+                     $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_start.":".$col_sched_2.$col_start)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                     $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_end.":".$col_sched_2.$col_end)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                     //set border to section cell
+                     $spreadsheet->getActiveSheet()->getStyle($col_section.$col_start)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                     $spreadsheet->getActiveSheet()->getStyle($col_section.$col_end)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
                   
                                                        
                     

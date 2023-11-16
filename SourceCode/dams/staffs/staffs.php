@@ -73,12 +73,38 @@ session_start();
                 <div class="container-fluid tabcontent" id="dashboard" >
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                  <!--   <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
+                    </div> -->
+                    <div class="d-sm-flex align-items-center justify-content-lg-between mb-4 row ">
+                        <div class="col-md-9 justify-content-start">
+                            <b> <h1 class="h3 text-gray-800  fw-bold flex-fill ">Dashboard</h1></b>
+                        </div>
+                        <div class="col-md-3 justify-content-end">
+                             <h6 class=" fw-bold flex-fill"> <b><?php 
+                        include "../config.php";
+                        $query = mysqli_query($conn,"SELECT term,year FROM terms WHERE term_id = '$term_id'");
+                        if($query){
+                            if(mysqli_num_rows($query)>0){
+                                $row = mysqli_fetch_assoc($query);
+                                echo $row['term'] . " ". $row['year'];
+                            }else{
+                                echo mysqli_error($conn);
+                            }
+                        }else{
+                            echo mysqli_error($conn);
+                        }
 
+                         ?><a href="#addEmployeeModal" data-toggle="modal"><i class="fas fa-filter"></i></a></h6>
+                        </div>
+                       
+                        <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i-->
+                        <!--        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
+                       
+                        
+                    </div>
                     <!-- Content Row -->
                     <div class="row">
 
@@ -283,6 +309,60 @@ session_start();
     </div>
     <!-- End of Page Wrapper -->
 
+
+    <!-- Edit Modal HTML -->
+    <div id="addEmployeeModal" class="modal fade">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <form method="post" action="filter.php">
+                    <div class="modal-header">                      
+                        <h5 class="modal-title">School year filter</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">                    
+                        <div class="form-group">
+
+                            <label for="academic_year" class="form-label">Academic Year</label>                            
+                            <select id="terms" name="terms" class="form-control">
+                                <?php 
+                                    include "../php/config.php";
+                                    $query = mysqli_query($conn,"SELECT term,year FROM terms");
+                                    if($query){
+                                        if(mysqli_num_rows($query)>0){
+                                            while($row = mysqli_fetch_assoc($query)){
+                                                $termfilter = $row['term'] ." ".$row['year'];
+
+                                ?>
+
+                                    <option><?php echo $termfilter;?></option>
+
+                                <?php
+
+                                            }
+                                        }
+                                    }else{
+
+                                    }
+                                ?>
+                                
+                            </select>
+
+
+                        </div>
+                       
+                        
+                      
+                         
+                                  
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <button  class="btn btn-primary btn-sm" type="submit" name="submit">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>

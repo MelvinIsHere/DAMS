@@ -47,7 +47,7 @@ session_start();
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
 
-
+$term_id = $_SESSION['term_id'];
 
 ?>
 <!DOCTYPE html>
@@ -70,7 +70,7 @@ session_start();
       
 
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: scroll;">
                 <div class="table-wrapper">
                     <div class="table-title">
                         <div class="row">
@@ -79,7 +79,7 @@ session_start();
                             </div>
                             <div class="col-xs-6">
                                 <a href="#addEmployeeModal" class="btn btn-success" data-toggle ="modal" ><i class="material-icons">&#xE147;</i> <span>Add output</span></a>
-                                <a href="../php/automation_documents/generate_ipcr.php?dept_id=<?php echo $department_id;?>&user_id=<?php echo $user_id;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
+                                <a href="../php/automation_documents/generate_ipcr.php?dept_id=<?php echo $department_id;?>&user_id=<?php echo $user_id;?>&term_id=<?php echo $term_id;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                                                 
                             </div>
                         </div>
@@ -93,7 +93,10 @@ session_start();
                                 <th>Category</th>
                                 <th>Description</th>
                                 <th>Actual Accomplishment</th>
-                                <th>Rating</th>
+                                <th>Quality</th>
+                                <th>Efficiency</th>
+                                <th>Timeliness</th>
+
                                 <th>Remarks</th>                            
                                 <th>Actions</th>
                             </tr>
@@ -189,20 +192,40 @@ session_start();
                                     $adjacents = "2";
                                     $result_count = mysqli_query($conn, "SELECT
                                         COUNT(*) AS total_records
-                                        FROM ipcr_table 
                                         
-                                        WHERE user_id = '$user_id'");
+                                        
+                                         FROM ipcr_table it 
+                                            LEFT JOIN tasks tt ON tt.task_id = it.task_id
+                                            LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+
+                                            WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id'");
                                     $total_records = mysqli_fetch_array($result_count);
                                     $total_records = $total_records['total_records'];
                                     $total_no_of_page = ceil($total_records / $total_records_per_page);
                                     $second_last = $total_no_of_page - 1;
-                                    $sql = "SELECT
-                                                *
+                                    $sql = "
+
+                                            SELECT
+                                                it.ipcr_id, 
+                                                it.major_output,
+                                                it.`success_indicator`,
+                                                it.`actual_accomplishment`,
+                                                it.`remarks`,
+                                                it.`description`,
+                                                it.`category`,
+                                                it.quality,
+                                                it.efficiency,
+                                                it.timeliness,
+                                                it.average,
+                                                tt.`task_id`,
+                                                t.`term`,
+                                                t.`status`
                                                 
-                                            FROM ipcr_table 
-                                            
-                                            
-                                            WHERE user_id = '$user_id'";                                    
+                                            FROM ipcr_table it 
+                                            LEFT JOIN tasks tt ON tt.task_id = it.task_id
+                                            LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+
+                                            WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id'";                                    
                                     $results = mysqli_query($conn,$sql);
                                     if(!$results){
                                         die("Query failed: " . mysqli_error($conn));
@@ -217,8 +240,11 @@ session_start();
                                         $major_output = $row['major_output'];
                                         $success_indicator = $row['success_indicator'];
                                         $actual_accomplishment = $row['actual_accomplishment'];
-                                        $rating = $row['rating'];
+                                        
                                         $remarks = $row['remarks'];
+                                        $quality = $row['quality'];
+                                        $efficiency = $row['efficiency'];
+                                        $timeliness = $row['timeliness'];
                                          
                                         $category = $row['category'];
                                         $description = $row['description'];
@@ -233,7 +259,9 @@ session_start();
                                             <td><?php echo $category;?></td>
                                             <td><?php echo $description;?></td>
                                             <td><?php echo $actual_accomplishment;?></td>
-                                            <td><?php echo $rating; ?></td>
+                                            <td><?php echo $quality; ?></td>
+                                            <td><?php echo $efficiency; ?></td>
+                                            <td><?php echo $timeliness; ?></td>
                                             <td><?php echo $remarks; ?></td>                           
                                             <td>
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
@@ -364,17 +392,18 @@ session_start();
                     <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
                 </div>
                 <div class="modal-body" id="editModal-body">
-                    <div class="form-group">
+                    <div id="target">
+                        <div class="form-group">
                            <label for="faculty_name" class="form-label">Major Final Output</label>
                             <input type="text" name="loading_id" id="loading_id" hidden style="height: 0px; width:0px">
                             <input class="form-control" name="mfo" id="mfo_update" > 
-                    </div>
+                        </div>
                 
-                    <div class="form-group">
-                         <label for="course_code" class="form-label">Success Indicators</label>
-                         <textarea class="form-control" name="success_indicators" id="success_indicator" placeholder="Success Indicators"></textarea>
+                        <div class="form-group">
+                             <label for="course_code" class="form-label">Success Indicators</label>
+                             <textarea class="form-control" name="success_indicators" id="success_indicator" placeholder="Success Indicators"></textarea>
 
-                    </div>
+                        </div>
                       <div class="form-group">
                             <label  for="category_update"class="form-label">Category</label>
                             <select name="category" id="category_update" class="form-control">
@@ -387,6 +416,77 @@ session_start();
                             <label class="form-label" for="description_update">Description</label>
                             <input class="form-control" id="description_update" name="description" placeholder="Description">
                         </div>
+                    </div>
+                    
+
+                   
+                    
+                    
+
+<!-- ########################################################################################################################## -->                                   </div>
+                <div class="modal-footer  row">
+                    <div class="col d-flex justify-content-start">
+                        
+                            <a class="btn btn-success">Accomplishment</a>    
+                        
+                        
+                        
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        
+                            <button class="btn btn-success" type="submit" >Save</button>
+                            <button class="btn btn-warning" type="button" data-dismiss="modal">Back</button>
+                        
+                                
+                    </div>
+               
+                </div>
+
+
+
+
+
+                </form>
+                
+            </div>
+        </div>
+    </div>    
+
+<!-- accomplishment Modal -->
+<div class="modal fade" id="accomplishment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form id="update_loading" action="../php/update_ipcr.php" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
+                </div>
+                <div class="modal-body" id="editModal-body">
+                    <div id="target">
+                        <div class="form-group">
+                           <label for="faculty_name" class="form-label">Major Final Output</label>
+                            <input type="text" name="loading_id" id="loading_id" hidden style="height: 0px; width:0px">
+                            <input class="form-control" name="mfo" id="mfo_update" > 
+                        </div>
+                
+                        <div class="form-group">
+                             <label for="course_code" class="form-label">Success Indicators</label>
+                             <textarea class="form-control" name="success_indicators" id="success_indicator" placeholder="Success Indicators"></textarea>
+
+                        </div>
+                      <div class="form-group">
+                            <label  for="category_update"class="form-label">Category</label>
+                            <select name="category" id="category_update" class="form-control">
+                                <option value="Instruction">Instruction</option>
+                                <option value="Strategic">Strategic</option>
+                                <option value="Support">Support</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="description_update">Description</label>
+                            <input class="form-control" id="description_update" name="description" placeholder="Description">
+                        </div>
+                    </div>
+                    
 
                    
                     
@@ -408,8 +508,9 @@ session_start();
         </div>
     </div>    
 
-<!-- ########################################################################################################################## -->
-
+<script type="text/javascript">
+    
+</script>
 
 
 

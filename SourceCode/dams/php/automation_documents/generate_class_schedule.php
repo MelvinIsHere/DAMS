@@ -73,7 +73,7 @@ SELECT DISTINCT
     pr.`program_abbrv`,
     sc.section_name
     FROM class_schedule cs
-    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
     LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
@@ -324,7 +324,7 @@ $plot_query = "  SELECT
                                 ay.`acad_year`,
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -679,7 +679,7 @@ function plot_double_col($day,$dept_id,$conn,$spreadsheet,$section,$col_sched_1,
                                 ay.`acad_year`,
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -1085,7 +1085,7 @@ function plot_subject_info($dept_id,$conn,$spreadsheet,$section){
                                 
                                 fl.needed
                                 FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`

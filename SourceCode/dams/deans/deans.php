@@ -76,45 +76,33 @@ session_start();
                     <div class="row">
                         
                     </div>
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4 row">
-                       <b> <h1 class="h3 text-gray-800 col-md-8 fw-bold">Dashboard</h1></b>
-                        <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i-->
-                        <!--        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
-                        <h6 class="col-md-4 fw-bold"><b><?php 
+                    <div class="d-sm-flex align-items-center justify-content-lg-between mb-4 row ">
+                        <div class="col-md-10 justify-content-start">
+                            <b> <h1 class="h3 text-gray-800  fw-bold flex-fill ">Dashboard</h1></b>
+                        </div>
+                        <div class="col-md-2 justify-content-end">
+                             <h6 class=" fw-bold flex-fill"> <b><?php 
                         include "../config.php";
-                        $acad_id = $_SESSION['acad_id'];
-                        $query = mysqli_query($conn,"SELECT acad_year FROM academic_year WHERE acad_year_id = '$acad_id'");
+                        $query = mysqli_query($conn,"SELECT term FROM terms WHERE term_id = '$term_id'");
                         if($query){
-                            if(mysqli_num_rows($query) > 0){
+                            if(mysqli_num_rows($query)>0){
                                 $row = mysqli_fetch_assoc($query);
-                                $acad_year = $row['acad_year'];
-                                echo $acad_year;
+                                echo $row['term'];
                             }else{
-
-                            }   
-                        }else{
-
-                        }
-                        ?>
-                        </b>
-                        <?php
-                        $semester_id = $_SESSION['semester_id'];
-
-                        $semester = mysqli_query($conn,"SELECT sem_description FROM semesters WHERE semester_id = '$semester_id'");
-                        if($semester){
-                            if(mysqli_num_rows($semester)){
-                            $row = mysqli_fetch_assoc($semester);
-                                echo " ".$row['sem_description'] . " Semester";
-                            }else{
-
+                                echo mysqli_error($conn);
                             }
                         }else{
-
+                            echo mysqli_error($conn);
                         }
 
                          ?><a href="#addEmployeeModal" data-toggle="modal"><i class="fas fa-filter"></i></a></h6>
+                        </div>
+                       
+                        <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i-->
+                        <!--        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
+                       
                         
-                    </div>
+                    </div>  
 
                     <!-- Content Row -->
                     <div class="row">

@@ -35,8 +35,10 @@ if(!$conn){
 
 $dept_id = $_GET['dept_id'];
 $user_id = $_GET['user_id'];
-
-
+$term_id = $_GET['term_id'];
+ob_start();
+$task_id = get_task_id($term_id);
+$task_id_new = ob_get_clean();
 $query = "
 
 SELECT f.firstname,
@@ -87,6 +89,9 @@ if(mysqli_num_rows($user_text)>0){
 
 $query = " SELECT 
        f.`firstname`,
+       f.lastname,
+       f.middlename,
+       f.suffix,
        dp.department_name,
        d.`designation`
  FROM faculties f
@@ -134,7 +139,25 @@ $row_start_content = 25;
 
 
 
-$ipcr_query = "SELECT * FROM ipcr_table WHERE user_id = '$user_id' AND category = 'Instruction'";
+$ipcr_query =  "SELECT
+                    it.ipcr_id, 
+                    it.major_output,
+                    it.`success_indicator`,
+                    it.`actual_accomplishment`,
+                    it.`remarks`,
+                    it.`description`,
+                    it.`category`,
+                    it.quality,
+                    it.efficiency,
+                    it.timeliness,
+                    it.average,
+                    tt.`task_id`,
+                    t.`term`,
+                    t.`status`                                                
+              FROM ipcr_table it 
+              LEFT JOIN tasks tt ON tt.task_id = it.task_id
+              LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND  it.category = 'Instruction'";
 $data = [];
 $ipcr = mysqli_query($conn, $ipcr_query);
 if(mysqli_num_rows($ipcr) > 0){
@@ -143,8 +166,11 @@ if(mysqli_num_rows($ipcr) > 0){
               $mfo = $row['major_output'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              $quality = $row['quality'];
+              $timeliness = $row['timeliness'];
+              
+              $efficiency =  $row['efficiency'];
               $description =  $row['description'];
               $category =  $row['category'];
               // Append the current row's data to the $data array
@@ -152,8 +178,10 @@ if(mysqli_num_rows($ipcr) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
                      "remarks" => $remarks,
+                     "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "description" => $description,
                      "category" => $category
               );
@@ -164,8 +192,11 @@ if(mysqli_num_rows($ipcr) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              
+              $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $description =  $row['description'];
               $category =  $row['category'];
               
@@ -174,10 +205,32 @@ if(mysqli_num_rows($ipcr) > 0){
                      $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start + 1, 1);
                     
               }
-               $spreadsheet->getActiveSheet()
-                     ->setCellValue('A'.$row_start, $mfo)
-                     ->setCellValue('C'.$row_start, $success_indicator)
-                     ->setCellValue('G'.$row_start, $row_start);
+              // $count_to_average = 0;
+              // if(!empty($quality)){
+              //        $count_to_average++;
+              // }
+              // if(!empty($efficiency)){
+              //        $count_to_average++;
+              // }
+              // if(!empty($timeliness)){
+              //        $count_to_average++;
+              // }
+           
+            $spreadsheet->getActiveSheet()
+                  ->setCellValue('A'.$row_start, $mfo)
+                  ->setCellValue('C'.$row_start, $success_indicator)
+                  ->setCellValue('F'.$row_start, $actual_accomplishment)
+                  ->setCellValue('I'.$row_start, $quality)
+                  ->setCellValue('J'.$row_start, $efficiency)
+                  ->setCellValue('K'.$row_start, $timeliness)
+                  
+                  ->setCellValue('M'.$row_start, $remarks);
+              $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(9, $row_start)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, $row_start)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row_start)->getCalculatedValue();
+              if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('L'.$row_start, "=AVERAGE(I$row_start:K$row_start)");
+              }
               
               $row_start++;
               
@@ -264,18 +317,39 @@ if($instruction){
 ///strategic
 
 $research = false;
-$ipcr_query_strat = "SELECT * FROM ipcr_table WHERE user_id = '$user_id' AND category = 'Strategic' AND description = 'Research'";
+$ipcr_query_strat = "SELECT
+                    it.ipcr_id, 
+                    it.major_output,
+                    it.`success_indicator`,
+                    it.`actual_accomplishment`,
+                    it.`remarks`,
+                    it.`description`,
+                    it.`category`,
+                    it.quality,
+                    it.efficiency,
+                    it.timeliness,
+                    it.average,
+                    tt.`task_id`,
+                    t.`term`,
+                    t.`status`                                                
+              FROM ipcr_table it 
+              LEFT JOIN tasks tt ON tt.task_id = it.task_id
+              LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND category = 'Strategic' AND description = 'Research'";
 $data = [];
 $ipcr_strat = mysqli_query($conn, $ipcr_query_strat);
 if(mysqli_num_rows($ipcr_strat) > 0){
        $research = true;
        echo setResearchAsTitle($row_start_strat_research,$spreadsheet); //set the title as research  
        while ($row = mysqli_fetch_array($ipcr_strat)) {
-              $mfo = $row['major_output'];
+               $mfo = $row['major_output'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              $quality = $row['quality'];
+              $timeliness = $row['timeliness'];
+              
+              $efficiency =  $row['efficiency'];
               $description =  $row['description'];
               $category =  $row['category'];
               // Append the current row's data to the $data array
@@ -283,8 +357,10 @@ if(mysqli_num_rows($ipcr_strat) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
                      "remarks" => $remarks,
+                     "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "description" => $description,
                      "category" => $category
               );
@@ -295,8 +371,11 @@ if(mysqli_num_rows($ipcr_strat) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              
+              $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $description =  $row['description'];
               $category =  $row['category'];
               
@@ -305,9 +384,21 @@ if(mysqli_num_rows($ipcr_strat) > 0){
                      $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start_strat_research + 1, 1);
                     
               }
-               $spreadsheet->getActiveSheet()
-                     ->setCellValue('A'.$row_start_strat_research, $mfo)
-                     ->setCellValue('C'.$row_start_strat_research, $success_indicator);
+                $spreadsheet->getActiveSheet()
+                  ->setCellValue('A'.$row_start_strat_research, $mfo)
+                  ->setCellValue('C'.$row_start_strat_research, $success_indicator)
+                  ->setCellValue('F'.$row_start_strat_research, $actual_accomplishment)
+                  ->setCellValue('I'.$row_start_strat_research, $quality)
+                  ->setCellValue('J'.$row_start_strat_research, $efficiency)
+                  ->setCellValue('K'.$row_start_strat_research, $timeliness)
+                  
+                  ->setCellValue('M'.$row_start_strat_research, $remarks);
+                $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(9, $row_start_strat_research)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, $row_start_strat_research)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row_start_strat_research)->getCalculatedValue();
+              if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('L'.$row_start_strat_research, "=AVERAGE(I$row_start_strat_research:K$row_start_strat_research)");
+              }
               
               $row_start_strat_research++;
               
@@ -382,7 +473,25 @@ $cellvalue = "";
 // }
 
 $extension = false;
-$ipcr_query_strat_exten = "SELECT * FROM ipcr_table WHERE user_id = '$user_id' AND category = 'Strategic' AND description = 'Extension'";
+$ipcr_query_strat_exten = "SELECT
+                    it.ipcr_id, 
+                    it.major_output,
+                    it.`success_indicator`,
+                    it.`actual_accomplishment`,
+                    it.`remarks`,
+                    it.`description`,
+                    it.`category`,
+                    it.quality,
+                    it.efficiency,
+                    it.timeliness,
+                    it.average,
+                    tt.`task_id`,
+                    t.`term`,
+                    t.`status`                                                
+              FROM ipcr_table it 
+              LEFT JOIN tasks tt ON tt.task_id = it.task_id
+              LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND category = 'Strategic' AND description = 'Extension'";
 $data = [];
 $ipcr_strat_exten = mysqli_query($conn, $ipcr_query_strat_exten);
 if(mysqli_num_rows($ipcr_strat_exten) > 0){
@@ -392,11 +501,14 @@ if(mysqli_num_rows($ipcr_strat_exten) > 0){
        $row_start_strat_extension++;
         
        while ($row = mysqli_fetch_array($ipcr_strat_exten)) {
-              $mfo = $row['major_output'];
+               $mfo = $row['major_output'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              $quality = $row['quality'];
+              $timeliness = $row['timeliness'];
+              
+              $efficiency =  $row['efficiency'];
               $description =  $row['description'];
               $category =  $row['category'];
               // Append the current row's data to the $data array
@@ -404,8 +516,10 @@ if(mysqli_num_rows($ipcr_strat_exten) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
                      "remarks" => $remarks,
+                     "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "description" => $description,
                      "category" => $category
               );
@@ -413,11 +527,14 @@ if(mysqli_num_rows($ipcr_strat_exten) > 0){
        } 
 
        foreach($data as $row){
-              $mfo = $row['mfo'];
+               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              
+              $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $description =  $row['description'];
               $category =  $row['category'];
               
@@ -426,9 +543,21 @@ if(mysqli_num_rows($ipcr_strat_exten) > 0){
                      $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start_strat_extension + 1, 1);
                     
               }
-               $spreadsheet->getActiveSheet()
-                     ->setCellValue('A'.$row_start_strat_extension, $mfo)
-                     ->setCellValue('C'.$row_start_strat_extension, $success_indicator);
+              $spreadsheet->getActiveSheet()
+                  ->setCellValue('A'.$row_start_strat_extension, $mfo)
+                  ->setCellValue('C'.$row_start_strat_extension, $success_indicator)
+                  ->setCellValue('F'.$row_start_strat_extension, $actual_accomplishment)
+                  ->setCellValue('I'.$row_start_strat_extension, $quality)
+                  ->setCellValue('J'.$row_start_strat_extension, $efficiency)
+                  ->setCellValue('K'.$row_start_strat_extension, $timeliness)
+                  
+                  ->setCellValue('M'.$row_start_strat_extension, $remarks);
+                $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(9, $row_start_strat_extension)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, $row_start_strat_extension)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row_start_strat_extension)->getCalculatedValue();
+              if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('L'.$row_start_strat_extension, "=AVERAGE(I$row_start_strat_extension:K$row_start_strat_extension)");
+              }
               
               $row_start_strat_extension++;
               
@@ -511,7 +640,25 @@ while($cellvalue != "SUPPORT"){
  
 $support = false;
 
-$ipcr_query_strat = "SELECT * FROM ipcr_table WHERE user_id = '$user_id' AND category = 'Support'";
+$ipcr_query_strat = "SELECT
+                    it.ipcr_id, 
+                    it.major_output,
+                    it.`success_indicator`,
+                    it.`actual_accomplishment`,
+                    it.`remarks`,
+                    it.`description`,
+                    it.`category`,
+                    it.quality,
+                    it.efficiency,
+                    it.timeliness,
+                    it.average,
+                    tt.`task_id`,
+                    t.`term`,
+                    t.`status`                                                
+              FROM ipcr_table it 
+              LEFT JOIN tasks tt ON tt.task_id = it.task_id
+              LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND category = 'Support'";
 $data = [];
 $ipcr_strat = mysqli_query($conn, $ipcr_query_strat);
 if(mysqli_num_rows($ipcr_strat) > 0){
@@ -519,11 +666,14 @@ if(mysqli_num_rows($ipcr_strat) > 0){
        $support = true;
         
        while ($row = mysqli_fetch_array($ipcr_strat)) {
-              $mfo = $row['major_output'];
+                $mfo = $row['major_output'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              $quality = $row['quality'];
+              $timeliness = $row['timeliness'];
+              
+              $efficiency =  $row['efficiency'];
               $description =  $row['description'];
               $category =  $row['category'];
               // Append the current row's data to the $data array
@@ -531,8 +681,10 @@ if(mysqli_num_rows($ipcr_strat) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
                      "remarks" => $remarks,
+                     "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "description" => $description,
                      "category" => $category
               );
@@ -541,8 +693,11 @@ if(mysqli_num_rows($ipcr_strat) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              $remarks = $row['remarks'];
+              
+              $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $description =  $row['description'];
               $category =  $row['category'];
               
@@ -552,9 +707,20 @@ if(mysqli_num_rows($ipcr_strat) > 0){
                     
               }
                $spreadsheet->getActiveSheet()
-                     ->setCellValue('A'.$row_start_strat_supp, $mfo)
-                     ->setCellValue('C'.$row_start_strat_supp, $success_indicator);
-              
+                  ->setCellValue('A'.$row_start_strat_supp, $mfo)
+                  ->setCellValue('C'.$row_start_strat_supp, $success_indicator)
+                  ->setCellValue('F'.$row_start_strat_supp, $actual_accomplishment)
+                  ->setCellValue('I'.$row_start_strat_supp, $quality)
+                  ->setCellValue('J'.$row_start_strat_supp, $efficiency)
+                  ->setCellValue('K'.$row_start_strat_supp, $timeliness)
+                  
+                  ->setCellValue('M'.$row_start_strat_supp, $remarks);
+                $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(9, $row_start_strat_supp)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, $row_start_strat_supp)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row_start_strat_supp)->getCalculatedValue();
+              if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('L'.$row_start_strat_supp, "=AVERAGE(I$row_start_strat_supp:K$row_start_strat_supp)");
+              }
               $row_start_strat_supp++;
               
 
@@ -776,7 +942,28 @@ function setExtensionAsTitle($row_start_strat_extension,$spreadsheet){
         
         
         
-  
+function get_task_id($term_id){
+       include "../config.php";
+       $query = mysqli_query($conn,"
+                            SELECT 
+                                   tt.task_id,
+                                   tt.`task_name`
+                            FROM tasks tt 
+                            LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+                            WHERE tt.`task_name` =  'IPCR' AND t.term_id = '$term_id'");
+       if($query){
+              if(mysqli_num_rows($query)>0){
+                     $row = mysqli_fetch_assoc($query);
+                     $task_id = $row['task_id'];
+
+                     return $task_id; 
+              }else{
+                     return false;
+              }
+       }else{
+              return false;
+       }
+}  
       
 
 
@@ -788,7 +975,7 @@ header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetm
 header('Content-Disposition: attachment;filename="BatStateU-FO-COL-29_Class.xlsx"');
 
 //create IOFactory object
-$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+$writer = IOFactory::createWriter($spreadsheet, 'Xls');
 //save into php output
 $writer->save('php://output');
 
