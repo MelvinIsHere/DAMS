@@ -100,6 +100,21 @@
                     <i class="fas fa-fw fa-user"></i>
                     <span>Accounts</span></a>
             </li>
+               <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                File Manager
+            </div>
+          
+
+
+           <li class="nav-item active">
+                <a class="nav-link tablinks" href="file_manager.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Files</span></a>
+            </li>
 
 
 
@@ -184,18 +199,17 @@
                                         include "../php/config";
                                         $query = mysqli_query($conn,"SELECT term FROM terms");
                                         if($query){
-                                            if(mysqli_num_rows($query) >0){
-                                                $row = mysqli_fetch_assoc($query);
+                                            while($row = mysqli_fetch_assoc($query)){
+                                                
                                                 $term = $row['term'];
                                     ?>
 
                                                 <option><?php echo $term;?></option>
 
                                     <?php
-                                            }else{
-
-                                            }
-                                        }else{
+                                      
+                                        }
+                                    }else{
 
                                         }
                                      ?>

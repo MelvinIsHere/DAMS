@@ -101,7 +101,7 @@ session_start();
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN users u ON u.`user_id`=ts.`user_id`
                         WHERE u.`user_id` = '$id' AND ts.`is_completed` = 1
-                        AND tt.due_date <= '$currentDate'
+                        AND tt.due_date >= '$currentDate'
                         AND tt.term_id = '$term_id'";
                 $result = $conn->query($sql);
 

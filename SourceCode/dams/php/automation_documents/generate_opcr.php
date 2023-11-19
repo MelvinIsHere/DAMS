@@ -35,7 +35,7 @@ if(!$conn){
 
 $dept_id = $_GET['dept_id'];
 $dean_id = $_SESSION['user_id'];
-
+$term_id =$_GET['term_id'];
 
 
 

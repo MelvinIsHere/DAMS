@@ -50,6 +50,7 @@ session_start();
 
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <?php include "../header/header.php"; ?>
@@ -81,9 +82,34 @@ session_start();
                                 <form id="settingsForm" method="POST" action="../php/academic_year_semester.php">
                                     <div class="form-group">
                                         <label for="academicYear">Academic Year</label>
-                                        <input type="text" class="form-control" id="academicYear" name="academic_year"  required placeholder="e.g. 2023-2024">
+                                        <select id="academicYear" class="form-control" name="academic_year"></select>
+                                        <!-- <input type="text" class="form-control" id="academicYear" name="academic_year"  required placeholder="e.g. 2023-2024"> -->
 
                                     </div>
+                                      <div class="form-group">
+                                        <label for="term">Current Term</label>
+                                        <select id="term" name="term" class="form-control">
+                                            <option>January - July</option>
+                                            <option>July - December</option>
+                                            
+                                        </select>
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Year</label>
+                                        <select id='date-dropdown' class="form-control" name="year"></select>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="semester">Semester</label>
+                                        <select class="form-control" id="semester" name="semester">
+                                            <option value="First Semester">1st Semester</option>
+                                            <option value="Second Semester">2nd Semester</option>
+                                            <option value="Summer Class">Summer Class</option>
+                                            
+                                    </select>
+                                </div>
                                     <button type="submit" class="btn btn-success" name="submit">Save Configuration</button>
                                 </form>
                             </div>
@@ -92,32 +118,38 @@ session_start();
               </div>
 
 
-                     <div class="row" style="margin-top: 100px">
-                   
-                <div class="container setting-holder">
-                    <!-- Academic Year and Semester Configuration -->
-                    <div class="card">
-                        <div class="card-header">
-                             Semester 
-                        </div>
-                        <div class="card-body">
-                            <form id="semesterForm" method="POST" action="../php/academic_year_semester.php">
-                                
-                                <div class="form-group">
-                                    <label for="semester">Semester</label>
-                                    <select class="form-control" id="semester" name="semester">
-                                        <option value="First">1st Semester</option>
-                                        <option value="Second">2nd Semester</option>
-                                        <option value="Summer 1">Summer Class 1</option>
-                                        <option value="Summer 2">Summer Class 2</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-success" name="submit">Save Configuration</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>    
-              </div>
+
+                    
+                <script>
+                  var dateDropdown = document.getElementById('date-dropdown'); 
+                       
+                  var currentYear = new Date().getFullYear();    
+                  var earliestYear = 2020;     
+                  while (currentYear >= earliestYear) {      
+                    var dateOption = document.createElement('option');          
+                    dateOption.text = currentYear;      
+                    dateOption.value = currentYear;        
+                    dateDropdown.add(dateOption);      
+                    currentYear -= 1;    
+                  }
+                </script>
+            
+                <script>
+                    var dateDropdown = document.getElementById('academicYear');
+
+                    var currentYear = new Date().getFullYear();
+                    var startYear = 2020;
+
+                    while (currentYear >= startYear) {
+                        var academicYear = `${startYear}-${startYear + 1}`;
+                        var dateOption = document.createElement('option');
+                        dateOption.text = academicYear;
+                        dateOption.value = academicYear;
+                        dateDropdown.appendChild(dateOption); // Use .appendChild() instead of .add()
+                        startYear += 1;
+                    }
+                </script>
+
 
             </div>
         </div>
@@ -144,7 +176,7 @@ session_start();
 <!-- ... Your existing HTML code ... -->
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#settingsForm").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -187,9 +219,9 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function() {
    $("#semesterForm").submit(function(e) {
       e.preventDefault(); // Prevent the form from submitting normally
@@ -232,7 +264,7 @@ $(document).ready(function() {
       });
    });
 });
-</script>
+</script> -->
 
 <!-- ... Your existing HTML code ... -->
 

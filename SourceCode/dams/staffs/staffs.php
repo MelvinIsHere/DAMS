@@ -49,6 +49,7 @@ session_start();
 
         $term_id = $_SESSION['term_id'];
 
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -220,7 +221,7 @@ session_start();
 
                         $query = "SELECT ROUND((COUNT(CASE WHEN is_completed = 0 THEN 1 END) / COUNT(*)) * 100) AS percentage_completed
                                 FROM task_status_deans
-                                WHERE user_id = '$id'";
+                                WHERE user_id = '$id' ";
 
                         $result = $conn->query($query);
                         if ($result->num_rows > 0) {

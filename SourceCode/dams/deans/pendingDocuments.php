@@ -98,7 +98,8 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_deans = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 1
+
+                        WHERE tt.for_deans = 1 AND ts.user_id = '$id'  AND ts.`is_completed` = 1
                         AND tt.due_date >= '$currentDate'   
                         AND tt.term_id = '$term_id'
                         GROUP BY due_date,task_name";

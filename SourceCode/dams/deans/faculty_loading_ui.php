@@ -169,8 +169,7 @@ session_start();
                             LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                             LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                             WHERE fl.`dept_id` = '$department_id'  AND CONCAT(fc.firstname,fc.middlename,fc.lastname) LIKE '%$search%'
-                            AND s.status = 'ACTIVE'
-                            AND ay.status = 'ACTIVE'
+                        
                             AND tt.term_id = '$term_id'
                             
                             ");
@@ -200,9 +199,8 @@ session_start();
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                                     LEFT JOIN tasks tt ON tt.task_id = fl.task_id
-                                    WHERE fc.`department_id` = '$department_id'   AND CONCAT(fc.firstname,fc.middlename,fc.lastname) LIKE '%$search%'
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    WHERE fc.`department_id` = '$department_id'   AND CONCAT(fc.firstname,fc.middlename,fc.lastname,cs.course_code) LIKE '%$search%'
+                                  
                                     AND tt.term_id = '$term_id'
                                     GROUP BY fl.`fac_load_id`
                                     ";
@@ -274,8 +272,7 @@ session_start();
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                                     LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                                     WHERE pr.`department_id` = '$department_id' 
-                                    AND s.semester_id = '$semester_id'
-                                    AND ay.acad_year_id = '$acad_id'
+                                   
                                     AND tt.term_id = '$term_id'
                                      
                                     
@@ -312,8 +309,7 @@ session_start();
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                                     LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                                     WHERE pr.`department_id` = '$department_id'  
-                                    AND s.semester_id = '$semester_id'
-                                    AND ay.acad_year_id = '$acad_id'
+                                    
                                     AND tt.term_id = '$term_id'
                                     OR fc.`faculty_id` = NULL  
                                     GROUP BY fl.`fac_load_id`

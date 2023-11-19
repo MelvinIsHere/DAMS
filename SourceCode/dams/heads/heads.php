@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -73,10 +74,42 @@ session_start();
                 <div class="container-fluid tabcontent" id="dashboard" >
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                    <div class="d-sm-flex align-items-center justify-content-lg-between mb-4 row ">
+                        <div class="col-md-9 justify-content-start">
+                            <b> <h1 class="h3 text-gray-800  fw-bold flex-fill ">Dashboard</h1></b>
+                        </div>
+                        <div class="col-md-3 justify-content-end">
+                             <h6 class=" fw-bold flex-fill"> <b><?php 
+                        include "../config.php";
+                        $query = mysqli_query($conn,"
+                            SELECT 
+                                t.`term`,
+                                t.`year`,
+                                ay.`acad_year`,
+                                s.`sem_description`
+                            FROM terms t
+                            LEFT JOIN academic_year ay ON ay.`acad_year_id` = t.acad_year_id
+                            LEFT JOIN semesters s ON s.`semester_id` = t.semester_id
+                            WHERE t.term_id = '$term_id'
+                            ");
+                        if($query){
+                            if(mysqli_num_rows($query)>0){
+                                $row = mysqli_fetch_assoc($query);
+                                echo $row['term'] . " ". $row['year'] ." ".$row['sem_description'];
+                            }else{
+                                echo mysqli_error($conn);
+                            }
+                        }else{
+                            echo mysqli_error($conn);
+                        }
+
+                         ?><a href="#addEmployeeModal" data-toggle="modal"><i class="fas fa-filter"></i></a></h6>
+                        </div>
+                       
+                        <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i-->
+                        <!--        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
+                       
+                        
                     </div>
 
                     <!-- Content Row -->
@@ -100,8 +133,8 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_heads = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 1
-                        OR ts.user_id = '$user_id'");
+                        WHERE  ts.`is_completed` = 1
+                        AND ts.user_id = '$user_id'");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -139,8 +172,8 @@ session_start();
                                        FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_heads = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 0
-                        OR ts.user_id = '$user_id'");
+                        WHERE ts.`is_completed` = 0
+                        AND ts.user_id = '$user_id'");
                                                         $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
                                                             echo $result['COUNT(*)'];
@@ -301,6 +334,68 @@ session_start();
 
    
   
+
+
+    <!-- Edit Modal HTML -->
+    <div id="addEmployeeModal" class="modal fade">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <form method="post" action="filter.php">
+                    <div class="modal-header">                      
+                        <h5 class="modal-title">School year filter</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">                    
+                        <div class="form-group">
+
+                            <label for="academic_year" class="form-label">Academic Year</label>                            
+                            <select id="terms" name="terms" class="form-control">
+                                <?php 
+                                    include "../php/config.php";
+                                    $query = mysqli_query($conn,"SELECT 
+                                                            t.`term`,
+                                                            t.`year`,
+                                                            ay.`acad_year`,
+                                                            s.`sem_description`
+                                                        FROM terms t
+                                                        LEFT JOIN academic_year ay ON ay.`acad_year_id` = t.acad_year_id
+                                                        LEFT JOIN semesters s ON s.`semester_id` = t.semester_id");
+                                    if($query){
+                                        if(mysqli_num_rows($query)>0){
+                                            while($row = mysqli_fetch_assoc($query)){
+                                                $termfilter = $row['term'] ." ".$row['year'] ." ".$row['sem_description'];
+
+                                ?>
+
+                                    <option><?php echo $termfilter;?></option>
+
+                                <?php
+
+                                            }
+                                        }
+                                    }else{
+
+                                    }
+                                ?>
+                                
+                            </select>
+
+
+                        </div>
+                       
+                        
+                      
+                         
+                                  
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <button  class="btn btn-primary btn-sm" type="submit" name="submit">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap core JavaScript-->
     <!--<script src="vendor/jquery/jquery.min.js"></script>-->

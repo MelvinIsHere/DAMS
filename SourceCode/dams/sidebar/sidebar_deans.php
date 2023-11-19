@@ -88,6 +88,7 @@
                         <a class="collapse-item tablinks"  href="class_schedule_ui.php">Class Schedule</a>
                         <a class="collapse-item tablinks"  href="room_utilization_matrix_ui.php">Room Utilization Matrix</a>
                         <a class="collapse-item tablinks"  href="opcr.php">OPCR</a>
+                        <a class="collapse-item tablinks"  href="ipcr.php">IPCR</a>
                         
                     </div>
                 </div>

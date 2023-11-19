@@ -43,7 +43,7 @@
                     $_SESSION['term_id'] = $term_id;
                     
                     }
-                    else if($type === "Heads"){
+                    else if($type === "Head"){
                          $_SESSION['unique_id'] = $row['unique_id'];
                     $_SESSION['user_id'] = $row['user_id'];
                    

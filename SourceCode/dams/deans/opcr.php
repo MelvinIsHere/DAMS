@@ -4,7 +4,7 @@ session_start();
 
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
-    $id = $_SESSION['user_id'];
+    $user_id = $_SESSION['user_id'];
 
 
 
@@ -31,7 +31,7 @@ session_start();
                             LEFT JOIN faculties f ON f.`faculty_id` = u.faculty_id
                             LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
                             LEFT JOIN designation d ON d.designation_id = f.designation_id
-                            WHERE u.user_id = '$id'
+                            WHERE u.user_id = '$user_id'
     
             ");
     
@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -74,12 +75,11 @@ session_start();
                 <div class="table-wrapper">
                     <div class="table-title">
                         <div class="row">
-                            <div class="col-xs-6">
-                                <h2>Office Performance Commitment and Review</b></h2>
-                            </div>
+                           
                             <div class="col-xs-6">
                                 <a href="#addEmployeeModal" class="btn btn-success" data-toggle ="modal" ><i class="material-icons">&#xE147;</i> <span>Add output</span></a>
-                                <a href="../php/automation_documents/generate_opcr.php?dept_id=<?php echo $department_id;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
+                                <!-- <a href="../php/navigator.php?dept_id=<?php echo $department_id;?>&term_id=<?php echo $term_id; ?>&user_id=<?php echo $id;?>&type=<?php echo $type;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> -->
+                                 <a href="#ipcrmodal" data-toggle="modal" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                                                 
                             </div>
                         </div>
@@ -95,7 +95,9 @@ session_start();
                                 <th>Description</th>
                                 
                                 <th>Actual Accomplishment</th>
-                                <th>Rating</th>
+                                <th>Quality</th>
+                                <th>Efficiency</th>
+                                <th>Timeliness</th>
                                 <th>Remarks</th>                            
                                 <th>Actions</th>
                             </tr>
@@ -166,10 +168,14 @@ session_start();
                                             <td><?php echo $description;?></td>
                                             <td><?php echo $actual_accomplishment;?></td>
                                             <td><?php echo $rating; ?></td>
+                                            <td><?php echo $rating; ?></td>
+                                            <td><?php echo $rating; ?></td>
                                             <td><?php echo $remarks; ?></td>                           
                                             <td>
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                                                <a href="#accomplishment"data-toggle="modal" class="task"><i class="material-icons" data-toggle="tooltip" title="Check Circle">check_circle</i></a>
                                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+
                                             </td>
                                         </tr>
                             <?php 
@@ -191,9 +197,10 @@ session_start();
                                     $adjacents = "2";
                                     $result_count = mysqli_query($conn, "SELECT
                                         COUNT(*) AS total_records
-                                        FROM opcr i
-                                        LEFT JOIN departments dp ON dp.`department_id`=i.`department_id`
-                                        WHERE i.`department_id` = '$department_id'");
+                                        FROM opcr o
+                                        LEFT JOIN tasks tt ON tt.task_id = o.task_id
+                                        WHERE o.`department_id` = '$department_id'
+                                        AND tt.term_id = '$term_id'");
                                     $total_records = mysqli_fetch_array($result_count);
                                     $total_records = $total_records['total_records'];
                                     $total_no_of_page = ceil($total_records / $total_records_per_page);
@@ -206,7 +213,9 @@ session_start();
                                                 o.budgets,
                                                 o.disipline,
                                                 o.actual_accomplishment,
-                                                o.rating,
+                                                o.quality,
+                                                o.efficiency,
+                                                o.timeliness,
                                                 o.remarks,
                                                 o.category,
                                                 o.description
@@ -214,7 +223,9 @@ session_start();
                                             FROM opcr o
                                             LEFT JOIN users u ON u.user_id = o.dean_id
                                             LEFT JOIN departments dp ON dp.`department_id` = o.department_id
-                                            WHERE o.`department_id` = '$department_id'";                                    
+                                            LEFT JOIN tasks tt ON tt.task_id = o.task_id
+                                            WHERE o.`department_id` = '$department_id'
+                                            AND tt.term_id = '$term_id'";                                    
                                     $results = $conn->query($sql);
                                     if(!$results){
                                         die("Query failed: " . mysqli_error($conn));
@@ -227,7 +238,9 @@ session_start();
                                         $success_indicator = $row['success_indicator'];
                                         $budget = $row['budgets'];
                                         $actual_accomplishment = $row['actual_accomplishment'];
-                                        $rating = $row['rating'];
+                                        $quality = $row['quality'];
+                                        $timeliness = $row['timeliness'];
+                                        $efficiency = $row['efficiency'];
                                         $remarks = $row['remarks'];
                                         $category = $row['category'];
                                         $description = $row['description'];
@@ -247,11 +260,15 @@ session_start();
                                             
                                             
                                             <td><?php echo $actual_accomplishment;?></td>
-                                            <td><?php echo $rating; ?></td>
+                                            <td><?php echo $quality; ?></td>
+                                            <td><?php echo $efficiency; ?></td>
+                                            <td><?php echo $timeliness; ?></td>
                                             <td><?php echo $remarks; ?></td>                           
                                             <td>
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                                                <a href="#accomplishment"data-toggle="modal" class="task"><i class="material-icons" data-toggle="tooltip" title="Check Circle">check_circle</i></a>
                                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+
                                             </td>
                                         </tr>
                             <?php 
@@ -351,6 +368,24 @@ session_start();
                 $('#budget_update').val(data[3]);            
                 $('#category_update').val(data[4]);
                 $('#description_update').val(data[5]);
+            });
+        });
+    $(document).ready(function() {
+        $('.task').on('click',function(){
+            $('#accomplishment').modal('show');
+                $tr = $(this).closest('tr');
+                var data = $tr.children("td").map(function(){
+                    return $(this).text();
+                }).get();
+                console.log(data);
+                var loading_id  = $(this).closest('tr').find('.loading_id').text();
+                console.log(loading_id)
+                $('#opcr_id').val(loading_id);;
+                $('#accomplishment_input').val(data[6]);
+                $('#quality').val(data[7]);
+                
+                $('#efficiency').val(data[8]);
+                $('#timeliness').val(data[9]);
             });
         });
         $(document).ready(function() {
@@ -476,6 +511,7 @@ session_start();
                         <div class="form-group">
 
                             <label for="mfo_input" class="form-label">Major Final Output</label>
+
                             <input type="text" name="department_id" value="<?php echo $department_id?>" style="width: 0px;height: 0px;" hidden>
                             <input class="form-control"  name="mfo" id="mfo_input" placeholder="Enter major final output" required>
 
@@ -491,7 +527,7 @@ session_start();
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <label  for="category"class="form-label">Category</label>
-                                <select name="category" id="category" class="form-control">
+                                <select name="category" id="category" class="form-control" onchange="categoryOnchange()">
                                     <option value="ADMINISTRATIV/STRATEGIC FUNCTION">Aministrative/ Strategic Functions</option>
                                     <option value="CORE FUNCTION">Core functions</option>                                
                                 </select>
@@ -503,12 +539,13 @@ session_start();
                             </div>
                            
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="description_group">
                             <label class="form-label" for="description">Description</label>
                             <!-- <input class="form-control" id="description" name="description" placeholder="Description"> -->
                             <select class="form-control" name="description">
-                                <option>HIGHER EDUCATION</option>
-                                <option>RESEARCH</option>
+                                <option>MFO 1 HIGHER EDUCATION</option>
+                                <option>MFO 2 RESEARCH</option>
+                                <option>MFO 3 EXTENSION</option>
                             </select>
                         </div>
                          
@@ -522,6 +559,80 @@ session_start();
             </div>
         </div>
     </div>
+    <!-- accomplishment Modal -->
+<div class="modal fade" id="accomplishment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form id="update_loading" action="../php/insert_accomplishment_opcr.php" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Accomplishments</h5>
+                </div>
+                <div class="modal-body" id="editModal-body">
+                    <div id="target">
+                        <div class="form-group">
+                           <label for="accomplishment" class="form-label">Actual Accomplishment</label>
+                            <input hidden type="text" name="opcr_id" id="opcr_id">
+                            <input type="text" name="type" hidden value="<?php echo $type;?>">
+                             <textarea class="form-control" name="accomplishment" id="accomplishment_input" placeholder="Success accomplishment"></textarea>
+                        </div>
+                
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Quality</label>
+                                    <input type="number" name="quality" id="quality" class="form-control" placeholder="Insert quality">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Efficiency</label>
+                                    <input type="number" name="efficiency" id="efficiency" class="form-control" placeholder="Insert efficiency">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Timelines</label>
+                                    <input type="number" name="timeliness" id="timeliness" class="form-control" placeholder="Insert timelines">
+                                </div>
+                            </div>
+                           
+                             
+
+                        </div>
+                    
+                    </div>
+                    
+
+                   
+                    
+                    
+
+<!-- ########################################################################################################################## -->                                   </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit" >Save</button>
+                    <button class="btn btn-warning" type="button" data-dismiss="modal">Back</button>
+                </div>
+
+
+
+
+
+                </form>
+                
+            </div>
+        </div>
+    </div> 
+    <script type="text/javascript">
+    document.getElementById('description_group').style.display = "block";
+   function categoryOnchange() {
+    var categoryInput = document.getElementById('category').value;
+    var descriptionGroup = document.getElementById('description_group');
+
+    if (categoryInput === "CORE FUNCTION") {
+        descriptionGroup.style.display = "none";
+        descriptionGroup.disabled = true;
+    } else {
+        descriptionGroup.style.display = "block";
+        descriptionGroup.disabled = false;
+    }
+}
+</script>
 
 <!--   <script>
     const successIndicators = [];
@@ -586,7 +697,42 @@ session_start();
 
 </script> -->
 
+<!-- Delete Modal -->
+    <div class="modal fade" id="ipcrmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <form id="delete_loading" action="../php/navigator.php" method="POST">
+                    <div class="modal-header">
+                    
+                    <h5 class="modal-title" id="exampleModalLabel">Fill out form</h5>
+                </div>
+                <div class="modal-body" id="deleteModal-body">
+                    <div class="form-group">
+                        <label class="form-label">Imidiate Supervisor</label>
+                        <input class="form-control" placeholder="Input Imidiate Supervisor" name="supervisor">
+                    </div>
+                    <div hidden>
+                        <input type="text" name="user_id" value="<?php echo $user_id; ?>">
+                        <input type="text" name="dept_id" value="<?php echo $department_id; ?>">
+                        <input type="text" name="term_id" value="<?php echo $term_id; ?>">
+                        <input type="text" name="type" value="<?php echo $type; ?>"> 
+                        <input type="text" name="document" value="OPCR"> 
+                    </div>
+                  
 
+               
+            </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit">Generate</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Back</button>
+                </div>
+                </form>
+
+                
+            </div>
+        </div>
+    </div> 
 
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

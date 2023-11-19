@@ -70,7 +70,7 @@ $term_id = $_SESSION['term_id'];
       
 
         <div class="card-body">
-            <div class="table-responsive" style="overflow: scroll;">
+            <div class="table-responsive">
                 <div class="table-wrapper">
                     <div class="table-title">
                         <div class="row">
@@ -79,19 +79,23 @@ $term_id = $_SESSION['term_id'];
                             </div>
                             <div class="col-xs-6">
                                 <a href="#addEmployeeModal" class="btn btn-success" data-toggle ="modal" ><i class="material-icons">&#xE147;</i> <span>Add output</span></a>
-                                <a href="../php/automation_documents/generate_ipcr.php?dept_id=<?php echo $department_id;?>&user_id=<?php echo $user_id;?>&term_id=<?php echo $term_id;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
+                                <a href="#ipcrmodal" data-toggle="modal" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                                                 
                             </div>
                         </div>
                     </div>
-                    <table class="table table-striped table-hover" style="table-layout: fixed;">
+                    <table class="table table-striped table-hover" style="table-layout: auto;">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Major Final Output</th>
                                 <th>Success Indicator</th>
                                 <th>Category</th>
-                                <th>Description</th>
+                                <th 
+                                <?php if ($type == 'Staff') {
+                                    echo "hidden";
+                                }?>
+                                >Description</th>
                                 <th>Actual Accomplishment</th>
                                 <th>Quality</th>
                                 <th>Efficiency</th>
@@ -168,8 +172,9 @@ $term_id = $_SESSION['term_id'];
                                             <td><?php echo $actual_accomplishment;?></td>
                                             <td><?php echo $rating; ?></td>
                                             <td><?php echo $remarks; ?></td>                           
-                                            <td>
+                                            <td colspan="4">
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                                                 <a href="#ipcrmodal" class="task" data-toggle="modal"><i class="fa-check-circle" data-toggle="tooltip" title="task">&#xE872;</i></a>
                                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                                             </td>
                                         </tr>
@@ -257,7 +262,11 @@ $term_id = $_SESSION['term_id'];
                                             <td><?php echo $major_output;?></td>
                                             <td><?php echo $success_indicator;?></td>
                                             <td><?php echo $category;?></td>
-                                            <td><?php echo $description;?></td>
+                                            <td  
+                                            <?php if ($type == 'Staff') {
+                                                echo "hidden";
+                                            }?>>
+                                            <?php echo $description;?></td>
                                             <td><?php echo $actual_accomplishment;?></td>
                                             <td><?php echo $quality; ?></td>
                                             <td><?php echo $efficiency; ?></td>
@@ -265,8 +274,10 @@ $term_id = $_SESSION['term_id'];
                                             <td><?php echo $remarks; ?></td>                           
                                             <td>
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                                                <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                                <a href="#accomplishment"data-toggle="modal" class="task"><i class="material-icons" data-toggle="tooltip" title="Check Circle">check_circle</i></a>
+                                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                                             </td>
+
                                         </tr>
                             <?php 
                                         // Break the loop if the desired limit is reached
@@ -366,6 +377,24 @@ $term_id = $_SESSION['term_id'];
                 $('#description_update').val(data[4]);
             });
         });
+     $(document).ready(function() {
+        $('.task').on('click',function(){
+            $('#accomplishment').modal('show');
+                $tr = $(this).closest('tr');
+                var data = $tr.children("td").map(function(){
+                    return $(this).text();
+                }).get();
+                console.log(data);
+                var loading_id  = $(this).closest('tr').find('.loading_id').text();
+                console.log(loading_id)
+                $('#ipcr_id').val(loading_id);;
+                $('#accomplishment_input').val(data[5]);
+                $('#quality').val(data[6]);
+                
+                $('#efficiency').val(data[7]);
+                $('#timeliness').val(data[8]);
+            });
+        });
         $(document).ready(function() {
             $('.delete').on('click',function(e){
                 e.preventDefault();
@@ -387,7 +416,7 @@ $term_id = $_SESSION['term_id'];
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <form id="update_loading" action="../php/update_ipcr.php" method="POST">
+            <form id="update_loading" action="../php/insert_accomplishment.php" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
                 </div>
@@ -424,23 +453,17 @@ $term_id = $_SESSION['term_id'];
                     
 
 <!-- ########################################################################################################################## -->                                   </div>
-                <div class="modal-footer  row">
-                    <div class="col d-flex justify-content-start">
-                        
-                            <a class="btn btn-success">Accomplishment</a>    
-                        
-                        
-                        
-                    </div>
-                    <div class="col d-flex justify-content-end">
-                        
-                            <button class="btn btn-success" type="submit" >Save</button>
-                            <button class="btn btn-warning" type="button" data-dismiss="modal">Back</button>
-                        
-                                
-                    </div>
+               <div class="modal-footer" >
+
+                   
+                    
+                        <button class="btn btn-success" type="submit">Save</button>
+                        <button class="btn btn-warning" type="button" data-dismiss="modal">Back</button>                
+                  
+                   
                
-                </div>
+            </div>
+
 
 
 
@@ -456,35 +479,39 @@ $term_id = $_SESSION['term_id'];
 <div class="modal fade" id="accomplishment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <form id="update_loading" action="../php/update_ipcr.php" method="POST">
+            <form id="update_loading" action="../php/insert_accomplishment.php" method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Accomplishments</h5>
                 </div>
                 <div class="modal-body" id="editModal-body">
                     <div id="target">
                         <div class="form-group">
-                           <label for="faculty_name" class="form-label">Major Final Output</label>
-                            <input type="text" name="loading_id" id="loading_id" hidden style="height: 0px; width:0px">
-                            <input class="form-control" name="mfo" id="mfo_update" > 
+                           <label for="accomplishment" class="form-label">Actual Accomplishment</label>
+                            <input type="text" name="ipcr_id" id="ipcr_id">
+                            <input type="text" name="type" value="<?php echo $type;?>">
+                             <textarea class="form-control" name="accomplishment" id="accomplishment_input" placeholder="Success accomplishment"></textarea>
                         </div>
                 
                         <div class="form-group">
-                             <label for="course_code" class="form-label">Success Indicators</label>
-                             <textarea class="form-control" name="success_indicators" id="success_indicator" placeholder="Success Indicators"></textarea>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Quality</label>
+                                    <input type="number" name="quality" id="quality" class="form-control" placeholder="Insert quality">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Efficiency</label>
+                                    <input type="number" name="efficiency" id="efficiency" class="form-control" placeholder="Insert efficiency">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Timelines</label>
+                                    <input type="number" name="timeliness" id="timeliness" class="form-control" placeholder="Insert timelines">
+                                </div>
+                            </div>
+                           
+                             
 
                         </div>
-                      <div class="form-group">
-                            <label  for="category_update"class="form-label">Category</label>
-                            <select name="category" id="category_update" class="form-control">
-                                <option value="Instruction">Instruction</option>
-                                <option value="Strategic">Strategic</option>
-                                <option value="Support">Support</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="description_update">Description</label>
-                            <input class="form-control" id="description_update" name="description" placeholder="Description">
-                        </div>
+                    
                     </div>
                     
 
@@ -511,6 +538,49 @@ $term_id = $_SESSION['term_id'];
 <script type="text/javascript">
     
 </script>
+
+
+
+
+
+
+<!-- Delete Modal -->
+    <div class="modal fade" id="ipcrmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <form id="delete_loading" action="../php/navigator.php" method="POST">
+                    <div class="modal-header">
+                    
+                    <h5 class="modal-title" id="exampleModalLabel">Fill out form</h5>
+                </div>
+                <div class="modal-body" id="deleteModal-body">
+                    <div class="form-group">
+                        <label class="form-label">Imidiate Supervisor</label>
+                        <input class="form-control" placeholder="Input Imidiate Supervisor" name="supervisor">
+                    </div>
+                    <div hidden>
+                        <input type="text" name="user_id" value="<?php echo $user_id; ?>">
+                        <input type="text" name="dept_id" value="<?php echo $department_id; ?>">
+                        <input type="text" name="term_id" value="<?php echo $term_id; ?>">
+                        <input type="text" name="type" value="<?php echo $type; ?>"> 
+                        <input type="text" name="document" value="IPCR"> 
+                    </div>
+                  
+
+               
+            </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit">Generate</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Back</button>
+                </div>
+                </form>
+
+                
+            </div>
+        </div>
+    </div> 
+
 
 
 

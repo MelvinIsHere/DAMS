@@ -72,22 +72,28 @@ session_start();
                 <!-- Begin Page Content -->
                 <div class="container-fluid tabcontent" id="dashboard" >
 
-                    <!-- Page Heading -->
-                    <div class="row">
-                        
-                    </div>
-                    <div class="d-sm-flex align-items-center justify-content-lg-between mb-4 row ">
-                        <div class="col-md-10 justify-content-start">
+                     <div class="d-sm-flex align-items-center justify-content-lg-between mb-4 row ">
+                        <div class="col-md-9 justify-content-start">
                             <b> <h1 class="h3 text-gray-800  fw-bold flex-fill ">Dashboard</h1></b>
                         </div>
-                        <div class="col-md-2 justify-content-end">
+                        <div class="col-md-3 justify-content-end">
                              <h6 class=" fw-bold flex-fill"> <b><?php 
                         include "../config.php";
-                        $query = mysqli_query($conn,"SELECT term FROM terms WHERE term_id = '$term_id'");
+                        $query = mysqli_query($conn,"
+                            SELECT 
+                                t.`term`,
+                                t.`year`,
+                                ay.`acad_year`,
+                                s.`sem_description`
+                            FROM terms t
+                            LEFT JOIN academic_year ay ON ay.`acad_year_id` = t.acad_year_id
+                            LEFT JOIN semesters s ON s.`semester_id` = t.semester_id
+                            WHERE t.term_id = '$term_id'
+                            ");
                         if($query){
                             if(mysqli_num_rows($query)>0){
                                 $row = mysqli_fetch_assoc($query);
-                                echo $row['term'];
+                                echo $row['term'] . " ". $row['year'] ." ".$row['sem_description'];
                             }else{
                                 echo mysqli_error($conn);
                             }
@@ -102,7 +108,7 @@ session_start();
                         <!--        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
                        
                         
-                    </div>  
+                    </div>
 
                     <!-- Content Row -->
                     <div class="row">
@@ -119,14 +125,13 @@ session_start();
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <center>
                                                     <?php
-                                                     $sem_id =$_SESSION['semester_id'];
-                                                     $acad_id =$_SESSION['acad_id'];
+                                                   
                                                         $pending_count = mysqli_query($conn,"  SELECT
                                                             COUNT(*)
                                                             FROM tasks tt
                                                             LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                                                             LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                                                            WHERE tt.for_deans = 1 AND ts.user_id = '$id' AND ts.`is_completed` = '1'
+                                                            WHERE ts.user_id = '$id' AND ts.`is_completed` = '1'
                                                             AND tt.term_id = '$term_id'");
                                                             $result = mysqli_fetch_assoc($pending_count);
                                                         if($result){
@@ -368,9 +373,9 @@ function openCity(evt, cityName) {
 
     <!-- Edit Modal HTML -->
     <div id="addEmployeeModal" class="modal fade">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
-                <form method="post" action="../php/filter.php">
+                <form method="post" action="filter.php">
                     <div class="modal-header">                      
                         <h5 class="modal-title">School year filter</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -379,17 +384,25 @@ function openCity(evt, cityName) {
                         <div class="form-group">
 
                             <label for="academic_year" class="form-label">Academic Year</label>                            
-                            <select id="academic_year" name="academic_year" class="form-control">
+                            <select id="terms" name="terms" class="form-control">
                                 <?php 
                                     include "../php/config.php";
-                                    $query = mysqli_query($conn,"SELECT acad_year FROM academic_year");
+                                    $query = mysqli_query($conn,"SELECT 
+                                                            t.`term`,
+                                                            t.`year`,
+                                                            ay.`acad_year`,
+                                                            s.`sem_description`
+                                                        FROM terms t
+                                                        LEFT JOIN academic_year ay ON ay.`acad_year_id` = t.acad_year_id
+                                                        LEFT JOIN semesters s ON s.`semester_id` = t.semester_id");
                                     if($query){
                                         if(mysqli_num_rows($query)>0){
                                             while($row = mysqli_fetch_assoc($query)){
-                                                $acad_year = $row['acad_year'];
+                                                $termfilter = $row['term'] ." ".$row['year'] ." ".$row['sem_description'];
+
                                 ?>
 
-                                    <option><?php echo $acad_year;?></option>
+                                    <option><?php echo $termfilter;?></option>
 
                                 <?php
 
@@ -404,34 +417,7 @@ function openCity(evt, cityName) {
 
 
                         </div>
-                        <div class="form-group">
-
-                            <label for="semester" class="form-label">Semester</label>
-                            <select id="semester_list" name="semester" class="form-control">
-                                <?php 
-                                    include "../php/config.php";
-                                    $query = mysqli_query($conn,"SELECT sem_description FROM semesters");
-                                    if($query){
-                                        if(mysqli_num_rows($query)>0){
-                                            while($row = mysqli_fetch_assoc($query)){
-                                                $sem_description = $row['sem_description'];
-                                ?>
-
-                                    <option><?php echo $sem_description;?></option>
-
-                                <?php
-
-                                            }
-                                        }
-                                    }else{
-
-                                    }
-                                ?>
-                                
-                            </select>
-
-
-                        </div>
+                       
                         
                       
                          
@@ -445,7 +431,6 @@ function openCity(evt, cityName) {
             </div>
         </div>
     </div>
-
 
 </body>
 

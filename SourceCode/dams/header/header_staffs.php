@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Deans - Dashboard</title>
+    <title>OWDA</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -133,7 +133,7 @@
         width: 60px;
     }
     table.table tr th:last-child {
-        width: 100px;
+        width: 150px;
     }
     table.table-striped tbody tr:nth-of-type(odd) {
         background-color: #fcfcfc;
@@ -163,6 +163,10 @@
     }
     table.table td a.edit {
         color: #FFC107;
+    }
+     table.table td a.task {
+        color: green;
+        
     }
     table.table td a.delete {
         color: #F44336;

@@ -298,7 +298,7 @@
     }   
     .setting-holder{
         background-color: #D9D9D9;
-        min-width: 800px;
+        min-width: 200px;
         height: 200px;
     }
 </style>

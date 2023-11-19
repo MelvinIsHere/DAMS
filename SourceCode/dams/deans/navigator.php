@@ -19,6 +19,10 @@ elseif($template_name == "Faculty Schedule"){
 	header("Location: room_utilization_matrix_ui.php");
 }elseif($template_name == "OPCR"){
 	header("Location: opcr.php");
+}elseif($template_name == "IPCR"){
+	header("Location: ipcr.php");
+}elseif($template_name == "IPCR - Accomplishment"){
+	header("Location: ipcr.php");
 }
 else{
 	header("Location: pendingDocuments.php?Alert : No task Such as" . $template);

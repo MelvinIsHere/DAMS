@@ -68,9 +68,7 @@
 <script src="sweetalert2.min.js"></script>
 <link rel="stylesheet" href="sweetalert2.min.css">
 
-
-
-    <style>
+ <style>
     body {
         color: #566787;
         background: #f5f5f5;
@@ -128,13 +126,16 @@
         border-color: #e9e9e9;
         padding: 12px 15px;
         vertical-align: middle;
-         word-wrap: break-word;
+         
+     
+        word-wrap: break-word;
+      
     }
     table.table tr th:first-child {
         width: 60px;
     }
     table.table tr th:last-child {
-        width: 100px;
+        width: 150px;
     }
     table.table-striped tbody tr:nth-of-type(odd) {
         background-color: #fcfcfc;
@@ -164,6 +165,10 @@
     }
     table.table td a.edit {
         color: #FFC107;
+    }
+     table.table td a.task {
+        color: green;
+        
     }
     table.table td a.delete {
         color: #F44336;
@@ -296,7 +301,8 @@
     .modal form label {
         font-weight: normal;
     }   
-</style>
+
     
+</style>
    
 </head>

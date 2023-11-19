@@ -11,7 +11,7 @@ $due_date = $_POST['due_date'];
 $task_name = $_POST['task_name'];
 $description = $_POST['description'];
 $category = $_POST['category'];
-$term = $_POST['term'];
+// $term = $_POST['term'];
 
 $staff = 0;
 $deans = 0;
@@ -30,7 +30,7 @@ if($category == "Staff"){
 	$faculty = 1;
 }
 
-$term_id = gettermid($term);
+$term_id = gettermid();
 
  $doc_temp_id = getTemplateId($task_name);
  if($doc_temp_id == ""){
@@ -121,7 +121,7 @@ function insert_task($task_name,$description,$doc_temp_id,$dateEnd,$ovcaa,$deans
 	if($acad_id){
 		$sem_id = getactivesem();
 		if($sem_id){
-			$query = mysqli_query($conn,"INSERT INTO tasks (task_name, task_desc,document_id, due_date, for_ovcaa,for_deans,for_heads,for_staffs,for_faculty,acad_year_id,sem_id,term_id) VALUES ('$task_name','$description','$doc_temp_id', '$dateEnd','$ovcaa', '$deans','$heads','$staffs','$faculty','$acad_id','$sem_id','$term_id')");
+			$query = mysqli_query($conn,"INSERT INTO tasks (task_name, task_desc,document_id, due_date, for_ovcaa,for_deans,for_heads,for_staffs,for_faculty,term_id) VALUES ('$task_name','$description','$doc_temp_id', '$dateEnd','$ovcaa', '$deans','$heads','$staffs','$faculty','$term_id')");
 			 if($query){
 	 		// Print auto-generated id
          		$id = $conn -> insert_id;
@@ -176,9 +176,9 @@ function getActiveAcadyear(){
 	return false;
 	}
 }
-function gettermid($term){
+function gettermid(){
 	include "config.php";
-	$query = mysqli_query($conn,"SELECT term_id FROM terms WHERE term = '$term'");
+	$query = mysqli_query($conn,"SELECT term_id FROM terms WHERE status = 'ACTIVE'");
 	if($query){
 		if(mysqli_num_rows($query) >0){
 			$row = mysqli_fetch_assoc($query);
