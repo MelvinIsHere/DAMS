@@ -56,7 +56,7 @@ $acad_id = $_SESSION['acad_id'];
 ob_start();
 $task_id = get_task_id();
 $task_id_all = ob_get_clean();
-
+$term_id = $_GET['term_id'];
 $faculty_names = []; //this is the array for the room names
          $sql = "SELECT DISTINCT
               
@@ -94,17 +94,17 @@ foreach ($faculty_names as $tabName) {
     // Set the newly added sheet as the active sheet
     $spreadsheet->setActiveSheetIndexByName($tabName);
       // Fill the cell with data
-    $monday_plot = faculty_plot_double_col('Monday',$dept_id,$conn,$spreadsheet,$tabName,'B','C','D',$task_id);
-    $plot_tuesday = plot("Tuesday",$dept_id,$conn,$spreadsheet,$tabName,"E","F",$task_id);
-    $plot_wednesday = plot("Wednesday",$dept_id,$conn,$spreadsheet,$tabName,"G","H",$task_id);
-    $plot_Thursday = plot("Thursday",$dept_id,$conn,$spreadsheet,$tabName,"I","J",$task_id);
+    $monday_plot = faculty_plot_double_col('Monday',$dept_id,$conn,$spreadsheet,$tabName,'B','C','D',$term_id);
+    $plot_tuesday = plot("Tuesday",$dept_id,$conn,$spreadsheet,$tabName,"E","F",$term_id);
+    $plot_wednesday = plot("Wednesday",$dept_id,$conn,$spreadsheet,$tabName,"G","H",$term_id);
+    $plot_Thursday = plot("Thursday",$dept_id,$conn,$spreadsheet,$tabName,"I","J",$term_id);
 
-    $friday_plot = faculty_plot_double_col('Friday',$dept_id,$conn,$spreadsheet,$tabName,'K','L','M',$task_id);
-    $saturday_plot = faculty_plot_double_col('Saturday',$dept_id,$conn,$spreadsheet,$tabName,'N','O','P',$task_id);
-    $sunday_plot = plot("Sunday",$dept_id,$conn,$spreadsheet,$tabName,"Q","R",$task_id);
+    $friday_plot = faculty_plot_double_col('Friday',$dept_id,$conn,$spreadsheet,$tabName,'K','L','M',$term_id);
+    $saturday_plot = faculty_plot_double_col('Saturday',$dept_id,$conn,$spreadsheet,$tabName,'N','O','P',$term_id);
+    $sunday_plot = plot("Sunday",$dept_id,$conn,$spreadsheet,$tabName,"Q","R",$term_id);
     
-    // $sched_info_plot = plot_sched_info($dept_id,$conn,$spreadsheet,$tabName);
-    // $plot_sched_header = plot_header_info($tabName,$spreadsheet,$department_name,$conn,$semester_id,$acad_id);
+    $sched_info_plot = plot_sched_info($dept_id,$conn,$spreadsheet,$tabName);
+    $plot_sched_header = plot_header_info($tabName,$spreadsheet,$department_name,$conn,$term_id);
         
     
   
@@ -118,7 +118,7 @@ foreach ($faculty_names as $tabName) {
 
 
 
-function plot($day,$dept_id,$conn,$spreadsheet,$faculty,$col_sched,$col_room,$task_id){
+function plot($day,$dept_id,$conn,$spreadsheet,$faculty,$col_sched,$col_room,$term_id){
 
 
     $data_to_plot = "  
@@ -158,7 +158,8 @@ function plot($day,$dept_id,$conn,$spreadsheet,$faculty,$col_sched,$col_room,$ta
             LEFT JOIN tasks tt ON tt.task_id = fs.task_id                             
             WHERE fs.department_id = '$dept_id'
             AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty'
-            AND fs.day = '$day'  AND tt.task_id = '$task_id'
+            AND fs.day = '$day'  AND tt.term_id = '$term_id' AND fs.description != 'Official time morning'
+            AND fs.description != 'Official time afternoon'
                 ";
 
 
@@ -275,7 +276,17 @@ foreach($data as $row){
     } elseif ($minutes_end == 0) {
         $col_end += 1;
     }
-
+    //nilagay ko to kasi nag sasala pag transition sa 11 -12 yung sa Am - PM
+    if($text_output_start == '11:00 - 12:00' && $text_output_end == '11:00 - 12:00'){
+        $col_start = 16;
+        $col_end = 17;
+    }
+    if($text_output_start == '11:00 - 12:00'){
+        $col_start = 16;                    
+    }
+    if($text_output_end == '11:00 - 12:00'){
+        $col_end = 17;                        
+    }
     if ($description == "Class Schedule") {
         $spreadsheet->getActiveSheet()
             ->setCellValue($col_sched . $col_start, $course_code . "\n" . $section)
@@ -325,7 +336,7 @@ foreach($data as $row){
 
 
 
-function faculty_plot_double_col($day,$dept_id,$conn,$spreadsheet,$faculty,$col_sched_1,$col_sched_2,$col_room,$task_id){
+function faculty_plot_double_col($day,$dept_id,$conn,$spreadsheet,$faculty,$col_sched_1,$col_sched_2,$col_room,$term_id){
 
     $data_to_plot = "  
             SELECT 
@@ -364,7 +375,8 @@ function faculty_plot_double_col($day,$dept_id,$conn,$spreadsheet,$faculty,$col_
             LEFT JOIN tasks tt ON tt.task_id = fs.task_id                             
             WHERE fs.department_id = '$dept_id'
             AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty'
-            AND fs.day = '$day'  AND tt.task_id = '$task_id'
+            AND fs.day = '$day'  AND tt.term_id = '$term_id' AND fs.description != 'Official time morning'
+            AND fs.description != 'Official time afternoon'
                 ";
 
 
@@ -466,25 +478,38 @@ foreach($data as $row){
     $row_index = 6;
     while ($row_index < 40) {
         $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_index)->getCalculatedValue();
-        $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row_index)->getCalculatedValue();
+        $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row_index)->getCalculatedValue();
         if ($cellValueCurrent == $text_output_end) {
             if($ampm_cell == $arr_ampm_end){                                        
                 $col_end = $row_index;
+
                 
                 break; // Exit the loop once the condition is met
             }                       
         }
-          $spreadsheet->getActiveSheet()
-            ->setCellValue("Y".$row_index,$row_index);
+          
         $row_index++;
     }
 
 
-       if ($minutes == 30) {
-        $col_start += 1;
-    } elseif ($minutes_end == 0) {
-        $col_end += 1;
+    if($text_output_start == '11:00 - 12:00'){
+        $col_start = 16;                    
     }
+    if($text_output_end == '11:00 - 12:00'){
+        $col_end = 17;                        
+    }
+    if($text_output_start == '11:00 - 12:00' && $text_output_end == '11:00 - 12:00'){
+        $col_start = 16;
+        $col_end = 17;
+    }
+    if ($minutes == 30) {
+        $col_start = $col_start +1;
+    }elseif ($minutes_end == 0) {
+        $col_end = $col_end + 1;
+        
+    }
+    
+
 
     if ($description == "Class Schedule") {
         $spreadsheet->getActiveSheet()
@@ -497,8 +522,8 @@ foreach($data as $row){
         $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_start)->getAlignment()->setWrapText(true); 
         $spreadsheet->getActiveSheet()->getStyle($col_room.$col_start)->getAlignment()->setWrapText(true);
          //set border to the sched - fac name course
-        $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_start.":".$col_sched_2.$col_start)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
-        $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_end.":".$col_sched_2.$col_end)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);  
+        $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_start.":".$col_room.$col_start)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); 
+                $spreadsheet->getActiveSheet()->getStyle($col_sched_1.$col_end.":".$col_room.$col_end)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
         
     } else {
         
@@ -565,6 +590,7 @@ function plot_sched_info($dept_id,$conn,$spreadsheet,$faculty){
             WHERE fs.department_id = '$dept_id'
             AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty'
             AND fs.description = 'Class Schedule'
+            GROUP BY s.section_name,p.program_abbrv
             
                 ";
 
@@ -661,11 +687,13 @@ function get_task_id(){
 }
 
 
-function plot_header_info($faculty,$spreadsheet,$department_name,$conn,$semester_id,$acad_id){
+function plot_header_info($faculty,$spreadsheet,$department_name,$conn,$term_id){
     $spreadsheet->getActiveSheet()
         ->setCellValue("B3",$department_name)
         ->setCellValue("B4", $faculty);
-    $query = mysqli_query($conn,"SELECT sem_description FROM semesters WHERE semester_id = '$semester_id'");
+    $query = mysqli_query($conn,"SELECT s.sem_description FROM terms t
+                                LEFT JOIN semesters s ON s.semester_id = t.semester_id
+                                WHERE t.term_id = '$term_id'");
     if($query){
         if(mysqli_num_rows($query) > 0){
             $row = mysqli_fetch_assoc($query);
@@ -679,7 +707,10 @@ function plot_header_info($faculty,$spreadsheet,$department_name,$conn,$semester
 
     }
 
-    $acad_query = mysqli_query($conn, "SELECT acad_year FROM academic_year WHERE acad_year_id = '$acad_id'");
+    $acad_query = mysqli_query($conn, "SELECT a.acad_year 
+                                        FROM terms t 
+                                        LEFT JOIN academic_year a ON a.acad_year_id = t.acad_year_id
+                                        WHERE t.term_id = '$term_id'");
     if($acad_query){
         if(mysqli_num_rows($acad_query) > 0){
             $row = mysqli_fetch_assoc($acad_query);

@@ -79,7 +79,10 @@
                         <a class="collapse-item" href="courses_management.php">Manage Courses</a>
                         <a class="collapse-item" href="faculties_management.php">Manage Faculties</a>
                         <a class="collapse-item" href="faculty_titles_management.php">Manage Facultiy Titles</a>
-                        <a class="collapse-item" href="program_management.php?search=">Manage Programs </a>
+                        <a class="collapse-item" href="program_management.php">Manage Programs</a>
+                        <a class="collapse-item" href="room_management.php">Manage rooms</a>
+                        <a class="collapse-item" href="designations.php">Manage designations</a>
+                        <a class="collapse-item" href="positions.php">Manage positions</a>
                        
                     </div>
                 </div>
@@ -172,64 +175,52 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body"> 
-                        <form method="POST" action="../php/send_task.php">
-                            <div class="form-group">
-                                  <label for="lname" class="form-label">Task name</label>
-                                    <input class="form-control" list="task_names" name="task_name" id="task_name" placeholder="Enter task name" required>
-                                    <datalist id="task_names">
-                                        <?php 
-                                            include "../config.php";
-                                            $sql = "SELECT template_title FROM document_templates";
-                                            $result = mysqli_query($conn,$sql);
-                                            while($row = mysqli_fetch_array($result)){
-                                                $task_names = $row['template_title'];                                            
-                                        ?>
-                                        <option value="<?php echo $task_names?>">
-                                        <?php }?>
-                                    </datalist>
-                            </div>
-                            <div class="form-group">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" placeholder="Insert Description" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Term</label>
-                                <select class="form-control" name="term">
-                                    <?php
-                                        include "../php/config";
-                                        $query = mysqli_query($conn,"SELECT term FROM terms");
-                                        if($query){
-                                            while($row = mysqli_fetch_assoc($query)){
-                                                
-                                                $term = $row['term'];
-                                    ?>
+                        <form method="POST" action="../php/automation_documents/automate_send_task.php">
+                          
+                                <div class="form-group">                              
+                                  <label class="form-label">Faculty loading due-date</label>
+                                  <input type="date" name="faculty_loading_due_date" class="form-control">                              
+                                </div>    
+                          
+                          
+                                <div class="form-group">                              
+                                  <label class="form-label">Class Schedule due-date</label>
+                                  <input type="date" name="class_schedule_due_date" class="form-control">                              
+                                </div>    
 
-                                                <option><?php echo $term;?></option>
+                                <div class="form-group">                              
+                                  <label class="form-label">Faculty Schedule due-date</label>
+                                  <input type="date" name="faculty_schedule_due_date" class="form-control">                              
+                                </div>
 
-                                    <?php
-                                      
-                                        }
-                                    }else{
+                                <div class="form-group">                              
+                                  <label class="form-label">Room Utilization Matrix due-date</label>
+                                  <input type="date" name="room_utilization_matrix_due_date" class="form-control">                              
+                                </div>     
 
-                                        }
-                                     ?>
-                                    
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                 <label class="form-label">Due date</label>
-                                 <input type="date" name="due_date" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Category</label>
-                                <select class="form-control" name="category" required>
-                                    <option value="Dean">Deans</option>
-                                    <option value="Head">Heads</option>
-                                    <option value="Admin">OVCAA</option>
-                                    <option value="Faculty">Faculty</option>
-                                    <option value="Staff">Staff</option>
-                                </select>
-                            </div>
+                                <div class="form-group">                              
+                                  <label class="form-label">Office Performance Commitment and Review Target due-date</label>
+                                  <input type="date" name="opcr_target_due_date" class="form-control">                              
+                                </div> 
+
+                                <div class="form-group">                              
+                                  <label class="form-label">Office Performance Commitment and Review Accomplishments due-date</label>
+                                  <input type="date" name="opcr_accomplishment_due_date" class="form-control">                              
+                                </div>    
+
+                                <div class="form-group">                              
+                                  <label class="form-label">Individual Performance Commitment and Review Target due-date</label>
+                                  <input type="date" name="ipcr_target_due_date" class="form-control">                              
+                                </div>
+
+                                <div class="form-group">                              
+                                  <label class="form-label">Individual Performance Commitment and Review Accomplishment due-date</label>
+                                  <input type="date" name="ipcr_accomplishment_due_date" class="form-control">                              
+                                </div>         
+                          
+                              
+                          
+                            
                            
                         
 

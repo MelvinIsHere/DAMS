@@ -47,6 +47,7 @@ session_start();
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
         $section_name = $_GET['section_name'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -151,23 +152,24 @@ session_start();
 
                                         
 
-                                      FROM class_schedule cs
-                                LEFT JOIN faculty_schedule fs ON fs.faculty_sched_id = cs.faculty_schedule_id
-                                LEFT JOIN faculties f ON f.faculty_id = fs.faculty_id
-                                LEFT JOIN courses c ON c.course_id = fs.course_id
-                                LEFT JOIN sections s ON s.section_id = fs.section_id
-                                LEFT JOIN rooms r ON r.room_id = fs.room_id
-                                LEFT JOIN `time` t1 ON t1.time_id = fs.time_start_id
-                                LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
-                                LEFT JOIN departments d ON d.department_id = fs.department_id
-                                LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                LEFT JOIN semesters sm ON sm.`semester_id` = fs.`semester_id`
-                                LEFT JOIN academic_year ay ON ay.`acad_year_id` = fs.`acad_year_id`
-
-                                    
-
-                                WHERE fs.department_id = '$department_id' AND ay.status = 'ACTIVE' AND sm.status = 'ACTIVE'
-                                AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
+                                   FROM class_schedule cs
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
+                              LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
+                                    LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
+                                    LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
+                                    LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
+                                    LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
+                                    LEFT JOIN semesters s ON s.semester_id = fl.sem_id
+                                    LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                                    LEFT JOIN rooms r ON r.`room_id` = cs.room_id
+                                    LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
+                                    LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
+                                    WHERE pr.`department_id` = '$department_id'
+                                    AND tt.term_id = '$term_id'
+                                      
+                                    AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) = '{$_GET['section_name']}'
+                                    AND CONCAT(r.room_name,cs.day,fc.firstname,fc.middlename,fc.lastname,fc.suffix) LIKE '%$search%'
                             
                             
                             ");
@@ -195,8 +197,8 @@ session_start();
                                 s.`sem_description`,
                                 ay.`acad_year`,
                                 fl.needed
-                                FROM class_schedule cs
-                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_schedule_id`
+                                  FROM class_schedule cs
+                                LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
                               LEFT JOIN faculties fc ON fl.`faculty_id`=fc.`faculty_id`
                                     LEFT JOIN courses c ON fl.`course_id`=c.`course_id`
                                     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
@@ -206,10 +208,13 @@ session_start();
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
-                                    LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id                                    
-                                    WHERE pr.department_id = '$department_id' AND ay.status = 'ACTIVE' AND s.status = 'ACTIVE'
+                                    LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
+                                    WHERE pr.`department_id` = '$department_id'
+                                    AND tt.term_id = '$term_id'
+                                      
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) = '{$_GET['section_name']}'
-                                    AND CONCAT(r.room_name,cs.day) LIKE '%$search%'
+                                    AND CONCAT(r.room_name,cs.day,fc.firstname,fc.middlename,fc.lastname,fc.suffix) LIKE '%$search%'
                                     ";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -219,6 +224,7 @@ session_start();
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
                                  $id = $row['class_sched_id'];
+                                 $faculty_id = $row['faculty_id'];
                                 $faculty_name = $row['lastname'] . " " . $row['firstname'] . " " . $row['middlename'] . " " . $row['suffix'];
                                 $course_code = $row['course_code'];
                                 $section = "BS".$row['program_abbrv'] . " " . $row['section_name'];
@@ -236,7 +242,7 @@ session_start();
                              <td class="loading_id"><?php echo $id;?></td>
                             <td><?php
 
-                               if(!empty($needed)){
+                               if(empty($faculty_id)){
                                 echo $needed;
                                }else{
                                 echo $faculty_name;
@@ -297,9 +303,9 @@ session_start();
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$department_id'
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
                                       
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) ='$section_name'
                                     
@@ -343,9 +349,9 @@ session_start();
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$department_id'
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
                                       
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) ='$section_name'
                                     
@@ -366,6 +372,7 @@ session_start();
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
                                 $id = $row['class_sched_id'];
+                                $faculty_id = $row['faculty_id'];
                                 $faculty_name = $row['lastname'] . " " . $row['firstname'] . " " . $row['middlename'] . " " . $row['suffix'];
                                 $course_code = $row['course_code'];
                                 $section = "BS".$row['program_abbrv'] . " " . $row['section_name'];
@@ -374,7 +381,7 @@ session_start();
                                 $day = $row['day'];
                                 $room_name = $row['room_name'];
                                 $class_hours = $row['time_s']. " - " .$row['time_e'];
-                                $needed = $row['needed'];
+                                $needed = "Need Lecturer";
 
                                 $count++;
                             
@@ -384,7 +391,7 @@ session_start();
                             <td class="loading_id"><?php echo $id;?></td>
                             <td><?php
 
-                               if(!empty($needed)){
+                               if(empty($faculty_id)){
                                 echo $needed;
                                }else{
                                 echo $faculty_name;
@@ -839,9 +846,9 @@ session_start();
                                     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
                                     LEFT JOIN semesters s ON s.semester_id = fl.sem_id
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fl.task_id
                                     WHERE pr.`department_id` = '$department_id'  
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                   AND tt.term_id = '$term_id'
                                      
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) = '$sectionName'
                                     GROUP BY fl.`fac_load_id`

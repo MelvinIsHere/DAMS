@@ -34,9 +34,9 @@ if($execute){
     if($type == 'Staff' || $type == 'Faculty'){
     	header("Location: ../staffs/ipcr.php");
     } elseif($type == 'Dean'){
-    	header("Location: ../deans/deans.php");
+    	header("Location: ../deans/ipcr.php");
     }elseif($type == 'Head'){
-    	header("Location: ../heads/heads.php");
+    	header("Location: ../heads/ipcr.php");
     }
     
 }else{
@@ -46,9 +46,9 @@ if($execute){
      if($type == 'Staff' || $type == 'Faculty'){
     	header("Location: ../staffs/ipcr.php");
     } elseif($type == 'Dean'){
-    	header("Location: ../deans/deans.php");
+    	header("Location: ../deans/ipcr.php");
     }elseif($type == 'Head'){
-    	header("Location: ../heads/heads.php");
+    	header("Location: ../heads/ipcr.php");
     }
 }
 
@@ -93,7 +93,7 @@ function get_task_id(){
 									tt.`task_name`
 								FROM tasks tt 
 								LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
-								WHERE tt.`task_name` =  'IPCR' AND t.`status` = 'ACTIVE'
+								WHERE tt.`task_name` =  'Individual Performance Commitment and Review Accomplishment' AND t.`status` = 'ACTIVE'
 						");
 	if($query){
 		if(mysqli_num_rows($query) >0){

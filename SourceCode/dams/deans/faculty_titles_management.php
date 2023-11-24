@@ -72,11 +72,25 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Faculty Titles in <?php echo $department_name;?></b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                        
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Title to Faculty Member</span></a>                                                                              
+                        </div>
+                         <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
                         </div>
                     </div>
                 </div>
@@ -499,9 +513,25 @@ session_start();
 <!-- ########################################################################################################################## -->
 
 
-                    <label for="faculty_title" class="form-label">Faculty titles</label>
-                                    <input class="form-control" list="faculty_titles" name="faculty_title" id="faculty_title" placeholder="Ente Course Code ">
-                                    <datalist id="faculty_titles">
+                  <label for="faculty_title" class="form-label">Faculty titles</label>
+                            <select class="form-control" name="faculty_title" id="faculty_title">
+                                <?php 
+                                    $sql = "SELECT title_description FROM titles";
+                                    $result = mysqli_query($conn, $sql);
+
+                                    while ($row = mysqli_fetch_array($result)) {
+                                        $title_description = $row['title_description'];
+                                ?>
+                                        <option value="<?php echo $title_description; ?>">
+                                            <?php echo $title_description; ?>
+                                        </option>
+                                <?php
+                                    }
+                                ?>
+                            </select>
+
+                                    <!-- <input class="form-control" list="faculty_titles" name="faculty_title" id="faculty_title" placeholder="Ente Course Code "> -->
+                                  <!--   <datalist id="faculty_titles">
                                         <?php 
                                             $sql = "SELECT DISTINCT title_description FROM titles";
                                             $result = mysqli_query($conn,$sql);
@@ -512,7 +542,7 @@ session_start();
                                         ?>
                                       <option value="<?php echo $title_description ?>">
                                       <?php }?>
-                                    </datalist>
+                                    </datalist> -->
 
 
 <!-- ########################################################################################################################## -->             
@@ -595,19 +625,21 @@ session_start();
                         </div>
                         <div class="form-group">
                              <label for="title" class="form-label">Course Code</label>
-                                    <input class="form-control" list="titles" name="title" id="title" placeholder="Choose a Title" required>
-                                    <datalist id="titles">
-                                        <?php 
-                                            $sql = "SELECT DISTINCT title_description FROM titles";
-                                            $result = mysqli_query($conn,$sql);
+                                   <select class="form-control" name="faculty_title" >
+                                <?php 
+                                    $sql = "SELECT title_description FROM titles";
+                                    $result = mysqli_query($conn, $sql);
 
-                                            while($row = mysqli_fetch_array($result)){
-                                                $title_description = $row['title_description'];
-                                            
-                                        ?>
-                                      <option value="<?php echo $title_description ?>">
-                                      <?php }?>
-                                    </datalist>
+                                    while ($row = mysqli_fetch_array($result)) {
+                                        $title_description = $row['title_description'];
+                                ?>
+                                        <option value="<?php echo $title_description; ?>">
+                                            <?php echo $title_description; ?>
+                                        </option>
+                                <?php
+                                    }
+                                ?>
+                            </select>
                         </div>
                         
                                   

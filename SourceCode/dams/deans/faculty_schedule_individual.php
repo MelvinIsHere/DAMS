@@ -65,7 +65,7 @@ session_start();
                 <?php include "../topbar/topbar_deans.php"; ?>
                 <div class="container-fluid tabcontent" id="createfill-Up">
                     <center>
-                            <h1 class="h3 mb-1 text-gray-800"> FACULTY SCHEDULE</h1>
+                            <h1 class="h3 mb-1 text-gray-800"><?php echo $faculty_name;?></h1>
                     </center>
 
                 <div class="card-body">
@@ -74,7 +74,7 @@ session_start();
                                 <div class="table-title">
                     <div class="row">
                         <div class="col d-flex justify-content-start">
-                              <a href="../php/automation_documents/generate_faculty_schedule.php?dept_id=<?php echo $department_id;?>&dept_abbrv=<?php echo $department_abbrv;?>&department_name=<?php echo $department_name; ?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
+                              <a href="official_time.php?faculty_name=<?php echo $faculty_name;?>" class="btn btn-success"><i class="material-icons">access_time</i> <span>Official time</span></a> 
                               <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty Schedule</span></a>
                         </div>
                         <div class="col d-flex justify-content-start">
@@ -151,8 +151,7 @@ session_start();
 
                                         
 
-                                    FROM faculty_schedule fs
-                                        
+                                   FROM faculty_schedule fs
                                     LEFT JOIN faculties f ON f.faculty_id = fs.faculty_id
                                     LEFT JOIN departments d ON d.department_id = fs.department_id
                                     LEFT JOIN courses c ON c.course_id = fs.course_id
@@ -161,12 +160,18 @@ session_start();
                                     LEFT JOIN academic_year ay ON ay.acad_year_id = fs.acad_year_id
                                     LEFT JOIN sections s ON s.section_id = fs.section_id
                                     LEFT JOIN programs p ON p.program_id = s.program_id
+                                    LEFT JOIN `time` t ON t.time_id = fs.time_start_id
+                                    LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fs.task_id
+
 
                                     
 
                                     WHERE fs.department_id = '$department_id'
+                                    
+                                    AND tt.term_id = '$term_id'
                                     AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name_rplc'
-                                    AND CONCAT(fs.day) LIKE '%$search%'
+                                    AND CONCAT(fs.day,fs.description) LIKE '%$search%'
                             
                             ");
                             $total_records = mysqli_fetch_array($result_count);
@@ -204,14 +209,16 @@ session_start();
                                     LEFT JOIN programs p ON p.program_id = s.program_id
                                     LEFT JOIN `time` t ON t.time_id = fs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = fs.task_id
 
 
                                     
 
                                     WHERE fs.department_id = '$department_id'
-                                    -- AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name'
+                                    
+                                    AND tt.term_id = '$term_id'
                                     AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name_rplc'
-                                    AND fs.day LIKE '%$search%'
+                                    AND CONCAT(fs.day,fs.description) LIKE '%$search%'
                                     ";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -812,69 +819,15 @@ session_start();
                                         <option value="Consultation">Consultation</option>
                                         <option value="Research">Research</option>
                                         <option value="Administrative">Administrative</option>
-                                        <option value="RCOT">RCOT</option>
+                                        <!-- <option value="Official time morning">Official time morning</option>
+                                        <option value="Official time afternoon">Official time Afternoon</option> -->
+                                        <option value="Lunch">Lunch</option>
                                         
                                     </select>
                         </div>               
                       
-                     <!-- <div class="form-group">
-    <label for="course_code" class="form-group" id="course_code_label">Choose a course:</label>
-
-    <select name="course_code" id="course_code" class="form-control" >
-        <option value="">Choose a course</option>
-        <?php 
-        $faculty_name = $_GET['faculty_name']; // Get the faculty name from the URL parameter
-        $sql = "SELECT cs.course_code AS 'Course Code'
-                FROM faculty_loadings fl
-                LEFT JOIN faculties fc ON fl.faculty_id = fc.faculty_id
-                LEFT JOIN courses cs ON fl.course_id = cs.course_id
-                LEFT JOIN sections sc ON fl.section_id = sc.section_id
-                LEFT JOIN programs pr ON sc.program_id = pr.program_id
-                LEFT JOIN departments dp ON dp.department_id = fl.dept_id
-                LEFT JOIN semesters s ON s.semester_id = fl.sem_id
-                LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
-                WHERE CONCAT(fc.lastname, ' ', fc.firstname, ' ', fc.middlename, ' ', fc.suffix) = '$faculty_name'
-                    AND s.status = 'ACTIVE'
-                    AND ay.status = 'ACTIVE'
-                GROUP BY cs.course_code";
-        $result = mysqli_query($conn, $sql);
-
-        while($row = mysqli_fetch_array($result)){
-            $course_code = $row['Course Code'];
-        ?>
-        
-        <option value="<?php echo $course_code; ?>"><?php echo $course_code; ?></option>
-        <?php }?>
-    </select>                        
-</div> -->
+           
 <!-- <div class="form-group">
-    <label for="section" class="form-label" id="section_dis_label">Section</label>
-    <select name="section" id="section_dis" class="form-control" >
-        <option value="">Choose a section</option>
-        <?php 
-            $sql = "SELECT DISTINCT
-                        p.`program_abbrv`,
-                        s.`section_name`
-                    FROM faculty_loadings fl
-                    LEFT JOIN sections s ON s.`section_id` = fl.`section_id`
-                    LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                    LEFT JOIN faculties f ON f.`faculty_id` = fl.`faculty_id`
-                    WHERE fl.dept_id = '$department_id'
-                    AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty_name';
-                    ";
-            $result = mysqli_query($conn, $sql);
-
-            while($row = mysqli_fetch_array($result)) {
-                $section_name = "BS".$row['program_abbrv']. " " .$row['section_name'];
-            ?>
-            
-            <option value="<?php echo $section_name; ?>"><?php echo $section_name; ?></option>
-            <?php 
-            }
-        ?>
-    </select>
-</div> -->
-<div class="form-group">
     <label for="browser" class="form-label" id="room_add_label">Room</label>
     <input class="form-control" list="rooms" name="room_name" id="room_add_input" placeholder="Choose a room" required>
         <datalist id="rooms">
@@ -889,7 +842,7 @@ session_start();
                 <option value="<?php echo $room ?>">
             <?php }?>
         </datalist>
-</div>
+</div> -->
 <div class="form-group">
     <label for="days" class="form-group">Choose a day:</label>
         <select name="days" id="days" class="form-control" required> 

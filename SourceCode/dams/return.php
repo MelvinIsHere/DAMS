@@ -1,15 +1,15 @@
 <?php
 session_start();
 $users_id = $_SESSION['user_id'];
-$task_owner_id = $_GET['user_id'];
-$status_id = $_GET['id'];
-$task_name = $_GET['task_name'];
-$user_id = $_GET['user_id'];
-$file_id = $_GET['file_id'];
+$task_owner_id = $_POST['user_id'];
+$status_id = $_POST['status_id'];
+$task_name = $_POST['task_name'];
+$user_id = $_POST['user_id'];
+$file_id = $_POST['file_id'];
+$remarks = $_POST['remarks'];
 
 
 include "config.php";
-include "php/functions.php";
 //validate if there are data 
 $delete_file = deletefile($file_id);
 if($delete_file){
@@ -23,23 +23,17 @@ if($delete_file){
     if($name != ""){
         
         
-    $notif_id = notifications_return($task_name); //insert new notifications about the document are returned
+    $notif_id = notifications_return($task_name,$remarks); //insert new notifications about the document are returned
     $user_notif_update = user_notif_update($user_id,$notif_id); //insert new user notifications
     if($user_notif_update != ""){
         if($notif_id != ""){
-        
-        
-              $act_log = activity_log_submitted_documents($users_id,$task_name);
-              if($act_log != ""){
+
                   
         
            echo "<script>alert('Work Returned!')
                     window.location.href = 'admin/submission_monitoring.php';</script>";
               }
-              else{
-                      echo "<script>alert('Something Went Wrong1!')
-            window.location.href = 'admin/submission_monitoring.php';</script>";
-              }
+              
 
             
         
@@ -47,7 +41,7 @@ if($delete_file){
 
  
         
-    }
+    
     else{
            echo "<script>alert('Something Went Wrong3!')
             window.location.href = 'admin/submission_monitoring.php';</script>";
@@ -109,6 +103,41 @@ if($delete_file){
         return false;
     }
  }
+function notifications_return($task_name,$remarks){
+    include "config.php";
+    $content = "Admin has return your task " . $task_name . " ".$remarks ;
+    $sql = mysqli_query($conn,"INSERT INTO notifications(content,is_task) VALUES('$content','yes')");
+    if(!$sql){
+        return "";
+        
+    }
+    else{
+        return $conn->insert_id;
+    }
 
+}
+function user_notif_update($user_id,$notif_id){
+    include "config.php";
+    $sql = mysqli_query($conn,"INSERT INTO user_notifications(status,notif_id,user_id) VALUES(0,'$notif_id','$user_id')");
+    if(!$sql){
+        return "";
+    }
+    else{
+        return "success";
+    }
+}
+function getName($user_id){
+    include "config.php";
+    $sql = mysqli_query($conn,"SELECT department_name FROM departments WHERE $user_id = '$user_id'");
+    $info = mysqli_fetch_assoc($sql);
+    if ($info) {
+        $name =  $info['department_name'];
+        return $name;
+    }
+    else{
+        
+        return "";
+    }
 
+}
 ?>

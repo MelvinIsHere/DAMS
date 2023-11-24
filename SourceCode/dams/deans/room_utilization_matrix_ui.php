@@ -77,12 +77,39 @@ session_start();
                         <div class="col-xs-6">
                             <!-- <h2>Class Schedule</b></h2> -->
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col d-flex justify-content-start">
                             <a href="../php/load_room_utilization_matrix.php?department_id=<?php echo $department_id;?>" class="btn btn-success" ><i class="material-icons">&#xE147;</i> <span>Load Rooms</span></a>
                             <a href="../php/automation_documents/generate_room_utilization.php?dept_id=<?php echo $department_id?>&department_name=<?php echo $department_name?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> 
 
                             
                         </div>
+                             <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                                                    
                     </div>
                 </div>
@@ -107,7 +134,7 @@ session_start();
 
                                 include "../config.php";
                                 
-                            if(isset($_GET['search']) && isset($_GET['section_name'])){
+                            if(isset($_GET['search'])){
                                 $search = $_GET['search'];
                                 
                             
@@ -146,8 +173,7 @@ session_start();
                                 
                                 WHERE dp.department_id = '$department_id'
                                 AND tt.term_id = '$term_id'
-                                AND CONCAT('BS',p.program_abbrv,' ',s.section_name) = '{$_GET['section_name']}'
-                                AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
+                                AND CONCAT(rm.room_name,cs.day,c.course_code) LIKE '%$search%'
                             
                             
                             ");
@@ -156,8 +182,9 @@ session_start();
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
 
-                            $sql = " SELECT 
+                            $sql = "  SELECT 
                                 rum.`rum_id`,
+                                fl.faculty_id,
                                 c.`course_code`,
                                 fc.`firstname`,
                                 fc.`middlename`,
@@ -197,8 +224,7 @@ session_start();
                                 
                                 WHERE dp.department_id = '$department_id'
                                 AND tt.term_id = '$term_id'
-                                AND CONCAT('BS',p.program_abbrv,' ',s.section_name) = '{$_GET['section_name']}'
-                                AND CONCAT(r.room_name,fs.day) LIKE '%$search%'
+                                AND CONCAT(rm.room_name,cs.day,c.course_code) LIKE '%$search%'
                                     ";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -207,23 +233,32 @@ session_start();
                             $results->data_seek($off_set);
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
-                                $id = $row['class_sched_id'];
-                                $faculty_name = $row['lastname'] . " " . $row['firstname'] . " " . $row['middlename'] . " " . $row['suffix'];
-                                $course_code = $row['course_code'];
-                                $section = "BS".$row['program_abbrv'] . " " . $row['section_name'];
-                                $studs = $row['no_of_students'];
-                                
-                                $day = $row['day'];
+                                $id = $row['rum_id'];
+                                $faculty_id = $row['faculty_id'];
+                                $faculty_name = $row['firstname'] . " ".$row['middlename']." ".$row['lastname']." ".$row['suffix'];
+                                $section = "BS".$row['program_abbrv']." ".$row['section_name'];
                                 $room_name = $row['room_name'];
-                                $class_hours = $row['time_s']. " - " .$row['time_e'];
+                                $course_code = $row['course_code'];
+                                $studs = $row['no_of_students'];
+                                $day = $row['day'];
+                                $class_hours = $row['time start'] ." - ".$row['time end'];
+                                $needed = $row['needed'];
+                                
 
                                 $count++;
                             
 
                          ?>
-                          <tr>
+                        <tr>
                             <td class="loading_id"><?php echo $id;?></td>
-                            <td><?php echo $faculty_name;?></td>
+                            <td><?php
+
+                               if(empty($faculty_id)){
+                                echo "Need Lecturer";
+                               }else{
+                                echo $faculty_name;
+                               }
+                            ?></td>
 
 
                             
@@ -233,6 +268,7 @@ session_start();
                             <td><?php echo $studs; ?></td>
                             <td><?php echo $day;?></td>
                             <td><?php echo $class_hours; ?></td>
+                            
                             
                             
                             
@@ -290,6 +326,7 @@ session_start();
                             $sql = "  
                                SELECT 
                                 rum.`rum_id`,
+                                fl.faculty_id,
                                 c.`course_code`,
                                 fc.`firstname`,
                                 fc.`middlename`,
@@ -345,6 +382,7 @@ session_start();
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
                                 $id = $row['rum_id'];
+                                $faculty_id = $row['faculty_id'];
                                 $faculty_name = $row['firstname'] . " ".$row['middlename']." ".$row['lastname']." ".$row['suffix'];
                                 $section = "BS".$row['program_abbrv']." ".$row['section_name'];
                                 $room_name = $row['room_name'];
@@ -363,8 +401,8 @@ session_start();
                             <td class="loading_id"><?php echo $id;?></td>
                             <td><?php
 
-                               if(!empty($needed)){
-                                echo $needed;
+                               if(empty($faculty_id)){
+                                echo "Need Lecturer";
                                }else{
                                 echo $faculty_name;
                                }

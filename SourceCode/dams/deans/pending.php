@@ -76,7 +76,7 @@ $task_id = $_GET['id'];
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><?php echo $task_name; ?></h5>
-                        <h6 class="card-subtitle mb-2 text-muted"><strong>Due date : </strong><?php echo $task_posted; ?></h6>
+                        <h6 class="card-subtitle mb-2 text-muted"><strong>Due date : </strong><?php echo $task_due; ?></h6>
                         <hr>
                         <h5 class="card-title">Description</h5>
                         <p class="card-text"><?php echo $task_desc; ?><br>See google doc for reference.</p>

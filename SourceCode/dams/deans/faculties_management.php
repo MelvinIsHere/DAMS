@@ -73,13 +73,27 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Faculties  in <?php echo $department_name;?></b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                        
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty</span></a>
                               
                                                 
+                        </div>
+                         <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
                         </div>
                     </div>
                 </div>
@@ -89,8 +103,7 @@ session_start();
                             <th>#</th>
                             <th>Faculty Name</th>
                             <th>Type</th>
-                            <th>Designation</th>
-                            <th>Position</th>
+                           
                            
                             <th>Actions</th>
                         </tr>
@@ -115,16 +128,28 @@ session_start();
                             $adjacents = "2";
 
                             $result_count = mysqli_query($conn, "SELECT
-                            COUNT(*)  AS total_records, firstname,middlename,lastname FROM faculties WHERE department_id = '$department_id'
+                            COUNT(*)  AS total_records FROM faculties WHERE department_id = '$department_id'
                              AND CONCAT(firstname,middlename,lastname) LIKE '%$search%'");
                             $total_records = mysqli_fetch_array($result_count);
                             $total_records = $total_records['total_records'];
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
 
-                            $sql = "SELECT faculty_id, firstname, lastname, middlename, suffix, is_permanent, is_guest, is_partTime
-                                FROM faculties
-                                WHERE department_id = '$department_id'
+                            $sql = "SELECT 
+                                        faculty_id,
+                                        firstname,
+                                        middlename,
+                                        lastname,
+                                        suffix,
+                                        is_permanent,
+                                        is_guest,
+                                        is_partTime
+                                     
+                                        
+                                        
+                                    FROM faculties
+                                  
+                                    WHERE department_id = '$department_id'
                                 AND CONCAT(firstname,middlename,lastname) LIKE '%$search%';";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -197,22 +222,19 @@ session_start();
                             $sql = "
 
                                     SELECT 
-                                        f.faculty_id,
-                                        f.`firstname`,
-                                        f.`middlename`,
-                                        f.`lastname`,
-                                        f.`suffix`,
-                                        f.is_permanent,
-                                        f.is_guest,
-                                        f.is_partTime,
-                                        d.designation,
-                                        t.`title_description`
+                                        faculty_id,
+                                        firstname,
+                                        middlename,
+                                        lastname,
+                                        suffix,
+                                        is_permanent,
+                                        is_guest,
+                                        is_partTime
+                                     
                                         
                                         
-                                    FROM faculties f
-                                    LEFT JOIN designation d ON d.designation_id = f.`designation_id`
-                                    
-                                    LEFT JOIN titles t ON t.`title_id` = f.position_id
+                                    FROM faculties
+                                  
                                     WHERE department_id = '$department_id'";
                             $results = $conn->query($sql);
                             if(!$results){
@@ -229,8 +251,7 @@ session_start();
                                 $is_permanent = $row['is_permanent'];
                                 $is_guest = $row['is_guest'];
                                 $is_partTime = $row['is_partTime'];
-                                $designation = $row['designation'];
-                                $position = $row['title_description'];
+                                
 
                                 $count++;
                             
@@ -253,8 +274,7 @@ session_start();
 
 
                             ;?></td>
-                            <td><?php echo $designation;?></td>
-                            <td><?php echo $position;?></td>
+                            
                             
                             <td>
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>

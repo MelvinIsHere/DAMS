@@ -196,7 +196,7 @@ function plot($day,$dept_id,$conn,$spreadsheet,$faculty,$col_sched,$col_room){
             LEFT JOIN `time` t2 ON t2.time_id = fs.time_end_id                                
             WHERE fs.department_id = '$dept_id'
             AND CONCAT(f.lastname,' ',f.firstname,' ',f.middlename,' ',f.suffix) = '$faculty'
-            AND fs.day = '$day' 
+            AND fs.day = '$day' AND fs.description != 'Official time morning' AND fs.description != 'Official time afternoon'
                 ";
 
 

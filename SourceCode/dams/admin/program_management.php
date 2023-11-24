@@ -74,12 +74,37 @@ include "../header/header.php"?>
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Programs</b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                      
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Program</span></a>                                                                              
                         </div>
+                             <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                     </div>
                 </div>
                 <table class="table table-striped table-hover" id="table">
@@ -552,8 +577,8 @@ include "../header/header.php"?>
                         
                         <div class="form-group">
                              <label for="department_name" class="form-label">Department</label>
-                                    <input class="form-control" list="department_names" name="department_name" id="department_name" placeholder="Enter department name" required>
-                                    <datalist id="department_names">
+                                    <select class="form-control"  name="department_name" id="department_name" placeholder="Enter department name" required>
+                                    
                                         <?php 
                                             $sql = "SELECT DISTINCT department_name FROM departments";
                                             $result = mysqli_query($conn,$sql);
@@ -562,9 +587,9 @@ include "../header/header.php"?>
                                                 $department_name = $row['department_name'];
                                             
                                         ?>
-                                      <option value="<?php echo $department_name ?>">
+                                      <option><?php echo $department_name ?></option>
                                       <?php }?>
-                                    </datalist>
+                                    </select>
                         </div>
                        
                         

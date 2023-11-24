@@ -74,14 +74,39 @@ $term_id = $_SESSION['term_id'];
                 <div class="table-wrapper">
                     <div class="table-title">
                         <div class="row">
-                            <div class="col-xs-6">
-                                <h2>Individual Performance Commitment and Review</b></h2>
-                            </div>
-                            <div class="col-xs-6">
+                           
+                            <div class="col d-flex justify-content-start">
                                 <a href="#addEmployeeModal" class="btn btn-success" data-toggle ="modal" ><i class="material-icons">&#xE147;</i> <span>Add output</span></a>
                                 <a href="#ipcrmodal" data-toggle="modal" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                                                 
                             </div>
+                               <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                         </div>
                     </div>
                     <table class="table table-striped table-hover" style="table-layout: auto;">
@@ -122,28 +147,39 @@ $term_id = $_SESSION['term_id'];
                                     $adjacents = "2";
                                     $result_count = mysqli_query($conn, "SELECT
                                         COUNT(*) AS total_records
-                                        FROM ipcr_table i
-                                        LEFT JOIN departments dp ON dp.`department_id`=i.`department_id`
-                                        WHERE i.`department_id` = '$department_id' # insert dept_id
-                                        AND major_output LIKE '%$search%'");
+                                        FROM ipcr_table it
+                                        
+                                            LEFT JOIN tasks tt ON tt.task_id = it.task_id
+                                            LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+
+                                            WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id'
+                                            AND CONCAT(it.major_output,it.description,it.category) LIKE '%$search%'");
                                     $total_records = mysqli_fetch_array($result_count);
                                     $total_records = $total_records['total_records'];
                                     $total_no_of_page = ceil($total_records / $total_records_per_page);
                                     $second_last = $total_no_of_page - 1;
                                     $sql = "SELECT
-                                                i.ipcr_id,
-                                                i.major_output,
-                                                i.success_indicator,
-                                                i.actual_accomplishment,
-                                                i.rating,
-                                                i.remarks,
-                                                i.category,
-                                                i.description,
-                                                dp.department_name
-                                            FROM ipcr_table i
-                                            LEFT JOIN departments dp ON dp.`department_id`=i.`department_id`
-                                            WHERE i.`department_id` = '$department_id'
-                                            AND major_output LIKE '%$search%'";                                    
+                                                it.ipcr_id, 
+                                                it.major_output,
+                                                it.`success_indicator`,
+                                                it.`actual_accomplishment`,
+                                                it.`remarks`,
+                                                it.`description`,
+                                                it.`category`,
+                                                it.quality,
+                                                it.efficiency,
+                                                it.timeliness,
+                                                it.average,
+                                                tt.`task_id`,
+                                                t.`term`,
+                                                t.`status`
+                                                
+                                            FROM ipcr_table it 
+                                            LEFT JOIN tasks tt ON tt.task_id = it.task_id
+                                            LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
+
+                                            WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id'
+                                            AND CONCAT(it.major_output,it.description,it.category) LIKE '%$search%'";                                    
                                     $results = $conn->query($sql);
                                     if(!$results){
                                         die("Query failed: " . mysqli_error($conn));
@@ -151,32 +187,43 @@ $term_id = $_SESSION['term_id'];
                                     $results->data_seek($off_set);
                                     $count = 1;
                                     while ($row = mysqli_fetch_array($results)) {
-                                        $id = $row['ipcr_id'];
+                                          $ipcr_id = $row['ipcr_id'];
                                         $major_output = $row['major_output'];
                                         $success_indicator = $row['success_indicator'];
                                         $actual_accomplishment = $row['actual_accomplishment'];
-                                        $rating = $row['rating'];
+                                        
                                         $remarks = $row['remarks'];
-                                        $department_name = $row['department_name'];   
+                                        $quality = $row['quality'];
+                                        $efficiency = $row['efficiency'];
+                                        $timeliness = $row['timeliness'];
+                                         
                                         $category = $row['category'];
-                                        $description = $row['description'];                          
+                                        $description = $row['description'];
+                                                                  
                                         $count++;                            
                             ?>
                                         <tr>
-                                            <td class="loading_id"><?php echo $id;?></td>
+                                            <td class="loading_id"><?php echo $ipcr_id;?></td>
                                             
                                             <td><?php echo $major_output;?></td>
                                             <td><?php echo $success_indicator;?></td>
                                             <td><?php echo $category;?></td>
-                                            <td><?php echo $description;?></td>
+                                            <td  
+                                            <?php if ($type == 'Staff') {
+                                                echo "hidden";
+                                            }?>>
+                                            <?php echo $description;?></td>
                                             <td><?php echo $actual_accomplishment;?></td>
-                                            <td><?php echo $rating; ?></td>
+                                            <td><?php echo $quality; ?></td>
+                                            <td><?php echo $efficiency; ?></td>
+                                            <td><?php echo $timeliness; ?></td>
                                             <td><?php echo $remarks; ?></td>                           
-                                            <td colspan="4">
+                                            <td>
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                                                 <a href="#ipcrmodal" class="task" data-toggle="modal"><i class="fa-check-circle" data-toggle="tooltip" title="task">&#xE872;</i></a>
-                                                <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                                <a href="#accomplishment"data-toggle="modal" class="task"><i class="material-icons" data-toggle="tooltip" title="Check Circle">check_circle</i></a>
+                                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                                             </td>
+
                                         </tr>
                             <?php 
                                         // Break the loop if the desired limit is reached
@@ -416,13 +463,14 @@ $term_id = $_SESSION['term_id'];
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <form id="update_loading" action="../php/insert_accomplishment.php" method="POST">
+            <form id="update_loading" action="../php/update_ipcr.php" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Form</h5>
                 </div>
                 <div class="modal-body" id="editModal-body">
                     <div id="target">
                         <div class="form-group">
+                            <input type="text" value="<?php echo $type;?>" hidden name="type">
                            <label for="faculty_name" class="form-label">Major Final Output</label>
                             <input type="text" name="loading_id" id="loading_id" hidden style="height: 0px; width:0px">
                             <input class="form-control" name="mfo" id="mfo_update" > 

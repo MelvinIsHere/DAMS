@@ -73,14 +73,39 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Sections</b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                        
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Section</span></a>
                               
                                                 
                         </div>
+                         <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                     </div>
                 </div>
                 <table class="table table-striped table-hover" id="table">
@@ -112,17 +137,15 @@ session_start();
                             $next_page = $page_no + 1;
                             $adjacents = "2";
 
-                            $result_count = mysqli_query($conn, "SELECT COUNT(*) AS total_records,
-                                                     s.section_id AS 'Section Id',
-                                                    p.program_abbrv AS 'Program Abbrv',
-                                                    s.section_name AS 'Section Name',
-                                                    s.no_of_students AS 'Students',
-                                                    d.department_name
-                                                    FROM sections s
-                                                    LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                                    LEFT JOIN departments d ON d.`department_id` = p.`department_id`
-                                                    WHERE CONCAT(p.program_abbrv,s.section_name,d.department_name) LIKE '%$search%'");
+                         $result_count = mysqli_query($conn, "SELECT COUNT(*) AS total_records
+                                           
+                                        FROM sections s
+                                        LEFT JOIN programs p ON p.program_id = s.program_id
+                                        LEFT JOIN departments d ON d.department_id = p.department_id
+                                        WHERE CONCAT(s.section_name,' ', d.department_name) LIKE '%$search%'");
+
                             $total_records = mysqli_fetch_array($result_count);
+
                             $total_records = $total_records['total_records'];
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
                             $second_last = $total_no_of_page - 1;
@@ -136,7 +159,7 @@ session_start();
                                     FROM sections s 
                                     LEFT JOIN programs p ON p.`program_id` = s.`program_id`
                                     LEFT JOIN departments d ON d.`department_id` = p.`department_id`
-                                     WHERE CONCAT(p.program_abbrv,s.section_name,d.department_name) LIKE '%$search%'";
+                                     WHERE CONCAT(p.program_abbrv,' ',s.section_name,d.department_name) LIKE '%$search%'";
                             $results = $conn->query($sql);
                             if(!$results){
                                 die("Query failed: " . mysqli_error($conn));

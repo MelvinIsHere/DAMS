@@ -73,13 +73,27 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>Sections in <?php echo $department_name;?></b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                     
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Section</span></a>
                               
                                                 
+                        </div>
+                         <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
                         </div>
                     </div>
                 </div>
@@ -118,11 +132,11 @@ session_start();
                                                     p.program_abbrv AS 'Program Abbrv',
                                                     s.section_name AS 'Section Name',
                                                     s.no_of_students AS 'Students'
-                                                    FROM sections s
+                                                     FROM sections s 
                                                     LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                                    LEFT JOIN departments d ON d.`department_id` = p.`department_id`
+                                                    LEFT JOIN faculties f ON f.faculty_id = s.adviser_id
                                                     WHERE p.`department_id` = '$department_id'
-                                                    AND CONCAT(p.program_abbrv,s.section_name) LIKE '%$search%'");
+                                                    AND CONCAT(p.program_abbrv,s.section_name,f.firstname,f.lastname) LIKE '%$search%'");
                             $total_records = mysqli_fetch_array($result_count);
                             $total_records = $total_records['total_records'];
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
@@ -132,11 +146,16 @@ session_start();
                                     s.section_id AS 'Section Id',
                                     p.program_abbrv AS 'Program Abbrv',
                                     s.section_name AS 'Section Name',
-                                    s.no_of_students AS 'Students'
+                                    s.no_of_students AS 'Students',
+                                    f.firstname,
+                                    f.middlename,
+                                    f.lastname,
+                                    f.suffix
                                     FROM sections s 
                                     LEFT JOIN programs p ON p.`program_id` = s.`program_id`
-                                    WHERE p.`department_id` = '$department_id' 
-                                    AND CONCAT(p.program_abbrv,s.section_name) LIKE '%$search%'";
+                                    LEFT JOIN faculties f ON f.faculty_id = s.adviser_id
+                                    WHERE p.`department_id` = '$department_id'
+                                    AND CONCAT(p.program_abbrv,s.section_name,f.firstname,f.lastname) LIKE '%$search%'";
                             $results = $conn->query($sql);
                             if(!$results){
                                 die("Query failed: " . mysqli_error($conn));
@@ -144,10 +163,11 @@ session_start();
                             $results->data_seek($off_set);
                             $count = 1;
                             while ($row = mysqli_fetch_array($results)) {
-                                $id = $row['Section Id'];
+                               $id = $row['Section Id'];
                                 $section_name = $row['Program Abbrv'] . " " . $row['Section Name'];
 
                                 $studs = $row['Students'];
+                                $adviser = $row['firstname']." ".$row['middlename']." ".$row['lastname']." ".$row['suffix']; 
 
                                 $count++;
                             
@@ -156,6 +176,7 @@ session_start();
                         <tr>
                             <td class="section_id"><?php echo $id;?></td>
                             <td><?php echo $section_name;?></td>
+                            <td><?php echo $adviser;?></td>
                             <td><?php echo $studs;?></td>
                             
                             <td>

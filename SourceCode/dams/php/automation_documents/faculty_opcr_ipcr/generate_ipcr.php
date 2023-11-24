@@ -177,7 +177,7 @@ $ipcr_query =  "SELECT
               FROM ipcr_table it 
               LEFT JOIN tasks tt ON tt.task_id = it.task_id
               LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
-              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND  it.category = 'Instruction'";
+              WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id' AND  it.category = 'Instruction'";
 $data = [];
 $ipcr = mysqli_query($conn, $ipcr_query);
 if(mysqli_num_rows($ipcr) > 0){
@@ -357,7 +357,7 @@ $ipcr_query_strat = "SELECT
               FROM ipcr_table it 
               LEFT JOIN tasks tt ON tt.task_id = it.task_id
               LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
-              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND category = 'Strategic' AND description = 'Research'";
+              WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id' AND category = 'Strategic' AND description = 'Research'";
 $data = [];
 $ipcr_strat = mysqli_query($conn, $ipcr_query_strat);
 if(mysqli_num_rows($ipcr_strat) > 0){
@@ -513,7 +513,7 @@ $ipcr_query_strat_exten = "SELECT
               FROM ipcr_table it 
               LEFT JOIN tasks tt ON tt.task_id = it.task_id
               LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
-              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND category = 'Strategic' AND description = 'Extension'";
+              WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id' AND category = 'Strategic' AND description = 'Extension'";
 $data = [];
 $ipcr_strat_exten = mysqli_query($conn, $ipcr_query_strat_exten);
 if(mysqli_num_rows($ipcr_strat_exten) > 0){
@@ -680,7 +680,7 @@ $ipcr_query_strat = "SELECT
               FROM ipcr_table it 
               LEFT JOIN tasks tt ON tt.task_id = it.task_id
               LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
-              WHERE it.user_id = '$user_id' AND tt.task_id = '$task_id' AND category = 'Support'";
+              WHERE it.user_id = '$user_id' AND tt.term_id = '$term_id' AND category = 'Support'";
 $data = [];
 $ipcr_strat = mysqli_query($conn, $ipcr_query_strat);
 if(mysqli_num_rows($ipcr_strat) > 0){
@@ -989,11 +989,11 @@ function get_task_id($term_id){
       
 function get_start_of_term($term_id){
        include "../../config.php";
-       $query = mysqli_query($conn,"SELECT start FROM terms WHERE term_id = '$term_id'");
+       $query = mysqli_query($conn,"SELECT start,year FROM terms WHERE term_id = '$term_id'");
        if($query){
               if(mysqli_num_rows($query)>0){
                      $row = mysqli_fetch_assoc($query);
-                     $start = $row['start'];
+                     $start = $row['start'] ." ".$row['year'];
 
                      return $start; 
               }else{
@@ -1005,11 +1005,11 @@ function get_start_of_term($term_id){
 }
 function get_end_of_term($term_id){
        include "../../config.php";
-       $query = mysqli_query($conn,"SELECT end FROM terms WHERE term_id = '$term_id'");
+       $query = mysqli_query($conn,"SELECT end,year FROM terms WHERE term_id = '$term_id'");
        if($query){
               if(mysqli_num_rows($query)>0){
                      $row = mysqli_fetch_assoc($query);
-                     $end = $row['end'];
+                     $end = $row['end'] ." ".$row['year'];
 
                      return $end; 
               }else{

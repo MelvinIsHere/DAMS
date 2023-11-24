@@ -37,6 +37,22 @@ $dept_id = $_GET['dept_id'];
 $dean_id = $_SESSION['user_id'];
 $term_id =$_GET['term_id'];
 
+$supervisor = $_GET['supervisor'];
+
+
+
+
+//plot supervisor
+$spreadsheet->getActiveSheet()->setCellValue('B12',"AAA");
+
+
+
+
+
+
+
+
+
 
 
 

@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -105,7 +106,7 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE   acad_year_id = '$acad_id' AND sem_id = '$sem_id'
+                        WHERE term_id = '$term_id'
                         GROUP BY due_date,task_name";
                         $result = $conn->query($sql);
                         while($row = mysqli_fetch_array($result)){

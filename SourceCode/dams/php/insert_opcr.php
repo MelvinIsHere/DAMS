@@ -61,7 +61,7 @@ function get_task_id(){
 							tt.`task_name`
 						FROM tasks tt 
 						LEFT JOIN terms t ON t.`term_id` = tt.`term_id`
-						WHERE tt.`task_name` =  'OPCR' AND t.`status` = 'ACTIVE'");
+						WHERE tt.`task_name` =  'Office Performance Commitment and Review Target' AND t.`status` = 'ACTIVE'");
 	if($query){
 		if(mysqli_num_rows($query)>0){
 			$row = mysqli_fetch_assoc($query);

@@ -187,7 +187,7 @@ session_start();
                                             }?>">
                                                 <?php
                                                 if ($status == 1 || $status == null) {
-                                                    echo "Not Submitted";
+                                                    echo "Not yet Submitted";
                                                 }
                                                 else{
                                                     echo "Submitted";
@@ -195,9 +195,9 @@ session_start();
 
                                              ?></td>
                             
-                            <td style="display: inline-flex; ">
-                                <a href="../view_files.php?id=<?php echo $file_id?>" class="btn btn-success" style="margin-right: 10px">View</a>
-                                <a href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report&user_id=<?php echo $user_id; ?>" class="btn-warning btn">Return</a>
+                             <td>
+                                <a href="../view_files.php?file_id=<?php echo $file_id?>" ><i class="material-icons" data-toggle="tooltip">download</i></a>
+                                <a href="../return.php?id=<?php echo $status_id ?>&task_name=<?php echo $task_name;?>&user_id=<?php echo $user_id; ?>&file_id=<?php $file_id;?>" ><i class="material-icons" data-toggle="tooltip">reply</i></a>
                             </td>
                         </tr>
                     <?php 
@@ -284,11 +284,13 @@ session_start();
 
                          ?>
                         <tr>
-                            <td><?php echo $user_id;?></td>
+                            <td class="file_id"><?php echo $file_id;?></td>
                                             <td><?php echo $email;?></td>
                                             <td><?php echo $position;?></td>
                                             <td><?php echo $abbrv;?></td>
                                             <td><?php echo $due_date;?></td>
+                                            <td hidden><?php echo $status_id;?></td>
+                                            <td hidden><?php echo $user_id;?></td>
                                             <td class="<?php if ($status == 1) {
                                                 echo 'ns';
                                             }
@@ -297,7 +299,7 @@ session_start();
                                             }?>">
                                                 <?php
                                                 if ($status == 1 || $status == null) {
-                                                    echo "Not Submitted";
+                                                    echo "Not yet Submitted";
                                                 }
                                                 else{
                                                     echo "Submitted";
@@ -305,10 +307,9 @@ session_start();
 
                                              ?></td>
                             
-                            <td style="display: inline-flex; ">
-                                <?php echo " $file_id";?>
-                                <a href="../view_files.php?file_id=<?php echo $file_id?>" class="btn btn-success" style="margin-right: 10px">View</a>
-                                <a href="../return.php?id=<?php echo $status_id ?>&task_name=Accomplishment%20Report&user_id=<?php echo $user_id; ?>&file_id=<?php echo $file_id;?>" class="btn-warning btn">Return</a>
+                             <td>
+                                   <a href="../view_files.php?file_id=<?php echo $file_id?>" ><i class="material-icons" data-toggle="tooltip">download</i></a>
+                                <a href="#return_modal" data-toggle="modal"  class="return"><i class="material-icons" data-toggle="tooltip">reply</i></a>
                             </td>
                         </tr>
                     <?php 
@@ -477,8 +478,8 @@ session_start();
 
                             <script type="text/javascript">
                                 $(document).ready(function() {
-                                $('.edit').on('click',function(){
-                                    $('#editModal').modal('show');
+                                $('.return').on('click',function(){
+                                    $('#return_modal').modal('show');
 
                                     $tr = $(this).closest('tr');
 
@@ -488,11 +489,12 @@ session_start();
 
                                     console.log(data);
 
-                                     var program_id  = $(this).closest('tr').find('.program_id').text();
-                                    console.log(program_id)
-                                    $('#program_id').val(program_id);;
-                                    $('#program_name').val(data[1]);
-                                    $('#program_abbrv').val(data[2]);
+                                     var file_id  = $(this).closest('tr').find('.file_id').text();
+                                    console.log(file_id)
+                                    $('#file_id').val(file_id);;
+                                    $('#status_id').val(data[5]);
+                                    $('#user_id').val(data[6]);
+                                    // $('#program_abbrv').val(data[2]);
                                     
                                     
 
@@ -501,17 +503,7 @@ session_start();
 
 
 
-                                $(document).ready(function() {
-                                $('.delete').on('click',function(e){
-                                    e.preventDefault();
-
-                                    var program_id  = $(this).closest('tr').find('.program_id').text();
-                                    console.log(program_id)
-                                    $('#delete_id').val(program_id);;
-                                    $('#deleteModal').modal('show');  
-
-                                });
-                                });
+                               
                             </script>
                         <!-- 
                         <script type="text/javascript">
@@ -532,7 +524,52 @@ session_start();
 <!-- end of container -->
 </div>
 
+    <div class="modal fade" id="return_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                
+                    
 
+
+
+
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Return work</h5>
+                    
+                </div>
+                <div class="modal-body" id="editModal-body">
+                    <form action="../return.php" method="POST">
+                         <input type="text" name="file_id" id="file_id" hidden> 
+                        <input type="text" name="status_id" id="status_id" hidden> 
+                        <input type="text" name="task_name" value="Faculty Loading" hidden>
+                        <input type="text" name="user_id" id="user_id" hidden>
+                        <label class="form-label">Remarks</label>
+                        <input type="text" name="remarks" class="form-control" placeholder="Insert remarks" required>
+                    
+                   
+                  
+
+             
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit" >Save</button>
+                    <button class="btn btn-warning" type="button" data-dismiss="modal">Back</button>
+                    </form>
+                </div>
+
+
+
+
+
+                
+                
+            </div>
+        </div>
+    </div>    
 
             
                 <!-- /.container-fluid -->

@@ -81,7 +81,7 @@ session_start();
                                 <i class="material-icons">&#xE147;</i> 
                                     <span>Add New Faculty Loading</span>
                             </a>
-                            <a href="../php/automation_documents/generate_loading.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>" class="btn btn-success">
+                            <a href="../php/automation_documents/generate_loading.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>&term_id=<?php echo $term_id;?>" class="btn btn-success">
                                 <i class="material-icons">&#xE147;</i> 
                                     <span>Create Document</span>
                             </a> 
@@ -725,6 +725,7 @@ session_start();
                     <div class="modal-body">                    
                         <div class="form-group">
                             <label for="lname" class="form-label">Faculty</label>
+                            <
                                     <input class="form-control" list="lnames" name="faculty" id="lname" placeholder="Enter faculty name">
                                     <datalist id="lnames">
                                         <?php 

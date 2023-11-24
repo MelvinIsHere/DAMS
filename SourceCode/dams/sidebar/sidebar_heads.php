@@ -3,9 +3,7 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
+               
                 <div class="sidebar-brand-text mx-3"><?php echo $department_abbrv; ?></div>
             </a>
 
@@ -64,6 +62,22 @@
                     </div>
                 </div>
             </li>
+
+
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Account Manager
+            </div>
+          
+
+
+           <li class="nav-item active">
+                <a class="nav-link tablinks" href="account_management.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Accounts</span></a>
+            </li>  
             <hr class="sidebar-divider">
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -82,6 +96,7 @@
                       
                         <a class="collapse-item tablinks"  href="ipcr.php">IPCR</a>
                         <a class="collapse-item tablinks"  href="opcr.php">OPCR</a>
+                        <a class="collapse-item tablinks"  href="official_time.php">RCOT</a>
                     
                         
                     </div>

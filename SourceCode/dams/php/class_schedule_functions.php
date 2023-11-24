@@ -101,7 +101,7 @@ function time_id_start($time_start){
 		$time_id = $row['time_id'];
 		return $time_id;
 	}else{
-		return "error";
+		return mysqli_error($conn);
 	}
 	
 }
@@ -117,7 +117,7 @@ function time_id_end($time_end){
 
 		return $time_id;
 	}else{
-		return "error";
+		return mysqli_error($conn);
 	}
 	
 }
@@ -147,7 +147,7 @@ function get_section_id_by_section_name_update($section,$dept_id){
 	}
 }
 
-function get_fac_load_id($section_id,$department_id,$course_id){
+function get_fac_load_id($section_id,$department_id,$course_id,$term_id){
 
 include "config.php";
 
@@ -155,20 +155,24 @@ $sql = "SELECT
 fl.`fac_load_id`
 FROM faculty_loadings fl
 
-LEFT JOIN semesters sm ON sm.`semester_id` = fl.`sem_id`
-LEFT JOIN academic_year ay ON ay.`acad_year_id` = fl.`acad_year_id`
+LEFT JOIN tasks tt ON tt.task_id = fl.task_id
 WHERE fl.`dept_id` = '$department_id' 
- AND fl.section_id = '$section_id' AND sm.`status` = 'ACTIVE' AND ay.`status` = 'ACTIVE'
- AND course_id = '$course_id'
+AND fl.section_id = '$section_id' AND tt.term_id = '$term_id'
+AND course_id = '$course_id'
 ";
 $result = mysqli_query($conn,$sql);
-if(mysqli_num_rows($result) > 0){
+if($result){
+	if(mysqli_num_rows($result) > 0){
 		$row = mysqli_fetch_assoc($result);
 		$fac_load_id = $row['fac_load_id'];
 		return $fac_load_id;
 	}else{
 		return "error";
 	}
+}else{
+				return "error";
+}
+
 }
 function get_room_id_by_room_name($room_name){
 	include "config.php";

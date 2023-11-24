@@ -52,16 +52,56 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
+                        
                       
-                        <a class="collapse-item tablinks"  href="section_management.php">Section Management</a>
-                        <a class="collapse-item tablinks"  href="faculties_management.php">Faculties Management</a>
-                        <a class="collapse-item tablinks"  href="courses_management.php">Course Management</a>
-                        <a class="collapse-item tablinks"  href="faculty_titles_management.php">Title Management</a>
+                        
+                        <a class="collapse-item tablinks"  href="faculties_management.php">Faculties</a>
+                        <a class="collapse-item tablinks"  href="designations.php">Faculty Designations</a>
+                        <a class="collapse-item tablinks"  href="faculty_titles_management.php">Faculty Positions</a>
+
+                        
+                        <a class="collapse-item tablinks"  href="section_management.php">Sections</a>
+                        <a class="collapse-item tablinks"  href="courses_management.php">Courses</a>
+                        
+                        
+                        
                         
                     </div>
                 </div>
             </li>
+               <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Account Manager
+            </div>
+          
+
+
+           <li class="nav-item active">
+                <a class="nav-link tablinks" href="account_management.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Accounts</span></a>
+            </li>   
+
+                 <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                File Manager
+            </div>
+          
+
+
+           <li class="nav-item active">
+                <a class="nav-link tablinks" href="file_manager.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Files</span></a>
+            </li>
+
+
 
 
 
@@ -89,6 +129,7 @@
                         <a class="collapse-item tablinks"  href="room_utilization_matrix_ui.php">Room Utilization Matrix</a>
                         <a class="collapse-item tablinks"  href="opcr.php">OPCR</a>
                         <a class="collapse-item tablinks"  href="ipcr.php">IPCR</a>
+                        <a class="collapse-item tablinks"  href="request_of_change_of_official_time.php">RCOT</a>
                         
                     </div>
                 </div>

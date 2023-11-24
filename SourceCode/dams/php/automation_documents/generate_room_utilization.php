@@ -33,7 +33,9 @@ if(!$conn){
 
 
 
-
+ob_start();
+$task_id = get_task_id();
+$task_id_all = ob_get_clean();
 $term_id = $_SESSION['term_id'];
 $department_id = $_GET['dept_id'];
 $department_name = $_GET['department_name'];
@@ -84,15 +86,15 @@ foreach ($room_names as $tabName) {
     // Set the newly added sheet as the active sheet
     $spreadsheet->setActiveSheetIndexByName($tabName);
       // Fill the cell with data
-    $plot_monday = plot_double_col('Monday',$department_id,$conn,$spreadsheet,$tabName,'B','C','D');
-    $plot_tuesday = plot('Tuesday',$department_id,$conn,$spreadsheet,$tabName,'E','F');
-    $plot_wednesday = plot('Wednesday',$department_id,$conn,$spreadsheet,$tabName,'G','H');
-    $plot_Thursday = plot('Thursday',$department_id,$conn,$spreadsheet,$tabName,'I','J');
-    $plot_friday = plot_double_col('Friday',$department_id,$conn,$spreadsheet,$tabName,'K','L','M');
-    $plot_saturday = plot_double_col('Saturday',$department_id,$conn,$spreadsheet,$tabName,'N','O','P');
-    $plot_sunday = plot('Sunday',$department_id,$conn,$spreadsheet,$tabName,'Q','R');
-    $plot_header = plot_room_name($tabName,$spreadsheet,$department_name,$conn);
-    $plot_room_info =plot_subject_info($department_id,$conn,$spreadsheet,$tabName);
+    $plot_monday = plot_double_col('Monday',$department_id,$conn,$spreadsheet,$tabName,'B','C','D',$term_id);
+    $plot_tuesday = plot('Tuesday',$department_id,$conn,$spreadsheet,$tabName,'E','F',$term_id);
+    $plot_wednesday = plot('Wednesday',$department_id,$conn,$spreadsheet,$tabName,'G','H',$term_id);
+    $plot_Thursday = plot('Thursday',$department_id,$conn,$spreadsheet,$tabName,'I','J',$term_id);
+    // $plot_friday = plot_double_col('Friday',$department_id,$conn,$spreadsheet,$tabName,'K','L','M',$term_id);
+    // $plot_saturday = plot_double_col('Saturday',$department_id,$conn,$spreadsheet,$tabName,'N','O','P',$term_id);
+    $plot_sunday = plot('Sunday',$department_id,$conn,$spreadsheet,$tabName,'Q','R',$term_id);
+    $plot_header = plot_room_name($tabName,$spreadsheet,$department_name,$conn,$term_id);
+    $plot_room_info =plot_subject_info($department_id,$conn,$spreadsheet,$tabName,$term_id);
 
     
 
@@ -207,7 +209,7 @@ function clear_redundant($spreadsheet){
 }
 
 
-function plot($day,$dept_id,$conn,$spreadsheet,$room_name,$col_sched,$col_room){
+function plot($day,$dept_id,$conn,$spreadsheet,$room_name,$col_sched,$col_room,$term_id){
 
 
 
@@ -250,9 +252,9 @@ $plot_query = "SELECT
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$dept_id'  
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
                                     AND cs.day = '$day'
                                     AND r.room_name = '$room_name'
                                     GROUP BY cs.class_sched_id";
@@ -289,9 +291,11 @@ while ($row = mysqli_fetch_array($plot)) {
     $ampm_end = $row['ampm_end'];
     $room_name = $row['room_name'];
     $section_name = "BS".$row['program_abbrv']." ".$row['section_name'];
+    $faculty_id = $row['faculty_id'];
 
     // Append the current row's data to the $data array
     $data[] = array(
+        "faculty_id" => $faculty_id,
         "faculty_name" => $facultyname,
         "course_code" => $course_code,
         "text_output_start" => $text_output_start,
@@ -343,6 +347,7 @@ $sample = [];
                 $section_name = $row['section_name'];
                 $col_start = 0;
                 $col_end = 0;
+                $faculty_id = $row['faculty_id'];
                 //for getting the col start
                $row_index = 6;
                  //class start minutes if the minutes is 30 just add one index
@@ -389,10 +394,10 @@ $sample = [];
                      // Finding col_end
                      while ($row_index < 40) {
                          $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_index)->getCalculatedValue();
-                         $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row_index)->getCalculatedValue();
+                         $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row_index)->getCalculatedValue();
                          
                          if ($cellValueCurrent == $text_output_end) {
-                            if($ampm_cell == $arr_ampm_start){
+                            if($ampm_cell == $arr_ampm_end){
                                         
                              $col_end = $row_index;
                              break; // Exit the loop once the condition is met
@@ -403,17 +408,35 @@ $sample = [];
                          $row_index++;
                      }
 
-                       if($minutes == 30){
+                    if($minutes == 30){
                             $col_start = $col_start +1;
                      }
+                     
                      if($minutes_end == 0){
                             $col_end = $col_end +1;      
                      }
 
-
-
-                     $spreadsheet->getActiveSheet()->setCellValue("$col_sched$col_start",$course_code."\n".$facultyname)
+                      //nilagay ko to kasi nag sasala pag transition sa 11 -12 yung sa Am - PM
+                    if($text_output_start == '11:00 - 12:00' && $text_output_end == '11:00 - 12:00'){
+                        $col_start = 16;
+                        $col_end = 17;
+                    }
+                    if($text_output_start == '11:00 - 12:00'){
+                        $col_start = 16;
+                        
+                    }
+                     if($text_output_end == '11:00 - 12:00'){
+                        $col_end = 17;
+                        
+                    }
+                    if(empty($faculty_id)){
+                        $spreadsheet->getActiveSheet()->setCellValue("$col_sched$col_start",$course_code."\n Need Lecturer")
                      ->setCellValue("$col_room$col_start",$section_name);
+                    }else{
+                        $spreadsheet->getActiveSheet()->setCellValue("$col_sched$col_start",$course_code."\n".$facultyname)
+                     ->setCellValue("$col_room$col_start",$section_name); 
+                    }
+                     
                      
                      $spreadsheet->getActiveSheet()->mergeCells("$col_sched$col_start:$col_sched$col_end");
                      $spreadsheet->getActiveSheet()->mergeCells("$col_room$col_start:$col_room$col_end");
@@ -451,7 +474,7 @@ $sample = [];
 
 
 
-function plot_double_col($day,$dept_id,$conn,$spreadsheet,$room_name,$col_sched_1,$col_sched_2,$col_section){
+function plot_double_col($day,$dept_id,$conn,$spreadsheet,$room_name,$col_sched_1,$col_sched_2,$col_section,$term_id){
 
 
 
@@ -493,9 +516,9 @@ $plot_query = "SELECT
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$dept_id'  
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
                                     AND cs.day = '$day'
                                     AND r.room_name = '$room_name'
                                     GROUP BY cs.class_sched_id";
@@ -607,6 +630,8 @@ $sample = [];
                          if ($cellValueCurrent == $text_output_start) {
                             if($ampm_cell == $arr_ampm_start){
                                    $col_start = $row_index;
+                                  
+                                   
                                    break; // Exit the loop once the condition is met  
                             }
                            
@@ -632,32 +657,51 @@ $sample = [];
                      // Finding col_end
                      while ($row_index < 40) {
                          $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_index)->getCalculatedValue();
-                         $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row_index)->getCalculatedValue();
+                         $ampm_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row_index)->getCalculatedValue();
                          
-                         if ($cellValueCurrent == $text_output_end) {
-                            if($ampm_cell == $arr_ampm_end){
-                                        
-                             $col_end = $row_index;
+                         if ($ampm_cell == $arr_ampm_end && $cellValueCurrent == $text_output_end) {
+                            //     $spreadsheet->getActiveSheet()->setCellValue("X".$row_index,$ampm_cell);
+                            // if($cellValueCurrent == $text_output_end){
+                            //      $spreadsheet->getActiveSheet()->setCellValue("X".$row_index,$cellValueCurrent);
+                             $col_end = $row_index; 
+                             
+                                   
+                             // echo "<script>console.log('$room_name,$day,$cellValueCurrent,,$row_index,$ampm_cell')</script>";
                              break; // Exit the loop once the condition is met
-                            }
-                       
+                            // }
+                            
                          }
 
                          $row_index++;
                      }
 
-
+                    
+                    if($text_output_start == '11:00 - 12:00'){
+                        $col_start = 16;
+                        
+                    }
+                     if($text_output_end == '11:00 - 12:00'){
+                        $col_end = 17;
+                        
+                    }
+                       //nilagay ko to kasi nag sasala pag transition sa 11 -12 yung sa Am - PM
+                    if($text_output_start == '11:00 - 12:00' && $text_output_end == '11:00 - 12:00'){
+                        $col_start = 16;
+                        $col_end = 17;
+                    }
                      if($minutes == 30){
                             $col_start = $col_start +1;
                      }
                      if($minutes_end == 0){
                             $col_end = $col_end + 1;
                      }
-
-
-                     $spreadsheet->getActiveSheet()->setCellValue("$col_sched_1$col_start",$course_code."\n".$facultyname)
+                    
+                     $spreadsheet->getActiveSheet()->setCellValue($col_sched_1.$col_start,$course_code."\n".$facultyname)
                      ->setCellValue("$col_section$col_start",$section_name);
                      
+                     
+                     // $spreadsheet->getActiveSheet()->setCellValue($col_sched_1.$col_start,$col_start);
+                     // $spreadsheet->getActiveSheet()->setCellValue($col_sched_2.$col_end,$text_output_end." ".$arr_ampm_end);
                      $spreadsheet->getActiveSheet()->mergeCells("$col_sched_1$col_start:$col_sched_2$col_end");
                      $spreadsheet->getActiveSheet()->mergeCells("$col_section$col_start:$col_section$col_end");
                      $spreadsheet->getActiveSheet()->getStyle("$col_sched_1$col_start")->getAlignment()->setHorizontal('center');
@@ -672,14 +716,14 @@ $sample = [];
                                                        
                     
                                                     
-                     // $currentContentRow++;                                
+                     // $currentContentRow++;     |                           
                    
               }
       
 
 }
 
-function plot_room_name($room_name,$spreadsheet,$department_name,$conn){ 
+function plot_room_name($room_name,$spreadsheet,$department_name,$conn,$term_id){ 
     $roomCell = 4;
        // Fill the cell with data
     $spreadsheet->getActiveSheet()->setCellValue('B'.$roomCell,$room_name);
@@ -688,7 +732,9 @@ function plot_room_name($room_name,$spreadsheet,$department_name,$conn){
     $spreadsheet->getActiveSheet()->setCellValue('B'.$dept_name_Cell,$department_name);
 
 
-    $active_semester = mysqli_query($conn, "SELECT sem_description FROM semesters WHERE status = 'ACTIVE'");
+    $active_semester = mysqli_query($conn, "SELECT s.sem_description FROM terms t 
+                                            LEFT JOIN semesters s ON s.semester_id = t.semester_id
+                                            WHERE t.term_id = '$term_id'");
     if(mysqli_num_rows($active_semester) > 0){
         $row = mysqli_fetch_array($active_semester);
         $semester = $row['sem_description'];
@@ -699,7 +745,9 @@ function plot_room_name($room_name,$spreadsheet,$department_name,$conn){
             // ... set other cell values
     }
 
-    $active_acad_year = mysqli_query($conn,"SELECT acad_year FROM academic_year WHERE status = 'ACTIVE'");
+    $active_acad_year = mysqli_query($conn,"SELECT a.acad_year FROM terms t 
+                                            LEFT JOIN academic_year a ON a.acad_year_id = t.acad_year_id
+                                            WHERE t.term_id = '$term_id'");
     if(mysqli_num_rows($active_acad_year) > 0){
         $row = mysqli_fetch_array($active_acad_year);
         $academic_year = $row['acad_year'];
@@ -713,7 +761,7 @@ function plot_room_name($room_name,$spreadsheet,$department_name,$conn){
 
 
 
-function plot_subject_info($dept_id,$conn,$spreadsheet,$room_name){
+function plot_subject_info($dept_id,$conn,$spreadsheet,$room_name,$term_id){
 
 
     $sql = " SELECT 
@@ -753,9 +801,10 @@ function plot_subject_info($dept_id,$conn,$spreadsheet,$room_name){
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$dept_id'  
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
+                                    
                                     
                                     AND r.room_name = '$room_name'
                                     GROUP BY cs.class_sched_id
@@ -868,7 +917,7 @@ function getprogramchair($spreadsheet,$department_id){
                      $facultyname = $row['facultyname'];
                      $facultyname = ob_get_clean();
                      $spreadsheet->getActiveSheet()->setCellValue("S21",$facultyname);
-                     echo $department_id;
+                     // echo $department_id;
 
               }else{
                      var_dump(mysql_error($conn));
@@ -877,6 +926,30 @@ function getprogramchair($spreadsheet,$department_id){
               var_dump(mysql_error($conn));
        }
 
+}
+function get_task_id(){
+    include "../config.php";
+    $query = mysqli_query($conn,"SELECT 
+                                    t.term_id,
+                                    t.status,
+                                    tt.task_name,
+                                    tt.`task_id` AS task_id
+
+                                FROM tasks tt 
+                                LEFT JOIN terms t ON t.term_id = tt.`term_id`  
+                                WHERE t.status = 'ACTIVE'  AND tt.`task_name` = 'Class Schedule'");
+    if($query){
+        if(mysqli_num_rows($query) >0){
+            $row = mysqli_fetch_assoc($query);
+            $task_id = $row['task_id'];
+
+            return $task_id;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
 }
 
 //set the header first, so the result will be treated as an xlsx file.

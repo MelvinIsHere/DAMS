@@ -45,8 +45,11 @@ $type = $_GET['type'];
 $task_id_new = ob_get_clean();
 
 
+$supervisor = $_GET['supervisor'];
 
 
+//plot supervisor
+$spreadsheet->getActiveSheet()->setCellValue('B12',$supervisor);
 
 $query = mysqli_query($conn,"
           SELECT f.firstname,
@@ -352,6 +355,8 @@ while ($formatting_start <= $formattng_end) {
        $spreadsheet->getActiveSheet()->mergeCells('I' . $formatting_start . ':K' . $formatting_start);
     $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start . ':E' . $formatting_start);
     $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start)->getAlignment()->setWrapText(true);
+     $spreadsheet->getActiveSheet()->getStyle('F'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('I'.$formatting_start)->getAlignment()->setHorizontal('center');
 
     $formatting_start++;
 

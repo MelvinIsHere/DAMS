@@ -49,182 +49,109 @@ session_start();
 
 
 
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 <?php include "../header/header.php"; ?>
 
 <body id="page-top">
     
-<!-- Page Wrapper -->
-<div id="wrapper">
-<?php include "../sidebar/sidebar.php"; ?>
-<!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
-    <!-- Main Content -->
-        <div id="content">
-            <?php include "../topbar/topbar.php"?>
-            <!-- Begin Page Content -->
-            <div class="container tabcontent">
-                <div></div>
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <?php include "../sidebar/sidebar.php"; ?>
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <?php include "../topbar/topbar.php"?>
+                <!-- Begin Page Content -->
+                <div class="container-fluid tabcontent">
+                    <h1 class="h3 mb-4 text-gray-800">File Manager</h1>
+
+                    <!-- File List -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">File List</h6>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Display your file list with additional information -->
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                          <?php 
+
+                                          include "../php/config.php";
+
+                                          $query = mysqli_query($conn,"SELECT 
+                                                                        ft.`file_id`,
+                                                                        u.`email`,
+                                                                        ft.`file_name`,
+                                                                        ft.`directory`,
+                                                                        ft.`date`
+                                                                        
+                                                                     FROM file_table ft
+                                                                     LEFT JOIN users u ON u.`user_id` = ft.`file_owner_id`");
+                                          if($query){
+                                             if(mysqli_num_rows($query)>0){
+                                                while ($row = mysqli_fetch_array($query)) {
+                                             
+                                                
+                                                   
+
+                                                   ?>
+                                                    <i class="fas fa-file-alt mr-2"></i>
+                                            <strong><?php echo $row['file_name']; ?></strong>
+                                            <a class="btn btn-success float-right" href="../view_files.php?file_id=<?php echo $row['file_id'];?>"><i class="fas fa-download"></i> Download</a>
+
+                                                   <?php
+                                                }
+                                             }else{
 
 
+                                             ?>
+                                             <h6 class="d-flex justify-content-center">There are no files</h6>
+                                          <?php
+                                             }
+                                          }else{
+                                             ?>
+                                                <p>There are no files</p>
 
+                                             <?php
+                                          }
+                                          ?>
+                                           
+                                        </li>
+                                       
+                                        <!-- Add more files with descriptions as needed -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Page Content -->
             </div>
+            <!-- End Main Content -->
         </div>
-        <!-- End of tab Content -->
+        <!-- End Content Wrapper -->
     </div>
-    <!-- End of Content  -->
-</div>
-<!-- end of content wrapper -->
-</div>
-<!-- end of wrapper -->
-
+    <!-- End Page Wrapper -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-   
-  <!-- Include SweetAlert JavaScript -->
-
-
-
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<!-- ... Your existing HTML code ... -->
-
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-   $("#settingsForm").submit(function(e) {
-      e.preventDefault(); // Prevent the form from submitting normally
-
-      // Get the form data
-      var formData = new FormData(this);
-
-      // Send the AJAX request
-      $.ajax({
-         url: "../php/academic_year_semester.php", // PHP file to handle the insertion
-         type: "POST",
-         data: formData,
-         processData: false,
-         contentType: false,
-         success: function(response) {
-            console.log(response);
-            
-            if(response.trim() === "success"){ // Trim any whitespace from the response
-               // Handle the response from the PHP file
-               swal({
-                  title: "Updated!",
-                  text: "The Academic Year has been Updated!",
-                  icon: "success",
-               });
-            } else {
-               swal({
-                  title: "Error",
-                  text: "An error occurred. Please try again.",
-                  icon: "error",
-               });
-            }
-         },
-         error: function(xhr, status, error) {
-            swal({
-               title: "Error",
-               text: "The Academic Year did not update!",
-               icon: "error",
-            });
-         }
-      });
-   });
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function() {
-   $("#semesterForm").submit(function(e) {
-      e.preventDefault(); // Prevent the form from submitting normally
-
-      // Get the form data
-      var formData = new FormData(this);
-
-      // Send the AJAX request
-      $.ajax({
-         url: "../php/semester.php", // PHP file to handle the insertion
-         type: "POST",
-         data: formData,
-         processData: false,
-         contentType: false,
-         success: function(response) {
-            console.log(response);
-            
-            if(response.trim() === "success"){ // Trim any whitespace from the response
-               // Handle the response from the PHP file
-               swal({
-                  title: "Updated!",
-                  text: "The Academic Year has been Updated!",
-                  icon: "success",
-               });
-            } else {
-               swal({
-                  title: "Error",
-                  text: "There are no semester name like that.",
-                  icon: "error",
-               });
-            }
-         },
-         error: function(xhr, status, error) {
-            swal({
-               title: "Error",
-               text: "The Academic Year did not update!",
-               icon: "error",
-            });
-         }
-      });
-   });
-});
-</script>
-
-<!-- ... Your existing HTML code ... -->
-
-
-
-
-
-    <!-- Bootstrap core JavaScript-->
-    <!--<script src="vendor/jquery/jquery.min.js"></script>-->
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!--<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
-
-    <!-- Core plugin JavaScript-->
-    <!--<script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
-
-    <!-- Custom scripts for all pages-->
-    <!--<script src="js/sb-admin-2.min.js"></script>-->
-
-    <!-- Page level plugins -->
-    <!--<script src="vendor/chart.js/Chart.min.js"></script>-->
-
-    <!-- Page level custom scripts -->
-    <!--<script src="js/demo/chart-area-demo.js"></script>-->
-    <!--<script src="js/demo/chart-pie-demo.js"></script>-->
-
-    <!--<script src="js/demo/datatables-demo.js"></script>-->
-    <!--<script src="js/demo/datatables-demo2.js"></script>-->
-    <!--<script src="js/demo/viewTask_details.js"></script>-->
-    <!--<script src="js/demo/faculty_table.js"></script>-->
-    <!--<script src="js/demo/faculty_sched_table.js"></script>-->
-     <!-- Custom scripts for all pages-->
-    <!--<script src="js/sb-admin-2.min.js"></script>-->
-
-    <!-- Page level plugins -->
-    <!--<script src="vendor/datatables/jquery.dataTables.min.js"></script>-->
-    <!--<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>-->
     <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Your custom JavaScript for file manager functionalities goes here -->
 
 </body>
 
 </html>
+
 <?php 
 
 }}else{

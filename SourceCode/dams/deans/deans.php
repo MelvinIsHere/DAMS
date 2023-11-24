@@ -117,6 +117,7 @@ session_start();
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-danger shadow h-100 py-2">
                                 <div class="card-body">
+                                    <a href="pendingDocuments.php" style="text-decoration: none;">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
@@ -150,6 +151,7 @@ session_start();
                                             <i class="fas fa-book fa-2x text-danger"></i>
                                         </div>
                                     </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -213,18 +215,61 @@ session_start();
                     <h6 class="m-0 font-weight-bold" style="color:white">All Tasks Completion</h6>
                 </div>
                 <div class="card-body">
-                    <h4 class="small font-weight-bold"> <span class="float-right">
-                        <?php
-                        // // Create a MySQLi connection
-                        // $conn = new mysqli("localhost", "root", "", "dams2");
+                    <h4 class="small font-weight-bold">
+                        
+                             
 
-                        // // Check connection
-                        // if ($conn->connect_error) {
-                        //     die("Connection failed: " . $conn->connect_error);
-                        // }
+
+                             
+                                                        
+
+
+                        
+
+                        <span class="float-right mr-3">
+                        <?php
+                        
+                        
                         include "../config.php";
-                        $sem_id = $_SESSION['semester_id'];
-                        $acad_id = $_SESSION['acad_id'];
+                        //pending count
+                        $pending = "";
+                        $completed = "";
+                         $complted_count = mysqli_query($conn,"  SELECT
+                                                        COUNT(*)
+                                                        FROM tasks tt
+                                                        LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
+                                                        LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                                                        WHERE  ts.user_id = '$id' AND ts.`is_completed` = '0' 
+                                                        AND tt.term_id = '$term_id'");
+                                                        $result = mysqli_fetch_assoc($complted_count);
+                                                        if($result){
+                                                            $completed =  $result['COUNT(*)'];
+                                                        }
+                                                        else{
+                                                            $completed =  "0";
+                                                        }
+
+
+
+                         $pending_count = mysqli_query($conn,"  SELECT
+                                                            COUNT(*)
+                                                            FROM tasks tt
+                                                            LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
+                                                            LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
+                                                            WHERE ts.user_id = '$id' AND ts.`is_completed` = '1'
+                                                            AND tt.term_id = '$term_id'");
+                                                            $result = mysqli_fetch_assoc($pending_count);
+                                                        if($result){
+                                                            $pending =  $result['COUNT(*)'];
+                                                        }
+                                                        else{
+                                                            $pending = "0";
+                                                        }
+
+
+                        echo $completed ."/".$pending ." ";
+
+
                         $query = "SELECT 
                                     ROUND((COUNT(CASE WHEN tsd.is_completed = 0 THEN 1 END) / COUNT(*)) * 100) 
                                     AS percentage_completed
@@ -245,6 +290,8 @@ session_start();
                         $conn->close();
                         ?>
                         </span>
+                        
+                       
                     </h4>
                     <div class="progress mb-4" style="width: 100%;"> <!-- Set the width to 100% to span the entire container -->
                         <div class="progress-bar" role="progressbar" style="background-color:#00BFA5;width: <?php
@@ -264,7 +311,7 @@ session_start();
                                 FROM tasks t
                                 LEFT JOIN task_status_deans tsd ON tsd.task_id = t.task_id
                                 WHERE tsd.office_id = '$department_id'
-                                AND t.sem_id = '$sem_id' AND t.acad_year_id = '$acad_id'";
+                               AND t.term_id = '$term_id'";
 
                             $result = $conn->query($query);
                             if ($result->num_rows > 0) {

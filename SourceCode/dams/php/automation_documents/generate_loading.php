@@ -36,8 +36,11 @@ $semester_id = $_SESSION['semester_id'];
 $dept_id = $_GET['dept_id'];
 $dept_abbrv = $_GET['dept_abbrv'];
 
+$term_id = $_GET['term_id'];
 
-
+ob_start();
+$task_id = get_task_id();
+$task_id_all = ob_get_clean();
 
 
 $active_semester = mysqli_query($conn, "SELECT sem_description FROM semesters WHERE semester_id = '$semester_id'");
@@ -134,9 +137,9 @@ LEFT JOIN titles t ON t.`title_id` = ft.`title_id`
 LEFT JOIN departments d ON d.`department_id` = fc.`department_id`
 LEFT JOIN semesters s ON s.semester_id = fl.sem_id
 LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+LEFT JOIN tasks ts ON ts.task_id = fl.task_id
 WHERE fc.is_permanent = 1 AND d.`department_id` = '$dept_id'
-AND s.semester_id = '$semester_id'
-AND ay.acad_year_id = '$acad_id'
+AND ts.term_id = '$term_id'
 
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.lastname");
@@ -200,6 +203,11 @@ if($permanent_query){
             $lec_hrs =  $row['lec_hrs'];
             $rle_hrs =  $row['rle_hrs'];
             $lab_hrs =  $row['lab_hrs'];
+            
+            if($students < 25){
+                $lab_hrs = $lab_hrs*0.75;
+            }
+
             $total_hrs_wk =  $row['total_hrs_wk'];
             $course_description =  $row['course_description'];
             $title_description = $row['title_description'];
@@ -227,8 +235,8 @@ if($permanent_query){
                     ->setCellValue('I'.$row_start_permanent, $rle_hrs)
                     ->setCellValue('J'.$row_start_permanent, $lab_hrs)
                     ->setCellValue('K'.$row_start_permanent, $rle_hrs)
-                    ->setCellValue('L'.$row_start_permanent, $course_description)
-                    ->setCellValue('Q'.$row_start_permanent, $faculty_id);
+                    ->setCellValue('L'.$row_start_permanent, $course_description);
+                    // ->setCellValue('Q'.$row_start_permanent, $faculty_id);
 
                
           
@@ -302,7 +310,7 @@ while($row_start_permanent >= $rowStart){
         $no_deloading = get_no_of_deloading($faculty_id);    
         $no_deloading_output = ob_get_clean();
         $regular_load = 18 - $no_deloading;
-        $overload = $totalUnits - $regular_load;
+        $overload = $regular_load - $totalUnits;
         
         //else add new row
         $spreadsheet->getActiveSheet()->insertNewRowBefore($rowStart + 1, 1);
@@ -422,8 +430,8 @@ $row_start_guest = $row_start_permanent;
 $row_start_content_guest= $row_start_permanent;
 while($cellvalue != " TEMPORARY FACULTY"){
      $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_guest)->getCalculatedValue();
-       $spreadsheet->getActiveSheet()
-                    ->setCellValue('P'.$row_start_guest, $row_start_guest);
+       // $spreadsheet->getActiveSheet()
+       //              ->setCellValue('P'.$row_start_guest, $row_start_guest);
      $row_start_guest++;
      $row_start_content_guest++;
 }
@@ -459,10 +467,9 @@ LEFT JOIN titles t ON t.`title_id` = ft.`title_id`
 LEFT JOIN departments d ON d.`department_id` = fc.`department_id`
 LEFT JOIN semesters s ON s.semester_id = fl.sem_id
 LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+LEFT JOIN tasks ts ON ts.task_id = fl.task_id
 WHERE fc.is_guest = 1 AND d.`department_id` = '$dept_id'
-AND s.semester_id = '$semester_id'
-AND ay.acad_year_id = '$acad_id'
-
+AND ts.term_id = '$term_id'
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.firstname");
 
@@ -523,6 +530,9 @@ if($guest_query){
             $total_hrs_wk =  $row['total_hrs_wk'];
             $course_description =  $row['course_description'];
             $title_description = $row['title_description'];
+            if($students < 25){
+                $lab_hrs = $lab_hrs*0.75;
+            }
             $cellValuenext = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_guest+1)->getCalculatedValue();
             if($cellValuenext == " PART-TIME FACULTY"){
                 $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start_guest, 1);
@@ -538,8 +548,8 @@ if($guest_query){
                     ->setCellValue('I'.$row_start_guest, $rle_hrs)
                     ->setCellValue('J'.$row_start_guest, $lab_hrs)
                     ->setCellValue('K'.$row_start_guest, $rle_hrs)
-                    ->setCellValue('L'.$row_start_guest, $course_description)
-                    ->setCellValue('Q'.$row_start_guest, $faculty_id);
+                    ->setCellValue('L'.$row_start_guest, $course_description);
+                    // ->setCellValue('Q'.$row_start_guest, $faculty_id);
                     
               
               $row_start_guest++;
@@ -599,7 +609,7 @@ while($row_start_guest >= $rowStart){
         $no_deloading = get_no_of_deloading($faculty_id);    
         $no_deloading_output = ob_get_clean();
         $regular_load = 18 - $no_deloading;
-        $overload = $totalUnits - $regular_load;
+        $overload = $regular_load - $totalUnits;
         //else add new row
         $spreadsheet->getActiveSheet()->insertNewRowBefore($rowStart + 1, 1);
         //increment row
@@ -614,8 +624,7 @@ while($row_start_guest >= $rowStart){
             ->setCellValue('J' . $rowStart, $total_lab_hrs)
             ->setCellValue('K' . $rowStart, $total_hrs_wk)
             ->setCellValue('N' . $rowStart, $regular_load)
-            ->setCellValue('O' . $rowStart, $overload)
-            ->setCellValue('P' . $rowStart, $no_prep);
+            ->setCellValue('O' . $rowStart, $overload);
         //merge the cells
         $spreadsheet->getActiveSheet()->mergeCells('D'.$rowStart.':F'.$rowStart);
         //re assign it or reset the values                                    
@@ -726,8 +735,8 @@ $row_start_part_time = $row_start_guest;
 $row_start_content_part_time = $row_start_guest;
 while($cellvalue != " PART-TIME FACULTY"){
      $cellvalue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_part_time)->getCalculatedValue();
-       $spreadsheet->getActiveSheet()
-                    ->setCellValue('P'.$row_start_part_time, $row_start_part_time);
+       // $spreadsheet->getActiveSheet()
+       //              ->setCellValue('P'.$row_start_part_time, $row_start_part_time);
      $row_start_part_time++;
      $row_start_content_part_time++;
 }
@@ -782,9 +791,9 @@ LEFT JOIN titles t ON t.`title_id` = ft.`title_id`
 LEFT JOIN departments d ON d.`department_id` = fc.`department_id`
 LEFT JOIN semesters s ON s.semester_id = fl.sem_id
 LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+LEFT JOIN tasks ts ON ts.task_id = fl.task_id
 WHERE fc.is_partTime = 1 AND d.`department_id` = '$dept_id'
-AND s.semester_id = '$semester_id'
-AND ay.acad_year_id = '$acad_id'
+AND ts.term_id = '$term_id'
 
 GROUP BY fl.`fac_load_id`
 ORDER BY  fc.firstname");
@@ -845,6 +854,9 @@ if($part_time_query){
             $total_hrs_wk =  $row['total_hrs_wk'];
             $course_description =  $row['course_description'];
             $title_description = $row['title_description'];
+            if($students < 25){
+                $lab_hrs = $lab_hrs*0.75;
+            }
             $cellValuenext = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_part_time+1)->getCalculatedValue();
             if($cellValuenext == " PART-TIME FACULTY"){
                 $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start_part_time, 1);
@@ -933,7 +945,7 @@ while($row_start_part_time >= $rowStart){
         $no_deloading = get_no_of_deloading($faculty_id);    
         $no_deloading_output = ob_get_clean();
         $regular_load = 18 - $no_deloading;
-        $overload = $totalUnits - $regular_load;
+        $overload = $regular_load - $totalUnits;
 
         //else add new row
         $spreadsheet->getActiveSheet()->insertNewRowBefore($rowStart + 1, 1);
@@ -1056,7 +1068,30 @@ function get_no_of_deloading($faculty_id){
     }
 }
 
+function get_task_id(){
+    include "../config.php";
+    $query = mysqli_query($conn,"SELECT 
+                                    t.term_id,
+                                    t.status,
+                                    tt.task_name,
+                                    tt.`task_id` AS task_id
 
+                                FROM tasks tt 
+                                LEFT JOIN terms t ON t.term_id = tt.`term_id`  
+                                WHERE t.status = 'ACTIVE'  AND tt.`task_name` = 'Faculty Loading'");
+    if($query){
+        if(mysqli_num_rows($query) >0){
+            $row = mysqli_fetch_assoc($query);
+            $task_id = $row['task_id'];
+
+            return $task_id;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
 //set the header first, so the result will be treated as an xlsx file.
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 

@@ -8,13 +8,14 @@ $error = "error";
 $success = "success";
 $class_sched_task_id = get_task_id_by_active_term_class_sched();
 $rum_task_id = get_task_id_by_active_term();
+$term_id = getactiveterm();
 $matrix_sql = "SELECT 
 				cs.class_sched_id
 		    FROM class_schedule cs
 		    LEFT JOIN room_utilization_matrixes ru ON cs.class_sched_id = ru.class_sched_id
 		    LEFT JOIN faculty_loadings fl ON fl.`fac_load_id` = cs.`faculty_loading_id`
 		    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
-		    WHERE fl.`dept_id` = '$department_id' AND cs.task_id = '$class_sched_task_id'
+		    WHERE fl.`dept_id` = '$department_id' AND tt.term_id = '$term_id'
 
             ";
      
@@ -26,7 +27,7 @@ $no_rooms = false;
 while ($row = mysqli_fetch_array($matrix_data)) {
     	$load_in = -1;
 	$id = $row['class_sched_id'];
-	$verify = verify_matrix_id($id,$conn,$rum_task_id);
+	$verify = verify_matrix_id($id,$conn,$term_id);
 	if($verify){
 		//nothing to do here because it exist already it will pass by so it can continue inserting
 		$no_rooms = true;
@@ -34,6 +35,7 @@ while ($row = mysqli_fetch_array($matrix_data)) {
 		//if false meaning there are no rum_id that already inserted
 		$load_in = insert_room_matrix($id,$conn,$rum_task_id); //execute this
 		echo $load_in;
+      
 	}else{
 		//nothing to do here
 	}
@@ -53,18 +55,19 @@ function insert_room_matrix($id,$conn,$rum_task_id){
 	$execution = mysqli_query($conn,$load_in_query);
 	if($execution){
 		 $last_inserted_id = $conn->insert_id;
+
 		return $last_inserted_id;
 	}else{
-		return "failed";
+		return false;
 	}
 }
-function verify_matrix_id($id,$conn,$rum_task_id){
+function verify_matrix_id($id,$conn,$term_id){
 	$matrix_sql = " SELECT 
                         r.rum_id
                     FROM room_utilization_matrixes r
                     LEFT JOIN tasks tt ON tt.task_id = r.task_id
                     WHERE r.class_sched_id = '$id'
-                    AND r.task_id  = '$rum_task_id'
+                    AND tt.term_id  = '$term_id'
                                
                                     
 
@@ -128,5 +131,21 @@ function get_task_id_by_active_term(){
         return false;
     }
 }
+function getactiveterm(){
+    include "config.php";
 
+    $query = mysqli_query($conn,"SELECT term_id FROM terms WHERE status = 'ACTIVE'");
+    if($query){
+        if(mysqli_num_rows($query)>0){
+            $row = mysqli_fetch_assoc($query);
+            $term_id = $row['term_id'];
+
+            return $term_id;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
  ?>

@@ -18,14 +18,14 @@ if($department_id != ""){
         header("Location: ../admin/program_management.php");
 	}
 	else{
-		$message = "Something went wrong adding the program $program_name";
+		$message = "Something went wrong adding the program";
 		$_SESSION['alert'] = $error; 
         $_SESSION['message'] =  $message;   //failed to insert
         header("Location: ../admin/program_management.php");
 	}
 }
 else{
-	$message = "Something went wrong adding the program $program_name";
+	$message = "Something went wrong adding the program";
 	$_SESSION['alert'] = $error; 
     $_SESSION['message'] =  $message;   //failed to insert
     header("Location: ../admin/program_management.php");

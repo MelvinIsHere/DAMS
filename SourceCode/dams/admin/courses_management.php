@@ -73,14 +73,39 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>All Courses</b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                        
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Course</span></a>
                               
                                                 
                         </div>
+                         <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                     </div>
                 </div>
                 <table class="table table-striped table-hover" id="table">
@@ -122,7 +147,7 @@ session_start();
                             d.department_name
                             FROM courses c
                             LEFT JOIN departments d ON d.`department_id` = c.`department_id`
-                            WHERE CONCAT(c.course_description,d.department_name) LIKE '%$search%'");
+                            WHERE CONCAT(c.course_description,d.department_name,c.course_code) LIKE '%$search%'");
                             $total_records = mysqli_fetch_array($result_count);
                             $total_records = $total_records['total_records'];
                             $total_no_of_page = ceil($total_records / $total_records_per_page);
@@ -139,7 +164,7 @@ session_start();
                                     d.department_name 
                                     FROM courses c
                                     LEFT JOIN departments d ON d.`department_id` = c.`department_id`
-                                    WHERE CONCAT(c.course_description,d.department_name) LIKE '%$search%'";
+                                    WHERE CONCAT(c.course_description,d.department_name,c.course_code) LIKE '%$search%'";
                             $results = $conn->query($sql);
                             if(!$results){
                                 die("Query failed: " . mysqli_error($conn));

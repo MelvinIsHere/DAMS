@@ -72,14 +72,39 @@ session_start();
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <h2>All Faculties</b></h2>
-                        </div>
-                        <div class="col-xs-6">
+                       
+                        <div class="col d-flex justify-content-start">
                             <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Faculty</span></a>
                               
                                                 
                         </div>
+                           <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                     </div>
                 </div>
                 <table class="table table-striped table-hover" id="table">
@@ -112,8 +137,8 @@ session_start();
                             $adjacents = "2";
 
                             $result_count = mysqli_query($conn, "SELECT
-                            COUNT(*)  AS total_records, f.firstname,f.middlename,f.lastname,
-                            d.department_name FROM faculties f
+                            COUNT(*)  AS total_records
+                            FROM faculties f
                             LEFT JOIN departments d ON d.`department_id` = f.`department_id`
                             WHERE CONCAT(f.firstname,f.middlename,f.lastname,d.department_name) LIKE '%$search%'");
                             $total_records = mysqli_fetch_array($result_count);
@@ -122,14 +147,14 @@ session_start();
                             $second_last = $total_no_of_page - 1;
 
                             $sql = "SELECT
-                                    f.faculty_id,
-                                    f.firstname,
-                                    f.lastname,
-                                    f.middlename,
-                                    f.suffix,
-                                    f.is_permanent,
-                                    f.is_guest,
-                                    f.is_partTime,
+                                        f.faculty_id,
+                                        f.firstname,
+                                        f.lastname,
+                                        f.middlename,
+                                        f.suffix,
+                                        f.is_permanent,
+                                        f.is_guest,
+                                        f.is_partTime,
                                     d.`department_name`
                                     FROM faculties f
                                     LEFT JOIN departments d ON d.`department_id` = f.`department_id`
@@ -493,13 +518,13 @@ session_start();
 <!-- ########################################################################################################################## -->
                      <div class="form-group">
                              <label for="type" class="form-label">Type</label>
-                                    <input class="form-control" list="browsers" name="type" id="type" placeholder="Choose a faculty type" required>
-                                    <datalist id="browsers">
+                                    <SELECT class="form-control"  name="type" id="type" placeholder="Choose a faculty type" required>
+                                    
                                        
-                                      <option value="Permanent">
-                                      <option value="Temporary">
-                                      <option value="Part time">
-                                    </datalist>
+                                      <option >Permanent</option>
+                                      <option >Temporary</option>
+                                      <option >Part time</option>
+                                    </SELECT>
                         </div>
 
                     
@@ -593,8 +618,8 @@ session_start();
                             <div class="form-group">
 
                             <label for="department" class="form-label">Department Name</label>
-                            <input class="form-control"  list="departments" name="department_name" id="department" placeholder="Enter department name" required>
-                              <datalist id="departments">
+                            <select class="form-control"  name="department_name" id="department" placeholder="Enter department name" required>
+                              
                                         <?php 
                                             $sql = "SELECT DISTINCT department_name FROM departments";
                                             $result = mysqli_query($conn,$sql);
@@ -603,9 +628,9 @@ session_start();
                                                 $department_name = $row['department_name'];
                                             
                                         ?>
-                                      <option value="<?php echo $department_name ?>">
+                                      <option><?php echo $department_name ?></option>
                                       <?php }?>
-                                    </datalist>
+                                    </select>
 
 
                         </div>
@@ -613,13 +638,13 @@ session_start();
                        
                         <div class="form-group">
                              <label for="browser" class="form-label">Type</label>
-                                    <input class="form-control" list="browsers" name="type" id="browser" placeholder="Choose a faculty type" required>
-                                    <datalist id="browsers">
+                                    <select class="form-control"  name="type" id="browser" placeholder="Choose a faculty type" required>
+                                    
                                        
-                                      <option value="Permanent">
-                                      <option value="Temporary">
-                                      <option value="Part time">
-                                    </datalist>
+                                      <option >Permanent</option>
+                                      <option >Temporary</option>
+                                      <option >Part time</option>
+                                    </select>
                         </div>
 
 

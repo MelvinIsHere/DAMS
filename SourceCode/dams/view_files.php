@@ -1,18 +1,10 @@
 <?php
 session_start();
 
-$id = $_REQUEST['id'];
-$due_date = $_REQUEST['due_date'];
-$status_id = $_GET['status_id'];
-$task_name = $_GET['task_name'];
 $file_id = $_GET['file_id'];
-// Database Connection 
-// $conn = new mysqli("localhost", "root", "", "dams2");
-// // Check for connection error
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
+
 include "php/config.php";
+
 $select = "SELECT
   dp.`department_name`,
   dp.`department_abbrv`,
@@ -23,7 +15,8 @@ $select = "SELECT
   tsd.`status_id`,
   t.due_date,
   ft.file_id,
-  ft.`directory`
+  ft.`directory`,
+  ft.file_name
 FROM
   file_table ft
   LEFT JOIN users u
@@ -44,6 +37,7 @@ if ($result && $result->num_rows > 0) {
     $row = $result->fetch_object();
     $path = $row->directory;
     $file = $path . "";
+    $file_name = $row->file_name;
 
     // Check if the file exists
     if (file_exists($file)) {
@@ -52,6 +46,7 @@ if ($result && $result->num_rows > 0) {
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Transfer-Encoding: binary');
         header('Accept-Ranges: bytes');
+        header('Content-Disposition: attachment; filename="' . $file_name . '"'); // Set the filename in the header
 
         // Disable output buffering to avoid interference with file downloads
         ob_end_clean();

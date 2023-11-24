@@ -4,7 +4,7 @@ session_start();
 
  if(isset($_SESSION['unique_id']) && isset($_SESSION['user_id'])){
     $users_id = $_SESSION['unique_id'];
-    $user_id = $_SESSION['user_id'];
+    $id = $_SESSION['user_id'];
 
 
 
@@ -31,7 +31,7 @@ session_start();
                             LEFT JOIN faculties f ON f.`faculty_id` = u.faculty_id
                             LEFT JOIN departments dp ON dp.`department_id` = f.`department_id`
                             LEFT JOIN designation d ON d.designation_id = f.designation_id
-                            WHERE u.user_id = '$user_id'
+                            WHERE u.user_id = '$id'
     
             ");
     
@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -66,17 +67,15 @@ session_start();
     <?php include "../topbar/topbar_heads.php"; ?>
     <div class="container-fluid tabcontent" id="pendingDocu">
     <!-- Page Heading -->
-   
+
+
       <div class="container-fluid tabcontent" id="viewMonitoring">
                 <div>
                                         <!-- Page Heading -->
                     <h1 class="h3 mb-1 text-gray-800">Pending Documents</h1>
                     <div class="row">
                      <?php 
-             $conn = new mysqli("localhost", "root", "", "dams2");
-            if ($conn->connect_error) {
-                    die("Connection failed : " . $conn->connect_error);
-            }
+                include "../config.php";
 
             // $dept_name_sql = mysqli_query($conn,"SELECT department_abbrv FROM departments WHERE department_name = '$department_name'");
             // $dept_res = mysqli_fetch_assoc($dept_name_sql);
@@ -85,8 +84,9 @@ session_start();
 
             // echo $dept_name;
 
-
-
+                $currentDate = date('Y-m-d');
+                $sem_id = $_SESSION['semester_id'];
+                $acad_id = $_SESSION['acad_id'];
 
                 $sql = "SELECT
                          tt.task_name AS task_name,
@@ -98,7 +98,10 @@ session_start();
                         FROM tasks tt
                         LEFT JOIN task_status_deans ts ON tt.task_id=ts.`task_id`
                         LEFT JOIN departments dp ON ts.`office_id`=dp.`department_id`
-                        WHERE tt.for_heads = 1 AND dp.department_id = '$department_id' AND ts.`is_completed` = 1
+
+                        WHERE tt.for_heads = 1 AND ts.user_id = '$id'  AND ts.`is_completed` = 1
+                        AND tt.due_date >= '$currentDate'   
+                        AND tt.term_id = '$term_id'
                         GROUP BY due_date,task_name";
                 $result = $conn->query($sql);
                 while($row = mysqli_fetch_array($result)){
@@ -112,8 +115,20 @@ session_start();
                 
             ?>
 
-            
-                    <div class="col-lg-4 col-md-6 col-sm-12">
+<!--   <div class="col-md-4 col-sm-6">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4 class="card-title mb-3"><?php echo $taskName; ?></h4>
+            <p class="card-text text-muted mb-2">Due Date: <?php echo $deadline; ?></p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <a href="pending.php?id=<?php echo $taskid;?>" class="btn btn-primary btn-sm">Upload</a>
+                <a href="navigator.php?name=<?php echo $taskName; ?>" class="btn btn-secondary btn-sm">View Task</a>
+            </div>
+        </div>
+    </div>
+</div>
+ -->
+ <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="card  rounded-lg shadow-lg mb-4" style="border-color:#A52A2A">
             <div class="card-body">
                 <h4 class="card-title mb-3 "><?php echo $taskName; ?></h4>
@@ -125,6 +140,9 @@ session_start();
             </div>
         </div>
     </div>
+
+                    
+                    
             <?php }?>
                    
                 </div>
@@ -134,7 +152,7 @@ session_start();
 
     <!-- Bootstrap core JavaScript-->
     <!--<script src="vendor/jquery/jquery.min.js"></script>-->
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!--<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
 
     <!-- Core plugin JavaScript-->
     <!--<script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
@@ -154,12 +172,11 @@ session_start();
     <!--<script src="js/demo/faculty_loading.js"></script>-->
     <!--<script src="js/demo/faculty_sched_table.js"></script>-->
      <!-- Custom scripts for all pages-->
-    <!--<script src="js/sb-admin-2.min.js"></script>-->
+    <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
     <!--<script src="vendor/datatables/jquery.dataTables.min.js"></script>-->
     <!--<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>-->
-    <script src="js/sb-admin-2.min.js"></script>
 
 
 <?php }

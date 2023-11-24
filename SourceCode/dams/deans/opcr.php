@@ -76,12 +76,39 @@ session_start();
                     <div class="table-title">
                         <div class="row">
                            
-                            <div class="col-xs-6">
+                            <div class="col d-flex justify-content-start">
                                 <a href="#addEmployeeModal" class="btn btn-success" data-toggle ="modal" ><i class="material-icons">&#xE147;</i> <span>Add output</span></a>
                                 <!-- <a href="../php/navigator.php?dept_id=<?php echo $department_id;?>&term_id=<?php echo $term_id; ?>&user_id=<?php echo $id;?>&type=<?php echo $type;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a> -->
                                  <a href="#ipcrmodal" data-toggle="modal" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                                                 
                             </div>
+                             <div class="col d-flex justify-content-start">
+                            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control bg-light " placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                                <?php 
+                                    if(isset($_GET['faculty_name'])){ ?>
+                                      <input type="text" name="faculty_name" style="width:0px;height:0px;display: none;" value="<?php  if(isset($_GET['faculty_name'])){echo $_GET['faculty_name']; } ?>">
+                                <?php }
+
+                                ?>
+                                <?php
+
+                                    if(isset($_GET['section_name'])){?>
+                                        <input type="text" name="section_name" style="width:0px;height:0px;display: none;" value="<?php 
+                                            if(isset($_GET['section_name'])){echo $_GET['section_name']; } ?>">
+                                <?php }?>
+                             
+                                    <div class="input-group-append">
+                                        <button class="btn " type="submit" style="color:#A52A2A;background-color:white">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                                    
+                        </div> 
                         </div>
                     </div>
                     <table class="table table-striped table-hover" style="table-layout: fixed;">
@@ -93,6 +120,7 @@ session_start();
                                 <th>Budget</th>
                                 <th>Category</th>
                                 <th>Description</th>
+                                <th>Accountable</th>
                                 
                                 <th>Actual Accomplishment</th>
                                 <th>Quality</th>
@@ -119,28 +147,41 @@ session_start();
                                     $adjacents = "2";
                                     $result_count = mysqli_query($conn, "SELECT
                                         COUNT(*) AS total_records
-                                        FROM ipcr_table i
-                                        LEFT JOIN departments dp ON dp.`department_id`=i.`department_id`
-                                        WHERE i.`department_id` = '$department_id' # insert dept_id
-                                        AND major_output LIKE '%$search%'");
+                                               
+                                            FROM opcr o
+                                            LEFT JOIN users u ON u.user_id = o.dean_id
+                                            LEFT JOIN departments dp ON dp.`department_id` = o.department_id
+                                            LEFT JOIN tasks tt ON tt.task_id = o.task_id
+                                            WHERE o.`department_id` = '$department_id'
+                                            AND tt.term_id = '$term_id'
+                                            AND CONCAT(o.mfo_ppa,o.success_indicator,o.category,o.description) LIKE '%$search%'");
                                     $total_records = mysqli_fetch_array($result_count);
                                     $total_records = $total_records['total_records'];
                                     $total_no_of_page = ceil($total_records / $total_records_per_page);
                                     $second_last = $total_no_of_page - 1;
-                                    $sql = "SELECT
-                                                i.ipcr_id,
-                                                i.major_output,
-                                                i.success_indicator,
-                                                i.actual_accomplishment,
-                                                i.rating,
-                                                i.remarks,
-                                                i.category,
-                                                i.description,
-                                                dp.department_name
-                                            FROM ipcr_table i
-                                            LEFT JOIN departments dp ON dp.`department_id`=i.`department_id`
-                                            WHERE i.`department_id` = '$department_id'
-                                            AND major_output LIKE '%$search%'";                                    
+                                    $sql = "SELECT 
+                                                o.opcr_id,
+                                                u.user_id,
+                                                o.mfo_ppa,
+                                                o.success_indicator,
+                                                o.budgets,
+                                                o.disipline,
+                                                o.actual_accomplishment,
+                                                o.quality,
+                                                o.efficiency,
+                                                o.timeliness,
+                                                o.remarks,
+                                                o.category,
+                                                o.description,
+                                                o.accountable
+                                                    
+                                            FROM opcr o
+                                            LEFT JOIN users u ON u.user_id = o.dean_id
+                                            LEFT JOIN departments dp ON dp.`department_id` = o.department_id
+                                            LEFT JOIN tasks tt ON tt.task_id = o.task_id
+                                            WHERE o.`department_id` = '$department_id'
+                                            AND tt.term_id = '$term_id'
+                                            AND CONCAT(o.mfo_ppa,o.success_indicator,o.category,o.description) LIKE '%$search%'";                                    
                                     $results = $conn->query($sql);
                                     if(!$results){
                                         die("Query failed: " . mysqli_error($conn));
@@ -148,15 +189,21 @@ session_start();
                                     $results->data_seek($off_set);
                                     $count = 1;
                                     while ($row = mysqli_fetch_array($results)) {
-                                        $id = $row['ipcr_id'];
-                                        $major_output = $row['major_output'];
+                                         $id = $row['opcr_id'];
+                                        $major_output = $row['mfo_ppa'];
                                         $success_indicator = $row['success_indicator'];
+                                        $budget = $row['budgets'];
                                         $actual_accomplishment = $row['actual_accomplishment'];
-                                        $rating = $row['rating'];
+                                        $quality = $row['quality'];
+                                        $timeliness = $row['timeliness'];
+                                        $efficiency = $row['efficiency'];
                                         $remarks = $row['remarks'];
-                                        $department_name = $row['department_name'];   
                                         $category = $row['category'];
-                                        $description = $row['description'];                          
+                                        $description = $row['description'];
+                                        $accountable = $row['accountable'];
+                                           
+                                        
+                                                                  
                                         $count++;                            
                             ?>
                                         <tr>
@@ -164,12 +211,16 @@ session_start();
                                             
                                             <td><?php echo $major_output;?></td>
                                             <td><?php echo $success_indicator;?></td>
-                                            <td><?php echo $category;?></td>
-                                            <td><?php echo $description;?></td>
+                                            <td><?php echo $budget;?></td>
+                                            <td><?php echo $category; ?></td>
+                                            <td><?php echo $description; ?></td>
+                                            <td><?php echo $accountable; ?></td>
+                                            
+                                            
                                             <td><?php echo $actual_accomplishment;?></td>
-                                            <td><?php echo $rating; ?></td>
-                                            <td><?php echo $rating; ?></td>
-                                            <td><?php echo $rating; ?></td>
+                                            <td><?php echo $quality; ?></td>
+                                            <td><?php echo $efficiency; ?></td>
+                                            <td><?php echo $timeliness; ?></td>
                                             <td><?php echo $remarks; ?></td>                           
                                             <td>
                                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
@@ -218,7 +269,8 @@ session_start();
                                                 o.timeliness,
                                                 o.remarks,
                                                 o.category,
-                                                o.description
+                                                o.description,
+                                                o.accountable
                                                     
                                             FROM opcr o
                                             LEFT JOIN users u ON u.user_id = o.dean_id
@@ -244,6 +296,7 @@ session_start();
                                         $remarks = $row['remarks'];
                                         $category = $row['category'];
                                         $description = $row['description'];
+                                        $accountable = $row['accountable'];
                                            
                                         
                                                                   
@@ -257,7 +310,7 @@ session_start();
                                             <td><?php echo $budget;?></td>
                                             <td><?php echo $category; ?></td>
                                             <td><?php echo $description; ?></td>
-                                            
+                                            <td><?php echo $accountable;?></td>
                                             
                                             <td><?php echo $actual_accomplishment;?></td>
                                             <td><?php echo $quality; ?></td>
@@ -363,7 +416,7 @@ session_start();
                 console.log(loading_id)
                 $('#loading_id').val(loading_id);
                 $('#mfo_update').val(data[1]);
-
+                $('#accountable').val(data[6]);
                 $('#success_indicator').val(data[2]);    
                 $('#budget_update').val(data[3]);            
                 $('#category_update').val(data[4]);
@@ -381,11 +434,12 @@ session_start();
                 var loading_id  = $(this).closest('tr').find('.loading_id').text();
                 console.log(loading_id)
                 $('#opcr_id').val(loading_id);;
-                $('#accomplishment_input').val(data[6]);
-                $('#quality').val(data[7]);
+                $('#accountable').val(data[6]);
+                $('#accomplishment_input').val(data[4]);
+                $('#quality').val(data[8]);
                 
-                $('#efficiency').val(data[8]);
-                $('#timeliness').val(data[9]);
+                $('#efficiency').val(data[9]);
+                $('#timeliness').val(data[10]);
             });
         });
         $(document).ready(function() {
@@ -513,6 +567,7 @@ session_start();
                             <label for="mfo_input" class="form-label">Major Final Output</label>
 
                             <input type="text" name="department_id" value="<?php echo $department_id?>" style="width: 0px;height: 0px;" hidden>
+                            <input type="text" name="type" value="<?php echo $type?>" style="width: 0px;height: 0px;" hidden>
                             <input class="form-control"  name="mfo" id="mfo_input" placeholder="Enter major final output" required>
 
 
@@ -559,7 +614,7 @@ session_start();
             </div>
         </div>
     </div>
-    <!-- accomplishment Modal -->
+        <!-- accomplishment Modal -->
 <div class="modal fade" id="accomplishment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -573,7 +628,13 @@ session_start();
                            <label for="accomplishment" class="form-label">Actual Accomplishment</label>
                             <input hidden type="text" name="opcr_id" id="opcr_id">
                             <input type="text" name="type" hidden value="<?php echo $type;?>">
-                             <textarea class="form-control" name="accomplishment" id="accomplishment_input" placeholder="Success accomplishment"></textarea>
+                             <textarea class="form-control" name="accomplishment" id="accomplishment_input" placeholder="Insert accomplishment"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Division/ Individual Accountable</label>
+                            <textarea class="form-control" name="accountable" placeholder="Insert Accountable" id="accountable">
+                                
+                            </textarea>
                         </div>
                 
                         <div class="form-group">
@@ -597,8 +658,6 @@ session_start();
                         </div>
                     
                     </div>
-                    
-
                    
                     
                     

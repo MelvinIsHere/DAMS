@@ -40,9 +40,10 @@ if(!$conn){
 
 $dept_id = $_GET['dept_id'];
 $dept_abbrv = $_GET['dept_abbrv'];
-$semester_id = $_SESSION['semester_id'];
-$acad_id = $_SESSION['acad_id'];
+// $semester_id = $_SESSION['semester_id'];
+// $acad_id = $_SESSION['acad_id'];
 $department_name = $_GET['department_name'];
+$term_id = $_GET['term_id'];
 
 
 // here is the first query for the insertion
@@ -77,10 +78,9 @@ SELECT DISTINCT
     LEFT JOIN sections sc ON fl.`section_id`=sc.`section_id`
     LEFT JOIN programs pr ON sc.`program_id`=pr.`program_id`
     LEFT JOIN departments dp ON dp.`department_id`=fl.`dept_id`
-    LEFT JOIN semesters s ON s.semester_id = fl.sem_id
-    LEFT JOIN academic_year ay ON ay.acad_year_id = fl.acad_year_id
+    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
 
-    WHERE fl.dept_id = '$dept_id'  AND s.semester_id = '$semester_id' AND ay.acad_year_id = '$acad_id'";
+    WHERE fl.dept_id = '$dept_id'  AND tt.term_id = '$term_id'";
 
 $execute = mysqli_query($conn, $sql);
 
@@ -108,16 +108,16 @@ foreach ($sections as $tabName) {
     // // Set the newly added sheet as the active sheet
     $spreadsheet->setActiveSheetIndexByName($tabName);
 
-    $plot_monday = plot_double_col("Monday",$dept_id,$conn,$spreadsheet,$tabName,"B","C","D",$semester_id,$acad_id);
+    $plot_monday = plot_double_col("Monday",$dept_id,$conn,$spreadsheet,$tabName,"B","C","D",$term_id);
 
-    $plot_tuesday = plot("Tuesday",$dept_id,$conn,$spreadsheet,$tabName,"E","F",$semester_id,$acad_id);
-    $plot_wednesday = plot("Wednesday",$dept_id,$conn,$spreadsheet,$tabName,"G","H",$semester_id,$acad_id);
-    $plot_Thursday = plot("Thursday",$dept_id,$conn,$spreadsheet,$tabName,"I","J",$semester_id,$acad_id);
-    $plot_friday =  plot_double_col("Friday",$dept_id,$conn,$spreadsheet,$tabName,"K","L","M",$semester_id,$acad_id);
-    $plot_saturday =  plot_double_col("Saturday",$dept_id,$conn,$spreadsheet,$tabName,"N","O","P",$semester_id,$acad_id);
-    $plot_sunday = plot("Sunday",$dept_id,$conn,$spreadsheet,$tabName,"Q","R",$semester_id,$acad_id);
-    $plot_subject_info = plot_subject_info($dept_id,$conn,$spreadsheet,$tabName);
-    $plot_header_info = plot_header_info($conn,$spreadsheet,$tabName,$semester_id,$acad_id,$department_name);
+    $plot_tuesday = plot("Tuesday",$dept_id,$conn,$spreadsheet,$tabName,"E","F",$term_id);
+    $plot_wednesday = plot("Wednesday",$dept_id,$conn,$spreadsheet,$tabName,"G","H",$term_id);
+    $plot_Thursday = plot("Thursday",$dept_id,$conn,$spreadsheet,$tabName,"I","J",$term_id);
+    $plot_friday =  plot_double_col("Friday",$dept_id,$conn,$spreadsheet,$tabName,"K","L","M",$term_id);
+    $plot_saturday =  plot_double_col("Saturday",$dept_id,$conn,$spreadsheet,$tabName,"N","O","P",$term_id);
+    $plot_sunday = plot("Sunday",$dept_id,$conn,$spreadsheet,$tabName,"Q","R",$term_id);
+    $plot_subject_info = plot_subject_info($dept_id,$conn,$spreadsheet,$tabName,$term_id);
+    $plot_header_info = plot_header_info($conn,$spreadsheet,$tabName,$term_id,$department_name);
     $plot_people = people($conn,$dept_id,$spreadsheet,$tabName);
 
 
@@ -127,7 +127,7 @@ foreach ($sections as $tabName) {
 
 
 
-function plot_header_info($conn,$spreadsheet,$section,$semester_id,$acad_id,$department_name){
+function plot_header_info($conn,$spreadsheet,$section,$term_id,$department_name){
         $spreadsheet->getActiveSheet()
             ->setCellValue("B3",$department_name);
         $spreadsheet->getActiveSheet()
@@ -135,7 +135,11 @@ function plot_header_info($conn,$spreadsheet,$section,$semester_id,$acad_id,$dep
         $spreadsheet->getActiveSheet()
             ->setCellValue("O3","ARASOF");
 
-        $semester_query = mysqli_query($conn,"SELECT sem_description FROM semesters WHERE semester_id = '$semester_id'");
+        $semester_query = mysqli_query($conn,"SELECT 
+                                                    s.sem_description 
+                                            FROM terms t 
+                                            LEFT JOIN semesters s ON s.semester_id = t.semester_id
+                                            WHERE t.term_id = '$term_id'");
         if($semester_query){
             if(mysqli_num_rows($semester_query) >0){
                 $row = mysqli_fetch_assoc($semester_query);
@@ -149,7 +153,11 @@ function plot_header_info($conn,$spreadsheet,$section,$semester_id,$acad_id,$dep
         }else{
 
         }         
-        $acad_query = mysqli_query($conn,"SELECT acad_year FROM academic_year WHERE acad_year_id = '$acad_id'");
+        $acad_query = mysqli_query($conn,"SELECT 
+                                                a.acad_year 
+                                        FROM terms t  
+                                        LEFT JOIN academic_year a ON a.acad_year_id = t.acad_year_id
+                                        WHERE t.term_id = '$term_id'");
         if($acad_query){
             if(mysqli_num_rows($acad_query) >0){
                 $row = mysqli_fetch_assoc($acad_query);
@@ -293,7 +301,7 @@ function people($conn,$dept_id,$spreadsheet,$section){
 
 // $course_codes = [];
 
-function plot($day,$dept_id,$conn,$spreadsheet,$section,$col_sched,$col_room,$semester_id,$acad_id){
+function plot($day,$dept_id,$conn,$spreadsheet,$section,$col_sched,$col_room,$term_id){
 
 
 
@@ -335,9 +343,9 @@ $plot_query = "  SELECT
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$dept_id'  
-                                    AND s.semester_id = '$semester_id'
-                                    AND ay.acad_year_id = '$acad_id'
+                                    AND tt.term_id = '$term_id'
                                     
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) ='$section'
                                     AND cs.day = '$day'
@@ -371,10 +379,12 @@ while ($row = mysqli_fetch_array($plot)) {
     $ampm_start = $row['ampm_start'];
     $ampm_end = $row['ampm_end'];
     $room_name = $row['room_name'];
-    $needed = $row['needed'];
+    $faculty_id = $row['faculty_id'];
+    
 
     // Append the current row's data to the $data array
     $data[] = array(
+        "faculty_id" => $faculty_id,
         "faculty_name" => $facultyname,
         "course_code" => $course_code,
         "text_output_start" => $text_output_start,
@@ -386,8 +396,8 @@ while ($row = mysqli_fetch_array($plot)) {
         "ampm_start" => $ampm_start,
         "ampm_end" => $ampm_end,
         "inserted" => NULL,
-        "room_name" => $room_name,
-        "needed" => $needed
+        "room_name" => $room_name
+      
     );
 }
 
@@ -422,6 +432,7 @@ while($currentContentRow != 40){
                 $inserted =$row['inserted'];
                 $facultyname = $row['faculty_name'];
                 $room_name = $row['room_name'];
+                $faculty_id = $row['faculty_id'];
                 if ($cellValueCurrent == $text_output_data && !in_array($text_output_data, $start) && !in_array($search_course_code, $course)) {
                     $start[] = $text_output_data; // Add the inserted value to the tracking array
                     $course[] = $search_course_code;
@@ -450,9 +461,9 @@ while($currentContentRow != 40){
                             $data[$index]['col_start'] = $new_content_row;
                             $course_codes[] = $search_course_code;                                       
                             $b = $data[$index]['col_start'];
-                            if(empty($facultyname)){
+                            if(empty($faculty_id)){
                                 $spreadsheet->getActiveSheet()
-                                    ->setCellValue($col_sched .$new_content_row, $search_course_code."\nNeeded Lecturer")
+                                    ->setCellValue($col_sched .$new_content_row, $search_course_code."\nNeed Lecturer")
                                     ->setCellValue($col_room.$new_content_row, $room_name);
                             }else{
                                 $spreadsheet->getActiveSheet()
@@ -466,7 +477,7 @@ while($currentContentRow != 40){
                             $b = $data[$index]['col_start'];
                             if(empty($facultyname)){
                                 $spreadsheet->getActiveSheet()
-                                    ->setCellValue($col_sched .$currentContentRow, $search_course_code."\nNeeded Lecturer")
+                                    ->setCellValue($col_sched .$currentContentRow, $search_course_code."\nNeed Lecturer")
                                     ->setCellValue($col_room.$currentContentRow, $room_name);
                             }else{
                                 $spreadsheet->getActiveSheet()
@@ -649,7 +660,7 @@ $styleArray = [
 
 
 
-function plot_double_col($day,$dept_id,$conn,$spreadsheet,$section,$col_sched_1,$col_sched_2,$col_room,$semester_id,$acad_id){
+function plot_double_col($day,$dept_id,$conn,$spreadsheet,$section,$col_sched_1,$col_sched_2,$col_room,$term_id){
 
 
 
@@ -690,9 +701,9 @@ function plot_double_col($day,$dept_id,$conn,$spreadsheet,$section,$col_sched_1,
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$dept_id'  
-                                    AND s.semester_id = '$semester_id'
-                                    AND ay.acad_year_id = '$acad_id'
+                                    AND tt.term_id = '$term_id'
                                     AND cs.day = '$day'
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) ='$section'
                                     GROUP BY cs.class_sched_id";
@@ -724,10 +735,12 @@ while ($row = mysqli_fetch_array($monday_plot)) {
     $ampm_start = $row['ampm_start'];
     $ampm_end = $row['ampm_end'];
     $room_name = $row['room_name'];
-    $needed = $row['needed'];
+    $faculty_id = $row['faculty_id'];
+    
 
     // Append the current row's data to the $data array
     $data[] = array(
+        "faculty_id" => $faculty_id,
         "faculty_name" => $facultyname,
         "course_code" => $course_code,
         "text_output_start" => $text_output_start,
@@ -739,8 +752,8 @@ while ($row = mysqli_fetch_array($monday_plot)) {
         "ampm_start" => $ampm_start,
         "ampm_end" => $ampm_end,
         "inserted" => NULL,
-        "room_name" => $room_name,
-        "needed" => $needed
+        "room_name" => $room_name
+      
     );
 }
 
@@ -779,6 +792,7 @@ while($currentContentRow != 40){
                 $inserted =$row['inserted'];
                 $facultyname = $row['faculty_name'];
                 $room_name = $row['room_name'];
+                $faculty_id = $row['faculty_id'];
                 // $needed = "\n"."Needed Lecturer";
                 
                          
@@ -822,9 +836,9 @@ while($currentContentRow != 40){
                                                     $b = $data[$index]['col_start'];
                                                      
 
-                                                    if(empty($facultyname)){
+                                                    if(empty($faculty_id)){
                                                           $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched_1 .$new_content_row, $search_course_code."\nNeeded Lecturer")
+                                                      ->setCellValue($col_sched_1 .$new_content_row, $search_course_code."\nNeed Lecturer")
                                                       ->setCellValue($col_room.$new_content_row, $room_name);
                                                     }else{
                                                           $spreadsheet->getActiveSheet()
@@ -838,14 +852,14 @@ while($currentContentRow != 40){
                                                
                                                 $b = $data[$index]['col_start'];
 
-                                                    if(empty($facultyname)){
+                                                    if(!empty($facultyname)){
                                                           $spreadsheet->getActiveSheet()
                                                       ->setCellValue($col_sched_1 .$currentContentRow, $search_course_code.
                                                         "\n".$facultyname)
                                                       ->setCellValue($col_room.$currentContentRow, $room_name);
                                                     }else{
                                                           $spreadsheet->getActiveSheet()
-                                                      ->setCellValue($col_sched_1 .$currentContentRow, $search_course_code."\n Needed Lecturer")
+                                                      ->setCellValue($col_sched_1 .$currentContentRow, $search_course_code."\n Need Lecturer")
                                                       ->setCellValue($col_room.$currentContentRow, $room_name);
                                                     }
 
@@ -1041,7 +1055,7 @@ $styleArray = [
 
 }
 
-function plot_subject_info($dept_id,$conn,$spreadsheet,$section){
+function plot_subject_info($dept_id,$conn,$spreadsheet,$section,$term_id){
 //     $sql = "SELECT DISTINCT
 // fs.faculty_id,
 // f.firstname,
@@ -1096,9 +1110,9 @@ function plot_subject_info($dept_id,$conn,$spreadsheet,$section){
                                     LEFT JOIN rooms r ON r.`room_id` = cs.room_id
                                     LEFT JOIN `time` t1 ON t1.`time_id` = cs.time_start_id
                                     LEFT JOIN `time` t2 ON t2.`time_id` = cs.time_end_id
+                                    LEFT JOIN tasks tt ON tt.task_id = cs.task_id
                                     WHERE pr.`department_id` = '$dept_id'  
-                                    AND s.status = 'ACTIVE'
-                                    AND ay.status = 'ACTIVE'
+                                    AND tt.term_id = '$term_id'
                                     
                                     AND CONCAT('BS',pr.program_abbrv,' ',sc.section_name) ='$section'
                                     GROUP BY fl.`fac_load_id`

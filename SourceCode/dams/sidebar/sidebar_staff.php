@@ -56,12 +56,17 @@
                         <h6 class="collapse-header">Task tables:</h6>
                       
                         <a class="collapse-item tablinks"  href="ipcr.php">IPCR</a>
-                        <a class="collapse-item tablinks"  href="#">RCOT</a>
+                        <a class="collapse-item tablinks"  href="official_time.php" <?php 
+                            if($type == 'Staff'){
+                                echo "hidden";
+                            }
+                        ?>>RCOT</a>
                        
                         
                     </div>
                 </div>
             </li>
+            
 
             <!-- Heading -->
          

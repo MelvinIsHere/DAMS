@@ -43,9 +43,11 @@ $end_of_term = get_end_of_term($term_id);
 $user_id = $_GET['user_id'];
 $type = $_GET['type'];
 $task_id_new = ob_get_clean();
+$supervisor = $_GET['supervisor'];
 
 
-
+//plot supervisor
+$spreadsheet->getActiveSheet()->setCellValue('B12',$supervisor);
 
 
 $query = mysqli_query($conn,"
@@ -106,19 +108,27 @@ if(mysqli_num_rows($opcr_strat_admin) > 0){
               $mfo = $row['mfo_ppa'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+                $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
+                $budget = $row['budgets'];
+              $accountable = $row['accountable'];
               // Append the current row's data to the $data array
               $data[] = array(
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
+                       "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "remarks" => $remarks,
                      "description" => $description,
-                     "category" => $category
+                     "category" => $category,
+                       "budget" => $budget,
+                     "accountable" => $accountable
               );
            
        }
@@ -127,19 +137,35 @@ if(mysqli_num_rows($opcr_strat_admin) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+              $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
+              $budget = $row['budget'];
+              $accountable = $row['accountable'];
               
               $cellValueCurrent = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row_start_admin_strat+1)->getCalculatedValue();
               if($cellValueCurrent == "CORE FUNCTIONS"){
                      $spreadsheet->getActiveSheet()->insertNewRowBefore($row_start_admin_strat + 1, 1);
                     
               }
-               $spreadsheet->getActiveSheet()
+                $spreadsheet->getActiveSheet()
                      ->setCellValue('A'.$row_start_admin_strat, $mfo)
-                     ->setCellValue('C'.$row_start_admin_strat, $success_indicator);
+                     ->setCellValue('C'.$row_start_admin_strat, $success_indicator)
+                     ->setCellValue('F'.$row_start_admin_strat, $budget)
+                     ->setCellValue('G'.$row_start_admin_strat, $accountable)
+                     ->setCellValue('I'.$row_start_admin_strat, $actual_accomplishment)
+                     ->setCellValue('L'.$row_start_admin_strat, $quality)
+                     ->setCellValue('M'.$row_start_admin_strat, $efficiency)
+                     ->setCellValue('N'.$row_start_admin_strat, $timeliness);
+              $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row_start_admin_strat)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row_start_admin_strat)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row_start_admin_strat)->getCalculatedValue();
+               if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('O'.$row_start_admin_strat, "=AVERAGE(L$row_start_admin_strat:N$row_start_admin_strat)");
+              }
               
               $row_start_admin_strat++;
               
@@ -160,7 +186,7 @@ if(mysqli_num_rows($opcr_strat_admin) > 0){
 
 //formatting
 $formattng_end = $row_start_admin_strat;
-$formatting_start = $row_start +2;
+$formatting_start = $row_start + 1;
 
 while ($formatting_start <= $formattng_end) {
     // Calculate the height based on the content in column A
@@ -177,7 +203,22 @@ while ($formatting_start <= $formattng_end) {
     $spreadsheet->getActiveSheet()->getStyle('A' . $formatting_start)->getAlignment()->setWrapText(true);
 
     $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start . ':E' . $formatting_start);
+    //for accountable
+    $spreadsheet->getActiveSheet()->mergeCells('G' . $formatting_start . ':H' . $formatting_start);
+        //actual accomplishment
+       $spreadsheet->getActiveSheet()->mergeCells('I' . $formatting_start . ':K' . $formatting_start);
     $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start)->getAlignment()->setWrapText(true);
+    $spreadsheet->getActiveSheet()->getStyle('F'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('I'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('G'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setVertical('center');
 
     $formatting_start++;
 
@@ -224,7 +265,9 @@ if(mysqli_num_rows($opcr_strat_research) > 0){
               $mfo = $row['mfo_ppa'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+               $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
@@ -233,7 +276,9 @@ if(mysqli_num_rows($opcr_strat_research) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
+                     "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "remarks" => $remarks,
                      "description" => $description,
                      "category" => $category
@@ -245,7 +290,9 @@ if(mysqli_num_rows($opcr_strat_research) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+               $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
@@ -257,7 +304,19 @@ if(mysqli_num_rows($opcr_strat_research) > 0){
               }
                $spreadsheet->getActiveSheet()
                      ->setCellValue('A'.$row_start_research, $mfo)
-                     ->setCellValue('C'.$row_start_research, $success_indicator);
+                     ->setCellValue('C'.$row_start_research, $success_indicator)
+                     ->setCellValue('F'.$row_start_research, $budget)
+                     ->setCellValue('G'.$row_start_research, $accountable)
+                     ->setCellValue('I'.$row_start_research, $actual_accomplishment)
+                     ->setCellValue('L'.$row_start_research, $quality)
+                     ->setCellValue('M'.$row_start_research, $efficiency)
+                     ->setCellValue('N'.$row_start_research, $timeliness);
+              $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row_start_research)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row_start_research)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row_start_research)->getCalculatedValue();
+               if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('O'.$row_start_research, "=AVERAGE(L$row_start_research:N$row_start_research)");
+              }
               
               $row_start_research++;
               
@@ -281,7 +340,7 @@ $formattng_end = $row_start_research;
 $formatting_start = $row_start_admin_strat +1;
 
 while ($formatting_start <= $formattng_end) {
-    // Calculate the height based on the content in column A
+   // Calculate the height based on the content in column A
     $cellValue = $spreadsheet->getActiveSheet()->getCell('C' . $formatting_start)->getValue();
     $textLength = strlen($cellValue);
     // Calculate approximate pixel height (adjust the multiplier as needed based on your font size and style)
@@ -295,10 +354,24 @@ while ($formatting_start <= $formattng_end) {
     $spreadsheet->getActiveSheet()->getStyle('A' . $formatting_start)->getAlignment()->setWrapText(true);
 
     $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start . ':E' . $formatting_start);
+        //for accountable
+    $spreadsheet->getActiveSheet()->mergeCells('G' . $formatting_start . ':H' . $formatting_start);
+        //actual accomplishment
+       $spreadsheet->getActiveSheet()->mergeCells('I' . $formatting_start . ':K' . $formatting_start);
     $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start)->getAlignment()->setWrapText(true);
+    $spreadsheet->getActiveSheet()->getStyle('F'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('I'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('G'.$formatting_start)->getAlignment()->setHorizontal('center');
+     $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setVertical('center');
 
     $formatting_start++;
-
 }
 
 
@@ -329,7 +402,9 @@ if(mysqli_num_rows($opcr_strat_extension) > 0){
               $mfo = $row['mfo_ppa'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+              $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
@@ -338,7 +413,9 @@ if(mysqli_num_rows($opcr_strat_extension) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
+                      "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "remarks" => $remarks,
                      "description" => $description,
                      "category" => $category
@@ -350,8 +427,10 @@ if(mysqli_num_rows($opcr_strat_extension) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
-              $remarks =  $row['remarks'];
+              
+               $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $description =  $row['description'];
               $category =  $row['category'];
               
@@ -362,7 +441,19 @@ if(mysqli_num_rows($opcr_strat_extension) > 0){
               }
                $spreadsheet->getActiveSheet()
                      ->setCellValue('A'.$row_start_extension, $mfo)
-                     ->setCellValue('C'.$row_start_extension, $success_indicator);
+                     ->setCellValue('C'.$row_start_extension, $success_indicator)
+                     ->setCellValue('F'.$row_start_extension, $budget)
+                     ->setCellValue('G'.$row_start_extension, $accountable)
+                     ->setCellValue('I'.$row_start_extension, $actual_accomplishment)
+                     ->setCellValue('L'.$row_start_extension, $quality)
+                     ->setCellValue('M'.$row_start_extension, $efficiency)
+                     ->setCellValue('N'.$row_start_extension, $timeliness);
+              $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row_start_extension)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row_start_extension)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row_start_extension)->getCalculatedValue();
+               if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('O'.$row_start_extension, "=AVERAGE(L$row_start_extension:N$row_start_extension)");
+              }
               
               $row_start_extension++;
               
@@ -386,7 +477,7 @@ $formattng_end = $row_start_extension;
 $formatting_start = $row_start_extension_content;
 
 while ($formatting_start <= $formattng_end) {
-    // Calculate the height based on the content in column A
+      // Calculate the height based on the content in column A
     $cellValue = $spreadsheet->getActiveSheet()->getCell('C' . $formatting_start)->getValue();
     $textLength = strlen($cellValue);
     // Calculate approximate pixel height (adjust the multiplier as needed based on your font size and style)
@@ -400,7 +491,22 @@ while ($formatting_start <= $formattng_end) {
     $spreadsheet->getActiveSheet()->getStyle('A' . $formatting_start)->getAlignment()->setWrapText(true);
 
     $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start . ':E' . $formatting_start);
+        //for accountable
+    $spreadsheet->getActiveSheet()->mergeCells('G' . $formatting_start . ':H' . $formatting_start);
+        //actual accomplishment
+       $spreadsheet->getActiveSheet()->mergeCells('I' . $formatting_start . ':K' . $formatting_start);
     $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start)->getAlignment()->setWrapText(true);
+    $spreadsheet->getActiveSheet()->getStyle('F'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('I'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('G'.$formatting_start)->getAlignment()->setHorizontal('center');
+     $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setVertical('center');
 
     $formatting_start++;
 
@@ -436,7 +542,9 @@ if(mysqli_num_rows($opcr_support) > 0){
               $mfo = $row['mfo_ppa'];
               $success_indicator =  $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+               $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
@@ -445,7 +553,9 @@ if(mysqli_num_rows($opcr_support) > 0){
                       "mfo" => $mfo,
                      "success_indicator" => $success_indicator,
                      "actual_accomplishment" => $actual_accomplishment,
-                     "rating" => $rating,
+                     "quality" => $quality,
+                     "efficiency" => $efficiency,
+                     "timeliness" => $timeliness,
                      "remarks" => $remarks,
                      "description" => $description,
                      "category" => $category
@@ -457,7 +567,9 @@ if(mysqli_num_rows($opcr_support) > 0){
               $mfo = $row['mfo'];
               $success_indicator = $row['success_indicator'];
               $actual_accomplishment =  $row['actual_accomplishment'];
-              $rating =  $row['rating'];
+               $quality =  $row['quality'];
+              $efficiency =  $row['efficiency'];
+              $timeliness =  $row['timeliness'];
               $remarks =  $row['remarks'];
               $description =  $row['description'];
               $category =  $row['category'];
@@ -469,7 +581,21 @@ if(mysqli_num_rows($opcr_support) > 0){
               }
                $spreadsheet->getActiveSheet()
                      ->setCellValue('A'.$row_start_strat_supp, $mfo)
-                     ->setCellValue('C'.$row_start_strat_supp, $success_indicator);
+                     ->setCellValue('C'.$row_start_strat_supp, $success_indicator)
+                      ->setCellValue('F'.$row_start_strat_supp, $budget)
+                      ->setCellValue('G'.$row_start_strat_supp, $accountable)
+                     ->setCellValue('I'.$row_start_strat_supp, $actual_accomplishment)
+
+                     ->setCellValue('L'.$row_start_strat_supp, $quality)
+                     ->setCellValue('M'.$row_start_strat_supp, $efficiency)
+                     ->setCellValue('N'.$row_start_strat_supp, $timeliness);
+
+              $quality_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row_start_strat_supp)->getCalculatedValue();
+              $efficiency_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row_start_strat_supp)->getCalculatedValue();
+              $timeliness_cell = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row_start_strat_supp)->getCalculatedValue();
+               if(!empty($quality_cell) || !empty($efficiency_cell) || !empty($timeliness_cell)){
+                     $spreadsheet->getActiveSheet()->setCellValue('O'.$row_start_strat_supp, "=AVERAGE(L$row_start_strat_supp:N$row_start_strat_supp)");
+              }
               
               $row_start_strat_supp++;
               
@@ -491,7 +617,7 @@ $formattng_end = $row_start_strat_supp;
 $formatting_start = $row_start_strat_supp_content;
 
 while ($formatting_start <= $formattng_end) {
-    // Calculate the height based on the content in column A
+     // Calculate the height based on the content in column A
     $cellValue = $spreadsheet->getActiveSheet()->getCell('C' . $formatting_start)->getValue();
     $textLength = strlen($cellValue);
     // Calculate approximate pixel height (adjust the multiplier as needed based on your font size and style)
@@ -503,12 +629,25 @@ while ($formatting_start <= $formattng_end) {
     // Merge cells and set text wrapping
     $spreadsheet->getActiveSheet()->mergeCells('A' . $formatting_start . ':B' . $formatting_start);
     $spreadsheet->getActiveSheet()->getStyle('A' . $formatting_start)->getAlignment()->setWrapText(true);
-
+        //for accountable
+    $spreadsheet->getActiveSheet()->mergeCells('G' . $formatting_start . ':H' . $formatting_start);
+     //actual accomplishment
+       $spreadsheet->getActiveSheet()->mergeCells('I' . $formatting_start . ':K' . $formatting_start);
     $spreadsheet->getActiveSheet()->mergeCells('C' . $formatting_start . ':E' . $formatting_start);
     $spreadsheet->getActiveSheet()->getStyle('C' . $formatting_start)->getAlignment()->setWrapText(true);
+     $spreadsheet->getActiveSheet()->getStyle('F'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('I'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('G'.$formatting_start)->getAlignment()->setHorizontal('center');
+     $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('L'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('M'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('N'.$formatting_start)->getAlignment()->setVertical('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setHorizontal('center');
+    $spreadsheet->getActiveSheet()->getStyle('O'.$formatting_start)->getAlignment()->setVertical('center');
 
     $formatting_start++;
-
 }
 
 

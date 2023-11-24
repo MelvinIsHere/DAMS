@@ -46,6 +46,7 @@ session_start();
         $type =$row['type'];
         $department_abbrv = $row['department_abbrv'];
         $email = $row['email'];
+        $term_id = $_SESSION['term_id'];
 
 
 
@@ -73,7 +74,8 @@ session_start();
                 <div class="table-title">
                     <div class="row">
                         <div class="col d-flex justify-content-start">
-                             <a href="../php/automation_documents/generate_class_schedule.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>&department_name=<?php echo $department_name;?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
+                             <a href="../php/automation_documents/generate_class_schedule.php?dept_id=<?php echo $department_id?>&dept_abbrv=<?php echo $department_abbrv?>&department_name=<?php echo $department_name;?>&term_id=<?php echo 
+                             $term_id?>" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Document</span></a>
                          </div>
                           <div class="col d-flex justify-content-start">
                             <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
